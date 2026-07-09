@@ -841,7 +841,17 @@ function init() {
     }
 }
 init();
-// Make functions globally available for inline onclick events
+// --- ভাষা বাটনের জন্য ইভেন্ট লিসেনার ---
+const btnBn = document.getElementById('btnLangBn');
+if (btnBn) btnBn.addEventListener('click', () => setLang('bn'));
+
+const btnHi = document.getElementById('btnLangHi');
+if (btnHi) btnHi.addEventListener('click', () => setLang('hi'));
+
+const btnEn = document.getElementById('btnLangEn');
+if (btnEn) btnEn.addEventListener('click', () => setLang('en'));
+
+// --- অ্যাপের অন্যান্য সব ফাংশন গ্লোবালি এক্সপোর্ট ---
 window.setLang = setLang;
 window.openLangSelect = openLangSelect;
 window.closeChat = closeChat;
