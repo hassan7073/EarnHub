@@ -31,7 +31,7 @@ try {
     window.fbRemove = remove;
 } catch (e) { console.error("Firebase init error:", e); }
 
-const BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
+const BOT_TOKEN = "8420191879:AAF6pcT-TDGT3oyhmWMW0Qldj8KVFXoTASs";
 const ADMIN_CHAT_ID = "YOUR_ADMIN_CHAT_ID";
 const CHANNEL_USERNAME = "@YourChannelUsername";
 var SK = 'eh_v21';
