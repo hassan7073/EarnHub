@@ -3,13 +3,15 @@ import { getAuth, signInAnonymously, onAuthStateChanged, updateProfile } from "h
 import { getDatabase, ref, set, get, update, child, onValue, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB0oeRLZezG7RBYbFtzQ2Vxb6aYkGTdCTQ",
-    authDomain: "earn-tm-24.firebaseapp.com",
-    projectId: "earn-tm-24",
-    storageBucket: "earn-tm-24.firebasestorage.app",
-    messagingSenderId: "45412649481",
-    appId: "1:45412649481:web:762e6c849d5450e8a646d8",
-    measurementId: "G-LN66FTFNCV"
+  apiKey: "AIzaSyDD4UnD1nvHQOq2VyZ_ugsWbmgFTCsylUU",
+  authDomain: "earn-95a4d.firebaseapp.com",
+  databaseURL: "https://earn-95a4d-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "earn-95a4d",
+  storageBucket: "earn-95a4d.firebasestorage.app",
+  messagingSenderId: "1014969057245",
+  appId: "1:1014969057245:web:500be42f7d5d103b36c034",
+  measurementId: "G-4SDV77VGKC"
+};entId: "G-LN66FTFNCV"
 };
 
 try {
