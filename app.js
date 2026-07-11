@@ -33,8 +33,11 @@ try {
 } catch (e) { console.error("Firebase init error:", e); }
 
 const BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
+const BOT_USERNAME = "YourTelegramBotUsername"; // আপনার টেলিগ্রাম বটের ইউজারনেম (যেমন: EarnHubBot)
+const APP_SHORTNAME = "app"; // আপনার মিনি অ্যাপের শর্টনেম (যেমন: app বা earnhub)
 const ADMIN_CHAT_ID = "YOUR_ADMIN_CHAT_ID";
 const CHANNEL_USERNAME = "@YourChannelUsername";
+
 var SK = 'eh_v21';
 var ntTimer = null;
 var tgUser = { fn: 'User', ln: '', un: 'user_id', id: 0, pu: null };
@@ -71,6 +74,11 @@ try {
             tgUser.un = u.username || ('id_' + u.id); 
             tgUser.id = u.id || 0; 
             tgUser.pu = u.photo_url || null; // টেলিগ্রাম থেকে সরাসরি প্রোফাইল ছবি সংগ্রহ
+        }
+        // অটো-রেফারেল ডিটেক্ট করার জন্য স্টার্ট প্যারামিটার চেক করা
+        var startParam = Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.start_param;
+        if (startParam && startParam.startsWith('EARN')) {
+            window.autoReferralCode = startParam;
         }
     }
 } catch (e) { console.error("Telegram App API error:", e); }
@@ -329,7 +337,7 @@ function rgbOf(c) { return { '--ac': '0,230,138', '--gd': '251,191,36', '--rd': 
 
 var TASKS = [
     { id: 't1', n: { bn: 'অ্যাপ রেটিং', hi: 'ऐप रेटिंग', en: 'App Rating' }, d: { bn: '৫ স্টার রেটিং দিন', hi: '5 स्टार रेटिंग दें', en: 'Give 5 Star Rating' }, r: 20, i: 'fa-star', c: '--gd', type: 'normal', link: 'https://t.me/EarnHub', time: 10 },
-    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'চ্যানেল জয়েন', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'आधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
+    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'চ্যানেল জয়েন', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'আधिकारिक চ্যানেল', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
     { id: 't3', n: { bn: 'ভিডিও দেখুন', hi: 'ভিডিও দেখেন', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 मिनट का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
     { id: 't4', n: { bn: 'পেজ লাইক', hi: 'পেজ লাইক', en: 'Page Like' }, d: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজে লাইক', en: 'Facebook Page Like' }, r: 12, i: 'fa-thumbs-up', c: '--bl', type: 'normal', link: 'https://facebook.com', time: 15 },
     { id: 't5', n: { bn: 'শেয়ার করুন', hi: 'শেयर करें', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
@@ -342,14 +350,14 @@ var CODE_TASKS = [
     { id: 'ct3', n: { bn: 'ফ্রি কোড', hi: 'ফ্রি কোড', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'код: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
 ];
 var PROOF_TASKS = [
-    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'सब्सक्राइब करें', en: 'Subscribe' } },
-    { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোঁইন করুন', en: 'Join' } },
-    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'পেज लाइक और शेयर', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
+    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'সব্রাইব করুন', en: 'Subscribe' } },
+    { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোন করুন', en: 'Join' } },
+    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'पेज लाइक और शेयर', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
     { id: 'pt4', n: { bn: 'টিকটক ফলো', hi: 'টিকটক ফলো', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'ফলো করুন', en: 'Follow' } }
 ];
 var NOTIFS = [
     { id: 'n1', t: { bn: 'নতুন টিকটাক টো গেম!', en: 'New Tic Tac Toe Game!', hi: 'नया टिक टैक टो गेम!' }, d: { bn: 'টিকটাক টো গেম খেলে আপনার বন্ধুদের সাথে বা এআই এর সাথে কয়েন বাজি ধরে আনলিমিটেড ইনকাম করুন।', en: 'Play Tic Tac Toe with AI or random players to earn massive coins.', hi: 'एआई या दोस्तों के साथ टिक टैक टो खेलें और भारी कॉइन जीतें।' }, date: '28/06/2026' },
-    { id: 'n2', t: { bn: 'সরাসরি দ্রুত পেমেন্ট সিস্টেম', en: 'Instant Withdraw Support', hi: 'त्वरित निकासी सहायता' }, d: { bn: 'বিকাশ, নগদ এবং রকেটে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে নিশ্চিন্তে টাকা পেমেন্ট পান।', en: 'Withdraw payments reliably to bKash, Nagad, and Rocket within 24-48 hours.', hi: 'बीकाश, नगদ এবং রকেট পার ২৪-৪৮ ঘণ্টায় গ্যারান্টিড পেমেন্ট পান।' }, date: '27/06/2026' }
+    { id: 'n2', t: { bn: 'সরাসরি দ্রুত পেমেন্ট সিস্টেম', en: 'Instant Withdraw Support', hi: 'त्वरित निकासी सहायता' }, d: { bn: 'বিকাশ, নগদ এবং রকেটে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে নিশ্চিন্তে টাকা পেমেন্ট পান।', en: 'Withdraw payments reliably to bKash, Nagad, and Rocket within 24-48 hours.', hi: 'বিকাশ, নগদ এবং রকেট পার ২৪-৪৮ ঘণ্টায় গ্যারান্টিড পেমেন্ট পান।' }, date: '27/06/2026' }
 ];
 
 function isTaskDone(tid) { return D.cT.indexOf(tid) !== -1 || D.cO.indexOf(tid) !== -1 || D.dailyTasksDone.indexOf(tid) !== -1 || D.proofSubs.indexOf(tid) !== -1; }
@@ -545,7 +553,20 @@ function submitProof(tid) {
 
 function switchTab(t, b) { var tabs = ['tsk', 'ads', 'gm', 'of']; for (var i = 0; i < tabs.length; i++) { var el = document.getElementById('et-' + tabs[i]); if (el) el.style.display = tabs[i] === t ? 'block' : 'none'; } b.parentElement.querySelectorAll('.tab-btn').forEach(function(x) { x.classList.remove('on'); }); b.classList.add('on'); }
 function copyCode() { navigator.clipboard.writeText(D.rCode).then(function() { toast(getL('msg_copied'), 's'); }); }
-function shareCode() { var t = 'EarnHub! ' + getL('r_invite') + ': ' + D.rCode; if (navigator.share) navigator.share({ title: 'EarnHub', text: t }); else { navigator.clipboard.writeText(t); toast(getL('msg_copied'), 's'); } }
+
+// রেফারেল লিংক সরাসরি শেয়ার ও মেসেজ কাস্টমাইজ করার ফাংশন
+function shareCode() { 
+    var refLink = `https://t.me/${BOT_USERNAME}/${APP_SHORTNAME}?startapp=${D.rCode}`;
+    var textMsg = `🎁 Join EarnHub and earn free money! Use my link to get 50 coins instantly:\n${refLink}`;
+    if (navigator.share) {
+        navigator.share({ title: 'EarnHub Referral', text: textMsg });
+    } else {
+        navigator.clipboard.writeText(refLink).then(function() {
+            toast("Referral link copied to clipboard!", 's');
+        });
+    }
+}
+
 function pickMethod(el) { var all = document.querySelectorAll('.wm'); for (var i = 0; i < all.length; i++) { all[i].classList.remove('sel'); var ck = all[i].querySelector('.fa-check-circle'); if (ck) ck.remove(); } el.classList.add('sel'); var ic = document.createElement('i'); ic.className = 'fas fa-check-circle'; ic.style.cssText = 'color:var(--ac);font-size:12px'; el.appendChild(ic); }
 
 function submitReferralCode() {
@@ -825,7 +846,6 @@ async function sendChat() {
     inp.value = ''; 
     showTyping(); 
     
-    // ১. কন্টাক্ট/রিপোর্ট মোডে থাকলে মেসেজটিকে রিপোর্ট হিসেবে সেভ করব
     if (chatState.status === 'waiting_for_report') {
         setTimeout(async function() {
             hideTyping();
@@ -840,17 +860,15 @@ async function sendChat() {
                 date: new Date().toLocaleString()
             };
             
-            // ফায়ারবেসে সেভ করা
             if (window.fbDatabase && window.fbRef && window.fbSet) {
                 var repRef = window.fbRef(window.fbDatabase, 'reports/' + reportKey);
                 window.fbSet(repRef, reportData).catch(e => console.error("Report save error:", e));
             }
             
-            // অ্যাডমিন টেলিগ্রামে নোটিফিকেশন পাঠানো
             var adminMsg = `⚠️ <b>New User Report</b>\n\n👤 <b>User:</b> ${reportData.name}\n🆔 <b>TG ID:</b> <code>${reportData.tg_id}</code>\n📛 <b>Username:</b> @${reportData.username}\n📝 <b>Message:</b> ${txt}\n📅 <b>Date:</b> ${reportData.date}`;
             sendTelegramMessage(ADMIN_CHAT_ID, adminMsg);
             
-            chatState.status = 'idle'; // রিলিজ স্টেট
+            chatState.status = 'idle';
             
             typeBotMsg("✅ Thank you! Your report has been submitted to the admin panel. Our team will review it soon.", null);
             setTimeout(function() {
@@ -860,7 +878,6 @@ async function sendChat() {
         return;
     }
 
-    // ২. সাধারণ চ্যাট থাকলে বটের উত্তর খোঁজা
     var translatedQ = txt; 
     if (D.lang && D.lang !== 'en') { 
         translatedQ = await translateText(txt, 'en'); 
@@ -968,6 +985,39 @@ function setupFirebaseSync(uid) {
             }
         } catch (err) {
             console.error("Data mapping error:", err);
+        }
+        
+        // ডিপ-লিংক রেফারেল অটোমেটিক ডিটেকশন ও বোনাস প্রসেস
+        if (window.autoReferralCode && !D.referredBy && window.autoReferralCode !== D.rCode) {
+            var autoCode = window.autoReferralCode;
+            var usersRef = window.fbRef(window.fbDatabase, 'users');
+            window.fbGet(usersRef).then(function(refSnap) {
+                if (refSnap.exists()) {
+                    var users = refSnap.val();
+                    var foundUid = null;
+                    var foundUser = null;
+                    for (var key in users) {
+                        if (users[key].rCode === autoCode) {
+                            foundUid = key;
+                            foundUser = users[key];
+                            break;
+                        }
+                    }
+                    if (foundUid) {
+                        var refRef = window.fbRef(window.fbDatabase, 'users/' + foundUid);
+                        window.fbUpdate(refRef, {
+                            coins: (foundUser.coins || 0) + 50,
+                            tE: (foundUser.tE || 0) + 50,
+                            tR: (foundUser.tR || 0) + 1
+                        });
+                        D.referredBy = autoCode;
+                        addCoins(50, 'referral');
+                        toast("Successfully referred via link! +50 Coins", "g");
+                        saveData();
+                    }
+                }
+            });
+            window.autoReferralCode = null; // একবার প্রসেস করার পর প্যারামিটার ক্লিয়ার করা হলো
         }
         
         saveData(); updateUI(); renderAllTasks(); renderAds(); renderWdHist(); renderAch(); checkNotifBadge(); renderCaptchaFg();
