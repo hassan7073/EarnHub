@@ -283,8 +283,8 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
 .c-msg.bot .c-mav { background: var(--g1); color: #000 }
 .c-msg.usr .c-mav { background: var(--card); border: 1px solid var(--border); color: var(--fg) }
 .c-mbb { padding: 8px 12px; border-radius: 12px; font-size: 11px; line-height: 1.5; word-break: break-word }
-.c-msg.bot .c-mbb { background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 2px }
-.c-msg.usr .c-mbb { background: rgba(0, 230, 138, .12); border: 1px solid rgba(0, 230, 138, .2); border-bottom-right-radius: 2px }
+.c-msg.bot .c-mbb { background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 2px; color: #e8edf5 !important; }
+.c-msg.usr .c-mbb { background: rgba(0, 230, 138, .12); border: 1px solid rgba(0, 230, 138, .2); border-bottom-right-radius: 2px; color: #e8edf5 !important; }
 .c-tim { font-size: 7px; color: var(--mt); margin-top: 2px; padding: 0 28px }
 .c-msg.usr .c-tim { text-align: right }
 .tpi { display: flex; gap: 4px; align-items: center; padding: 8px 0 }
@@ -293,7 +293,7 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
 .tpi span:nth-child(3) { animation-delay: .4s }
 @keyframes tbn { 0%, 60%, 100% { transform: translateY(0) } 30% { transform: translateY(-5px) } }
 .c-qo { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px }
-.c-qb { padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 600; background: rgba(0, 230, 138, .08); border: 1px solid rgba(0, 230, 138, .2); color: var(--ac); cursor: pointer; transition: .15s }
+.c-qb { padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 600; background: rgba(0, 230, 138, .08); border: 1px solid rgba(0, 230, 138, .2); color: #00e68a !important; cursor: pointer; transition: .15s; font-weight: bold !important; }
 .c-qb:active { background: rgba(0, 230, 138, .2); transform: scale(.95) }
 .c-inp { display: flex; align-items: flex-end; gap: 6px; padding: 10px; background: var(--bg2); border-top: 1px solid var(--border) }
 .c-inp input { flex: 1; padding: 10px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; color: var(--fg); font-size: 11px; font-family: inherit; outline: none }
@@ -347,14 +347,14 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
     border-left: 3px solid var(--ac) !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
     border-bottom-left-radius: 4px !important;
-    color: #e8edf5 !important; /* বটের টেক্সট কালার উজ্জ্বল করা হলো */
+    color: #e8edf5 !important;
 }
 .c-msg.usr .c-mbb {
     background: linear-gradient(135deg, rgba(0, 230, 138, 0.15), rgba(0, 184, 212, 0.08)) !important;
     border: 1px solid rgba(0, 230, 138, 0.25) !important;
     box-shadow: 0 4px 15px rgba(0, 230, 138, 0.05);
     border-bottom-right-radius: 4px !important;
-    color: #e8edf5 !important; /* ইউজারের টেক্সট কালার নিশ্চিত করা হলো */
+    color: #e8edf5 !important;
 }
 .c-mav i {
     filter: drop-shadow(0 0 5px var(--ac));
@@ -363,7 +363,7 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
     background: rgba(0, 230, 138, 0.05) !important;
     border: 1px solid rgba(0, 230, 138, 0.2) !important;
     box-shadow: 0 2px 8px rgba(0, 230, 138, 0.05);
-    color: #00e68a !important; /* কুইক বাটনগুলোর টেক্সট কালার উজ্জ্বল করা হলো */
+    color: #00e68a !important;
     transition: all 0.25s ease !important;
     font-weight: bold !important;
 }
@@ -394,4 +394,4 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
 @keyframes wave {
     0%, 100% { height: 2px; }
     50% { height: 10px; }
-           }
+}
