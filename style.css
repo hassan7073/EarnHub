@@ -329,3 +329,65 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
 .captcha-limit-badge .limit-remaining { color: var(--ac); }
 @media(min-width:500px) { body { max-width: 420px; margin: 0 auto; border-left: 1px solid var(--border); border-right: 1px solid var(--border) } .nav { max-width: 420px; left: 50%; transform: translateX(-50%) } .fg-page { max-width: 420px; left: 50%; transform: translateX(-50%) } .cpg { max-width: 420px; left: 50%; transform: translateX(-50%) } }
 @media(prefers-reduced-motion:reduce) { * { animation-duration: 0s !important; transition-duration: 0s !important } }
+
+/* --- EarnBot AI Glowing Glassmorphism UI --- */
+.cpg {
+    background: radial-gradient(circle at top, #0f162a 0%, var(--bg) 100%) !important;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+}
+.c-hdr {
+    background: rgba(20, 28, 46, 0.85) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 230, 138, 0.15) !important;
+}
+.c-msg.bot .c-mbb {
+    background: linear-gradient(135deg, rgba(20, 28, 46, 0.95), rgba(13, 19, 33, 0.95)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-left: 3px solid var(--ac) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    border-bottom-left-radius: 4px !important;
+}
+.c-msg.usr .c-mbb {
+    background: linear-gradient(135deg, rgba(0, 230, 138, 0.15), rgba(0, 184, 212, 0.08)) !important;
+    border: 1px solid rgba(0, 230, 138, 0.25) !important;
+    box-shadow: 0 4px 15px rgba(0, 230, 138, 0.05);
+    border-bottom-right-radius: 4px !important;
+}
+.c-mav i {
+    filter: drop-shadow(0 0 5px var(--ac));
+}
+.c-qb {
+    background: rgba(0, 230, 138, 0.05) !important;
+    border: 1px solid rgba(0, 230, 138, 0.2) !important;
+    box-shadow: 0 2px 8px rgba(0, 230, 138, 0.05);
+    transition: all 0.25s ease !important;
+}
+.c-qb:hover, .c-qb:active {
+    background: var(--g1) !important;
+    color: #000 !important;
+    border-color: transparent !important;
+    transform: scale(0.96);
+    box-shadow: 0 4px 15px rgba(0, 230, 138, 0.3) !important;
+}
+.c-inp {
+    background: rgba(13, 19, 33, 0.95) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+.c-inp input {
+    background: #0f162a !important;
+    border: 1px solid var(--border) !important;
+    color: var(--fg) !important;
+    font-size: 12px !important;
+    border-radius: 20px !important;
+    padding: 12px 16px !important;
+}
+.c-inp input:focus {
+    border-color: var(--ac) !important;
+    box-shadow: 0 0 10px rgba(0, 230, 138, 0.15) !important;
+}
+/* Typing Indicator Animation */
+@keyframes wave {
+    0%, 100% { height: 2px; }
+    50% { height: 10px; }
+       }
