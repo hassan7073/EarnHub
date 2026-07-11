@@ -288,7 +288,7 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
 .c-tim { font-size: 7px; color: var(--mt); margin-top: 2px; padding: 0 28px }
 .c-msg.usr .c-tim { text-align: right }
 .tpi { display: flex; gap: 4px; align-items: center; padding: 8px 0 }
-.tpi span { width: 5px; height: 5px; border-radius: 50%; background: var(--ac); animation: tbn 1.2s infinite }
+.tpi span { width: 5px; height: 5px; border-radius: 50%; background: #00e68a !important; animation: tbn 1.2s infinite }
 .tpi span:nth-child(2) { animation-delay: .2s }
 .tpi span:nth-child(3) { animation-delay: .4s }
 @keyframes tbn { 0%, 60%, 100% { transform: translateY(0) } 30% { transform: translateY(-5px) } }
@@ -347,12 +347,14 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
     border-left: 3px solid var(--ac) !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
     border-bottom-left-radius: 4px !important;
+    color: #e8edf5 !important; /* বটের টেক্সট কালার উজ্জ্বল করা হলো */
 }
 .c-msg.usr .c-mbb {
     background: linear-gradient(135deg, rgba(0, 230, 138, 0.15), rgba(0, 184, 212, 0.08)) !important;
     border: 1px solid rgba(0, 230, 138, 0.25) !important;
     box-shadow: 0 4px 15px rgba(0, 230, 138, 0.05);
     border-bottom-right-radius: 4px !important;
+    color: #e8edf5 !important; /* ইউজারের টেক্সট কালার নিশ্চিত করা হলো */
 }
 .c-mav i {
     filter: drop-shadow(0 0 5px var(--ac));
@@ -361,7 +363,9 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
     background: rgba(0, 230, 138, 0.05) !important;
     border: 1px solid rgba(0, 230, 138, 0.2) !important;
     box-shadow: 0 2px 8px rgba(0, 230, 138, 0.05);
+    color: #00e68a !important; /* কুইক বাটনগুলোর টেক্সট কালার উজ্জ্বল করা হলো */
     transition: all 0.25s ease !important;
+    font-weight: bold !important;
 }
 .c-qb:hover, .c-qb:active {
     background: var(--g1) !important;
@@ -390,4 +394,4 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
 @keyframes wave {
     0%, 100% { height: 2px; }
     50% { height: 10px; }
-       }
+           }
