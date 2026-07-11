@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>EarnHub</title>
-
-    <!-- টেলিগ্রামের মূল স্ক্রিপ্ট ফাইল -->
+    <!-- টেলিগ্রামের মূল স্ক্রিপ্ট ফাইল (এটি যুক্ত করা হলো) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <script type="module" src="app.js"></script>
+    <!-- ক্যাশ বাস্টিং (Cache Busting) সহ নতুন স্ক্রিপ্ট লিংক -->
+    <script type="module" src="app.js?v=2"></script>
 
     <!-- Language Selection -->
     <div id="langSelect" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
@@ -68,7 +67,7 @@
         <div class="fg-body">
             <div class="mine-hero"><h2>COIN MINE</h2><p data-l="g_mine_d">Avoid mines and find coins!</p></div>
             <div class="mine-ctrls"><div class="mine-ctrl"><label data-l="g_bet">Bet</label><div class="val" id="mineBetDisp">10</div><div class="mine-cbtns"><button onclick="adjBet(-5)">-</button><button onclick="adjBet(5)">+</button></div></div><div class="mine-ctrl"><label data-l="g_mines">Mines</label><div class="val red" id="mineCountDisp">3</div><div class="mine-cbtns"><button onclick="adjMines(-1)">-</button><button onclick="adjMines(1)">+</button></div></div></div>
-            <div class="mine-stats"><div class="mine-stat"><div class="mine-stat-label" data-l="g_mult">Mult</div><div class="mine-stat-val" style="color:var(--gd)" id="mineMult">1.00x</div></div><div class="mine-stat"><div class="mine-stat-label" data-l="g_pot">Potential</div><div class="mine-stat-val" style="color:var(--ac)" id="minePotWin">0</div></div><div class="mine-stat"><div class="mine-stat-label" data-l="g_found">Found</div><div class="mine-stat-val" style="color:var(--ac)" id="mineFound">0</div></div></div>
+            <div class="mine-stats"><div class="mine-stat"><div class="mine-stat-label" data-l="g_mult">Multiplier</div><div class="mine-stat-val" style="color:var(--gd)" id="mineMult">1.00x</div></div><div class="mine-stat"><div class="mine-stat-label" data-l="g_pot">Potential</div><div class="mine-stat-val" style="color:var(--ac)" id="minePotWin">0</div></div><div class="mine-stat"><div class="mine-stat-label" data-l="g_found">Found</div><div class="mine-stat-val" style="color:var(--ac)" id="mineFound">0</div></div></div>
             <div style="position:relative;width:100%;max-width:340px"><div class="mine-grid" id="mineGrid"></div><div class="mine-over" id="mineOver"><div class="mine-over-icon" id="mineOverIcon"></div><div class="mine-over-text" id="mineOverText"></div><div class="mine-over-sub" id="mineOverSub"></div><div class="mine-over-amount" id="mineOverAmt"></div><button class="btn btn-p" style="padding:12px 28px;font-size:14px" onclick="closeMineOver()" data-l="g_play_again">Play Again</button></div></div>
             <div class="mine-action"><button class="mine-start-btn" id="mineStartBtn" onclick="startMine()"><i class="fas fa-play"></i>&nbsp; <span data-l="g_start">Start</span></button><button class="mine-cashout-btn" id="mineCashBtn" onclick="cashOut()" disabled><i class="fas fa-hand-holding-usd"></i>&nbsp; <span data-l="g_cashout">Cashout</span></button></div>
         </div>
@@ -296,4 +295,4 @@
         <div class="nav-i" onclick="goTo('prof')" data-p="prof"><i class="fas fa-user"></i><span data-l="nav_prof">Profile</span></div>
     </nav>
 </body>
-</html>
+    </html>
