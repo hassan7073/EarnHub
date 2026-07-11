@@ -217,11 +217,11 @@ function redeemPromo() {
 var ACHS = [
     { id: 'fe', n: { bn: 'First Earn', hi: 'पहली कमाई', en: 'First Earn' }, d: { bn: 'প্রথমবার কয়েন আয়', hi: 'पहली बार कॉइन कमाएं', en: 'Earn coins first time' }, i: 'fa-seedling', c: '--ac', ck: function(d) { return d.tE > 0 } },
     { id: 'fa', n: { bn: 'Ad Viewer', hi: 'विज्ञापन दर्शक', en: 'Ad Viewer' }, d: { bn: 'প্রথম অ্যাড', hi: 'पहला विज्ञापन', en: 'First Ad' }, i: 'fa-play', c: '--ac', ck: function(d) { return d.tAW > 0 } },
-    { id: 'tt', n: { bn: 'Task Master', hi: 'टास्क মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10 टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
-    { id: 'hc', n: { bn: 'Century', hi: 'শতक', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
+    { id: 'tt', n: { bn: 'Task Master', hi: 'টাस्क मास्टर', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10 टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
+    { id: 'hc', n: { bn: 'Century', hi: 'शतक', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
     { id: 's7', n: { bn: '7 Day Streak', hi: '7 दिन स्ट्रीक', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 दिन दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
-    { id: 'sp', n: { bn: 'Spinner', hi: 'स्पिनर', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'पहला स्पिन', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
-    { id: 'mn', n: { bn: 'Miner', hi: 'माइनर', en: 'Miner' }, d: { bn: 'মাইনে ১০+', hi: 'माइन में 10+', en: '10+ in Mine' }, i: 'fa-bomb', c: '--rd', ck: function(d) { return d.mnW >= 10 } }
+    { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'पहला स्पिन', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
+    { id: 'mn', n: { bn: 'Miner', hi: 'মাইনার', en: 'Miner' }, d: { bn: 'মাইনে ১০+', hi: 'माइन में 10+', en: '10+ in Mine' }, i: 'fa-bomb', c: '--rd', ck: function(d) { return d.mnW >= 10 } }
 ];
 
 function checkAch() { for (var i = 0; i < ACHS.length; i++) { var a = ACHS[i]; if (D.ach.indexOf(a.id) === -1 && a.ck(D)) { D.ach.push(a.id); toast(getL('p_ach') + ': ' + getLangText(a.n) + '!', 'g'); } } }
@@ -326,23 +326,23 @@ function rgbOf(c) { return { '--ac': '0,230,138', '--gd': '251,191,36', '--rd': 
 
 var TASKS = [
     { id: 't1', n: { bn: 'অ্যাপ রেটিং', hi: 'ऐप रेटिंग', en: 'App Rating' }, d: { bn: '৫ স্টার রেটিং দিন', hi: '5 स्टार रेटिंग दें', en: 'Give 5 Star Rating' }, r: 20, i: 'fa-star', c: '--gd', type: 'normal', link: 'https://t.me/EarnHub', time: 10 },
-    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'चैनल जॉइन', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'आधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
+    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'চैनल जॉइन', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'आधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
     { id: 't3', n: { bn: 'ভিডিও দেখুন', hi: 'ভিডিও দেখেন', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 मिनट का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
     { id: 't4', n: { bn: 'পেজ লাইক', hi: 'পেজ লাইক', en: 'Page Like' }, d: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেज लाइक', en: 'Facebook Page Like' }, r: 12, i: 'fa-thumbs-up', c: '--bl', type: 'normal', link: 'https://facebook.com', time: 15 },
-    { id: 't5', n: { bn: 'শেয়ার করুন', hi: 'शेयर करें', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
+    { id: 't5', n: { bn: 'শেয়ার করুন', hi: 'শেयर करें', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
     { id: 't6', n: { bn: 'প্রোফাইল সম্পূর্ণ', hi: 'प्रोफाइल पूरा करें', en: 'Complete Profile' }, d: { bn: '১০০% প্রোফাইল', hi: '100% प्रोफाइल', en: '100% Profile' }, r: 30, i: 'fa-user-edit', c: '--pp', type: 'normal', link: 'https://t.me/EarnHub', time: 5 }
 ];
 var DAILY_TASKS = [];
 var CODE_TASKS = [
-    { id: 'ct1', n: { bn: 'সিক্রেট কোড', hi: 'सीक्रेट कोड', en: 'Secret Code' }, d: { bn: 'কোড: EARNHUB2024', hi: 'कोड: EARNHUB2024', en: 'Code: EARNHUB2024' }, r: 30, i: 'fa-key', c: '--gd', type: 'code', code: 'EARNHUB2024', link: 'https://t.me/EarnHub' },
-    { id: 'ct2', n: { bn: 'ভিআইপি কোড', hi: 'वीआईपी कोड', en: 'VIP Code' }, d: { bn: 'কোড: VIP2024', hi: 'कोड: VIP2024', en: 'Code: VIP2024' }, r: 50, i: 'fa-crown', c: '--gd', type: 'code', code: 'VIP2024', link: 'https://t.me/EarnHub' },
+    { id: 'ct1', n: { bn: 'সিক্রেট কোড', hi: 'सीक्रेट कोड', en: 'Secret Code' }, d: { bn: 'কোড: EARNHUB2024', hi: 'код: EARNHUB2024', en: 'Code: EARNHUB2024' }, r: 30, i: 'fa-key', c: '--gd', type: 'code', code: 'EARNHUB2024', link: 'https://t.me/EarnHub' },
+    { id: 'ct2', n: { bn: 'ভিআইপি কোড', hi: 'वीआईपी कोड', en: 'VIP Code' }, d: { bn: 'কোড: VIP2024', hi: 'код: VIP2024', en: 'Code: VIP2024' }, r: 50, i: 'fa-crown', c: '--gd', type: 'code', code: 'VIP2024', link: 'https://t.me/EarnHub' },
     { id: 'ct3', n: { bn: 'ফ্রি কোড', hi: 'ফ্রি কোড', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'код: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
 ];
 var PROOF_TASKS = [
-    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'चैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'सब्सक्राइब करें', en: 'Subscribe' } },
-    { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'जॉइन करें', en: 'Join' } },
-    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক पेज लाइक', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'पेज लाइक और शेयर', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'लाइक करें', en: 'Like' } },
-    { id: 'pt4', n: { bn: 'টিকটক ফলো', hi: 'টিকটক ফলো', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'फॉलो करें', en: 'Follow' } }
+    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'चैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'সব্সক্রাইব করুন', en: 'Subscribe' } },
+    { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোইন করুন', en: 'Join' } },
+    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'पेज लाइक और शेयर', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
+    { id: 'pt4', n: { bn: 'টিকটক ফলো', hi: 'টিকটক ফলো', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'ফলো করুন', en: 'Follow' } }
 ];
 var NOTIFS = [
     { id: 'n1', t: { bn: 'নতুন টিকটাক টো গেম!', en: 'New Tic Tac Toe Game!', hi: 'नया टिक टैक टो गेम!' }, d: { bn: 'টিকটাক টো গেম খেলে আপনার বন্ধুদের সাথে বা এআই এর সাথে কয়েন বাজি ধরে আনলিমিটেড ইনকাম করুন।', en: 'Play Tic Tac Toe with AI or random players to earn massive coins.', hi: 'एआई या दोस्तों के साथ टिक टैक टो खेलें और भारी कॉइन जीतें।' }, date: '28/06/2026' },
@@ -610,15 +610,34 @@ function renderDynamicLeaderboard(elementId, metricType, timeframe, list) {
         if (rank === 1) { rankClass = 'rank-1'; badge = '🥇'; } else if (rank === 2) { rankClass = 'rank-2'; badge = '🥈'; } else if (rank === 3) { rankClass = 'rank-3'; badge = '🥉'; } else { badge = formatNum(rank); } 
         var displayName = u.name || u.fn || 'User'; 
         
-        var usernameDisplay = u.username ? (' (@' + u.username + ')') : '';
+        var usernameDisplay = u.username ? ('@' + u.username) : '';
         var val = u.calcVal; 
-        html += '<div class="lb-item ' + rankClass + (isMe ? ' lb-me' : '') + '"><div class="lb-rk">' + badge + '</div><div class="lb-nm">' + displayName + usernameDisplay + (isMe ? ' (<span style="color:var(--ac)">You</span>)' : '') + (rank === 1 ? '<i class="fas fa-crown crown-ic"></i>' : '') + '</div><div class="lb-co">' + formatNum(val.toLocaleString('en-US')) + '</div></div>'; 
+        
+        // লিডারবোর্ডে ছবি লোড করার কন্ডিশনাল লজিক
+        var userPhoto = u.photo_url || null;
+        var avatarHtml = '';
+        if (userPhoto) {
+            avatarHtml = '<div class="lb-av" style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--bg);"><img src="' + userPhoto + '" style="width:100%;height:100%;object-fit:cover;"></div>';
+        } else {
+            var firstLetter = (u.name || 'User').charAt(0).toUpperCase();
+            avatarHtml = '<div class="lb-av" style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--g1);color:#000;font-size:10px;font-weight:900;">' + firstLetter + '</div>';
+        }
+
+        // ছবি, নাম এবং ইউজারনেম সুন্দর ডিজাইনে সাজানো
+        html += '<div class="lb-item ' + rankClass + (isMe ? ' lb-me' : '') + '" style="display:flex;align-items:center;gap:8px;"><div class="lb-rk">' + badge + '</div>' + avatarHtml + '<div class="lb-nm" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px;"><div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">' + displayName + (isMe ? ' (<span style="color:var(--ac)">You</span>)' : '') + (rank === 1 ? ' <i class="fas fa-crown crown-ic"></i>' : '') + '</div><div style="font-size:8px;color:var(--mt)">' + usernameDisplay + '</div></div><div class="lb-co">' + formatNum(val.toLocaleString('en-US')) + '</div></div>'; 
     }
     if (myRank > limit) { 
         var myData = users[myRank - 1]; 
         var myVal = myData ? myData.calcVal : 0; 
-        var myUsername = tgUser.un ? (' (@' + tgUser.un + ')') : '';
-        html += '<div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;"></div><div class="lb-item lb-me" style="border: 1.5px solid var(--ac);"><div class="lb-rk">' + formatNum(myRank) + '</div><div class="lb-nm">' + tgUser.fn + myUsername + ' (<span style="color:var(--ac)">You</span>)</div><div class="lb-co">' + formatNum(myVal.toLocaleString('en-US')) + '</div></div>'; 
+        var myUsername = tgUser.un ? ('@' + tgUser.un) : '';
+        var myPhoto = tgUser.pu || null;
+        var myAvatarHtml = '';
+        if (myPhoto) {
+            myAvatarHtml = '<div class="lb-av" style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--bg);"><img src="' + myPhoto + '" style="width:100%;height:100%;object-fit:cover;"></div>';
+        } else {
+            myAvatarHtml = '<div class="lb-av" style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--g1);color:#000;font-size:10px;font-weight:900;">' + tgUser.fn.charAt(0).toUpperCase() + '</div>';
+        }
+        html += '<div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;"></div><div class="lb-item lb-me" style="border: 1.5px solid var(--ac); display:flex;align-items:center;gap:8px;"><div class="lb-rk">' + formatNum(myRank) + '</div>' + myAvatarHtml + '<div class="lb-nm" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px;"><div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">' + tgUser.fn + ' (<span style="color:var(--ac)">You</span>)</div><div style="font-size:8px;color:var(--mt)">' + myUsername + '</div></div><div class="lb-co">' + formatNum(myVal.toLocaleString('en-US')) + '</div></div>'; 
     } 
     else if (myRank === -1) { 
         var fallbackMyVal = 0; 
@@ -631,8 +650,15 @@ function renderDynamicLeaderboard(elementId, metricType, timeframe, list) {
             else if (timeframe === 'weekly') fallbackMyVal = Math.max(0, Math.floor(D.tR * 0.45)); 
             else fallbackMyVal = D.tR; 
         } 
-        var fallbackMyUsername = tgUser.un ? (' (@' + tgUser.un + ')') : '';
-        html += '<div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;"></div><div class="lb-item lb-me" style="border: 1.5px solid var(--ac);"><div class="lb-rk">?</div><div class="lb-nm">' + tgUser.fn + fallbackMyUsername + ' (<span style="color:var(--ac)">You</span>)</div><div class="lb-co">' + formatNum(fallbackMyVal.toLocaleString('en-US')) + '</div></div>'; 
+        var fallbackMyUsername = tgUser.un ? ('@' + tgUser.un) : '';
+        var myPhoto = tgUser.pu || null;
+        var myAvatarHtml = '';
+        if (myPhoto) {
+            myAvatarHtml = '<div class="lb-av" style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--bg);"><img src="' + myPhoto + '" style="width:100%;height:100%;object-fit:cover;"></div>';
+        } else {
+            myAvatarHtml = '<div class="lb-av" style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--g1);color:#000;font-size:10px;font-weight:900;">' + tgUser.fn.charAt(0).toUpperCase() + '</div>';
+        }
+        html += '<div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;"></div><div class="lb-item lb-me" style="border: 1.5px solid var(--ac); display:flex;align-items:center;gap:8px;"><div class="lb-rk">?</div>' + myAvatarHtml + '<div class="lb-nm" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px;"><div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">' + tgUser.fn + ' (<span style="color:var(--ac)">You</span>)</div><div style="font-size:8px;color:var(--mt)">' + fallbackMyUsername + '</div></div><div class="lb-co">' + formatNum(fallbackMyVal.toLocaleString('en-US')) + '</div></div>'; 
     }
     container.innerHTML = html;
 }
@@ -677,7 +703,19 @@ function leaveTicTac() { if (tttState.active && tttGameRef && tttState.mode === 
 var targetState = { active: false, hits: 0, time: 10, timer: null, moveTimer: null };
 function startTargetGame() { if (D.coins < 10) return toast(getL('msg_min_coins'), 'e'); showPrereqAd(function() { subCoins(10); targetState.active = true; targetState.hits = 0; targetState.time = 10; document.getElementById('targetStartBtn').style.display = 'none'; document.getElementById('targetDot').style.display = 'block'; document.getElementById('targetHits').textContent = formatNum(0); document.getElementById('targetTime').textContent = formatNum(10); document.getElementById('targetPrize').textContent = formatNum(100); moveTarget(); targetState.moveTimer = setInterval(moveTarget, 800); targetState.timer = setInterval(function() { targetState.time--; updateTargetUI(); if (targetState.time <= 0) endTargetGame(false); }, 1000); }, 1); }
 function moveTarget() { if (!targetState.active) return; var arena = document.getElementById('targetArena'); var dot = document.getElementById('targetDot'); var w = arena.offsetWidth - 30; var h = arena.offsetHeight - 30; dot.style.left = Math.floor(Math.random() * w) + 'px'; dot.style.top = Math.floor(Math.random() * h) + 'px'; }
-document.getElementById('targetDot').onclick = function() { if (!targetState.active) return; targetState.hits++; updateTargetUI(); moveTarget(); if (targetState.hits >= 15) endTargetGame(true); };
+
+// স্ক্রিপ্ট ক্র্যাশ এড়াতে targetDot গ্লোবাল ইভেন্ট লিসেনারটি সেফ গার্ড করা হলো
+var targetDotEl = document.getElementById('targetDot');
+if (targetDotEl) {
+    targetDotEl.onclick = function() { 
+        if (!targetState.active) return; 
+        targetState.hits++; 
+        updateTargetUI(); 
+        moveTarget(); 
+        if (targetState.hits >= 15) endTargetGame(true); 
+    };
+}
+
 function updateTargetUI() { document.getElementById('targetHits').textContent = formatNum(targetState.hits); document.getElementById('targetTime').textContent = formatNum(targetState.time); document.getElementById('targetBalTop').textContent = formatNum(D.coins); }
 function endTargetGame(win) { targetState.active = false; clearInterval(targetState.timer); clearInterval(targetState.moveTimer); document.getElementById('targetDot').style.display = 'none'; document.getElementById('targetStartBtn').style.display = 'block'; if (win) { addCoins(100, 'target'); toast(getL('msg_big_win') + ' +100', 's'); } else { toast(getL('msg_done_today'), 'e'); } updateTargetUI(); }
 
