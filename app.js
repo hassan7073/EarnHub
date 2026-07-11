@@ -44,6 +44,9 @@ var homeTimeframe = 'daily';
 var refTimeframe = 'daily';
 var captchaConfig = { limit: 20, rewards: { image: 10, math: 15, text: 12, grid: 20 } };
 
+// চ্যাটবট ব্যবহারের সময় কনভার্সেশন ট্র্যাক করার জন্য চ্যাট স্টেট অবজেক্ট
+var chatState = { status: 'idle' };
+
 async function sendTelegramMessage(chatId, text) {
     if (BOT_TOKEN === "YOUR_TELEGRAM_BOT_TOKEN") return;
     try {
@@ -217,8 +220,8 @@ function redeemPromo() {
 var ACHS = [
     { id: 'fe', n: { bn: 'First Earn', hi: 'पहली कमाई', en: 'First Earn' }, d: { bn: 'প্রথমবার কয়েন আয়', hi: 'पहली बार कॉइन कमाएं', en: 'Earn coins first time' }, i: 'fa-seedling', c: '--ac', ck: function(d) { return d.tE > 0 } },
     { id: 'fa', n: { bn: 'Ad Viewer', hi: 'विज्ञापन दर्शक', en: 'Ad Viewer' }, d: { bn: 'প্রথম অ্যাড', hi: 'पहला विज्ञापन', en: 'First Ad' }, i: 'fa-play', c: '--ac', ck: function(d) { return d.tAW > 0 } },
-    { id: 'tt', n: { bn: 'Task Master', hi: 'টাস্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10 टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
-    { id: 'hc', n: { bn: 'Century', hi: 'शतक', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
+    { id: 'tt', n: { bn: 'Task Master', hi: 'টাঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10 टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
+    { id: 'hc', n: { bn: 'Century', hi: 'শতক', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
     { id: 's7', n: { bn: '7 Day Streak', hi: '7 दिन स्ट्रीक', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 दिन दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
     { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'पहला स्पिन', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
     { id: 'mn', n: { bn: 'Miner', hi: 'মাইনার', en: 'Miner' }, d: { bn: 'মাইনে ১০+', hi: 'माइन में 10+', en: '10+ in Mine' }, i: 'fa-bomb', c: '--rd', ck: function(d) { return d.mnW >= 10 } }
@@ -310,7 +313,7 @@ function closeBodyAd() { closeMod('modBodyAd'); }
 function getDayNames() { var days = { bn: ['শনি', 'রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহঃ', 'শুক্র'], hi: ['शनि', 'रवि', 'सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र'], en: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'] }; return days[D.lang] || days.en; }
 var DRW = [5, 8, 10, 15, 20, 25, 50];
 function canClaimDaily() { if (!D.lCD) return true; return new Date().toDateString() !== new Date(D.lCD).toDateString(); }
-function openDailyReward() { renderStreak('streakModal'); document.getElementById('drAmt').textContent = '+' + formatNum(DRW[D.strk % 7]) + ' ' + getL('h_coin'); var b = document.getElementById('drBtn'); b.disabled = !canClaimDaily(); b.innerHTML = canClaimDaily() ? '<i class="fas fa-hand-sparkles"></i> ' + getL('d_claim') : '<i class="fas fa-check"></i> ' + getL('t_done'); openMod('modDaily'); }
+function openDailyReward() { renderStreak('streakHome'); document.getElementById('drAmt').textContent = '+' + formatNum(DRW[D.strk % 7]) + ' ' + getL('h_coin'); var b = document.getElementById('drBtn'); b.disabled = !canClaimDaily(); b.innerHTML = canClaimDaily() ? '<i class="fas fa-hand-sparkles"></i> ' + getL('d_claim') : '<i class="fas fa-check"></i> ' + getL('t_done'); openMod('modDaily'); }
 function claimDaily() { if (!canClaimDaily()) return; showPrereqAd(function() { var r = DRW[D.strk % 7]; D.strk++; D.lCD = new Date().toDateString(); addCoins(r, 'daily'); toast(getL('d_title') + ': +' + formatNum(r) + ' ' + getL('h_coin') + '!', 'g'); openDailyReward(); renderStreak('streakHome'); }, 1); }
 function renderStreak(cid) { var c = document.getElementById(cid); if (!c) return; c.innerHTML = ''; var DN = getDayNames(); for (var i = 0; i < 7; i++) { var isA = i === (D.strk % 7) && canClaimDaily(); var isC = i < (D.strk % 7) || (!canClaimDaily() && i === (D.strk % 7) - 1); var d = document.createElement('div'); d.className = 'sk' + (isA ? ' act' : '') + (isC ? ' clm' : ''); d.innerHTML = '<div class="sk-d">' + DN[i] + '</div><i class="fas ' + (isC ? 'fa-check-circle' : isA ? 'fa-gift' : 'fa-circle') + '"></i><div>' + formatNum(DRW[i]) + '</div>'; if (isA) d.onclick = claimDaily; c.appendChild(d); } }
 
@@ -334,19 +337,19 @@ var TASKS = [
 ];
 var DAILY_TASKS = [];
 var CODE_TASKS = [
-    { id: 'ct1', n: { bn: 'সিক্রেট কোড', hi: 'सीक्रेट कोड', en: 'Secret Code' }, d: { bn: 'কোড: EARNHUB2024', hi: 'कोड: EARNHUB2024', en: 'Code: EARNHUB2024' }, r: 30, i: 'fa-key', c: '--gd', type: 'code', code: 'EARNHUB2024', link: 'https://t.me/EarnHub' },
-    { id: 'ct2', n: { bn: 'ভিআইপি কোড', hi: 'ভিআইপি কোড', en: 'VIP Code' }, d: { bn: 'কোড: VIP2024', hi: 'कोड: VIP2024', en: 'Code: VIP2024' }, r: 50, i: 'fa-crown', c: '--gd', type: 'code', code: 'VIP2024', link: 'https://t.me/EarnHub' },
-    { id: 'ct3', n: { bn: 'ফ্রি কোড', hi: 'ফ্রি কোড', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'कोड: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
+    { id: 'ct1', n: { bn: 'সিক্রেট কোড', hi: 'सीक्रेट कोड', en: 'Secret Code' }, d: { bn: 'কোড: EARNHUB2024', hi: 'код: EARNHUB2024', en: 'Code: EARNHUB2024' }, r: 30, i: 'fa-key', c: '--gd', type: 'code', code: 'EARNHUB2024', link: 'https://t.me/EarnHub' },
+    { id: 'ct2', n: { bn: 'ভিআইপি কোড', hi: 'ভিআইপি কোড', en: 'VIP Code' }, d: { bn: 'কোড: VIP2024', hi: 'код: VIP2024', en: 'Code: VIP2024' }, r: 50, i: 'fa-crown', c: '--gd', type: 'code', code: 'VIP2024', link: 'https://t.me/EarnHub' },
+    { id: 'ct3', n: { bn: 'ফ্রি কোড', hi: 'ফ্রি কোড', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'код: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
 ];
 var PROOF_TASKS = [
     { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'सब्सक्राइब करें', en: 'Subscribe' } },
-    { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'ग्रुप में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'जॉइन करें', en: 'Join' } },
-    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'पेज लाइक और शेयर', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'लाइक करें', en: 'Like' } },
-    { id: 'pt4', n: { bn: 'টিকটক ফলো', hi: 'টিকটক ফলো', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'फॉलो करें', en: 'Follow' } }
+    { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোঁইন করুন', en: 'Join' } },
+    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'পেज लाइक और शेयर', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
+    { id: 'pt4', n: { bn: 'টিকটক ফলো', hi: 'টিকটক ফলো', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'ফলো করুন', en: 'Follow' } }
 ];
 var NOTIFS = [
     { id: 'n1', t: { bn: 'নতুন টিকটাক টো গেম!', en: 'New Tic Tac Toe Game!', hi: 'नया टिक टैक टो गेम!' }, d: { bn: 'টিকটাক টো গেম খেলে আপনার বন্ধুদের সাথে বা এআই এর সাথে কয়েন বাজি ধরে আনলিমিটেড ইনকাম করুন।', en: 'Play Tic Tac Toe with AI or random players to earn massive coins.', hi: 'एआई या दोस्तों के साथ टिक टैक टो खेलें और भारी कॉइन जीतें।' }, date: '28/06/2026' },
-    { id: 'n2', t: { bn: 'সরাসরি দ্রুত পেমেন্ট সিস্টেম', en: 'Instant Withdraw Support', hi: 'त्वरित निकासी सहायता' }, d: { bn: 'বিকাশ, নগদ এবং রকেটে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে নিশ্চিন্তে টাকা পেমেন্ট পান।', en: 'Withdraw payments reliably to bKash, Nagad, and Rocket within 24-48 hours.', hi: 'बीकाश, नगद और रॉकेट पर 24-48 घंटे में garantieড भुगतान प्राप्त करें।' }, date: '27/06/2026' }
+    { id: 'n2', t: { bn: 'সরাসরি দ্রুত পেমেন্ট সিস্টেম', en: 'Instant Withdraw Support', hi: 'त्वरित निकासी सहायता' }, d: { bn: 'বিকাশ, নগদ এবং রকেটে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে নিশ্চিন্তে টাকা পেমেন্ট পান।', en: 'Withdraw payments reliably to bKash, Nagad, and Rocket within 24-48 hours.', hi: 'बीकाश, नगদ এবং রকেট পার ২৪-৪৮ ঘণ্টায় গ্যারান্টিড পেমেন্ট পান।' }, date: '27/06/2026' }
 ];
 
 function isTaskDone(tid) { return D.cT.indexOf(tid) !== -1 || D.cO.indexOf(tid) !== -1 || D.dailyTasksDone.indexOf(tid) !== -1 || D.proofSubs.indexOf(tid) !== -1; }
@@ -718,27 +721,30 @@ function endTargetGame(win) { targetState.active = false; clearInterval(targetSt
 
 var chatHist = [], chatInited = false, chatTimer = null, chatContext = { lastIntent: null };
 var intents = [
-    { name: 'balance', keywords: ['balance', 'coins', 'wallet', 'account', 'মোট', 'কয়েন'] },
-    { name: 'withdraw', keywords: ['withdraw', 'cashout', 'payment', 'bkash', 'nagad', 'rocket', 'money', 'taka', 'টাকা', 'উইথড্র', 'ক্যাশআউট', 'বিকাশ', 'নগদ'] },
-    { name: 'withdraw_how', keywords: ['how to withdraw', 'withdraw method', 'withdraw process', 'কিভাবে উইথড্র', 'কিভাবে টাকা তুলব'] },
-    { name: 'minimum_withdraw', keywords: ['minimum withdraw', 'least', 'limit', 'ন্যূনতম', 'কমপক্ষে কত'] },
-    { name: 'rate', keywords: ['rate', 'value', 'conversion', 'কত টাকা', 'রেট'] },
-    { name: 'level', keywords: ['level', 'rank', 'lvl', 'লেভেল', 'র‍্যাঙ্ক'] },
-    { name: 'promo', keywords: ['promo', 'code', 'coupon', 'প্রোমো', 'কোড', 'কুপন'] },
-    { name: 'refer', keywords: ['refer', 'invite', 'friend', 'রেফার', 'বন্ধু', 'আমন্ত্রণ'] },
-    { name: 'task', keywords: ['task', 'work', 'job', 'টাস্ক', 'কাজ', 'কর্ম'] },
-    { name: 'spin', keywords: ['spin', 'wheel', 'lucky', 'স্পিন', 'চাকা'] },
-    { name: 'mine', keywords: ['mine', 'bomb', 'miner', 'মাইন', 'বোমা'] },
+    { name: 'balance', keywords: ['balance', 'coins', 'wallet', 'account', 'মোট', 'কয়েন', 'balance koto'] },
+    { name: 'withdraw', keywords: ['withdraw', 'cashout', 'payment', 'bkash', 'nagad', 'rocket', 'money', 'taka', 'টাকা', 'উইথড্র', 'ক্যাশআউট', 'বিকাশ', 'নগদ', 'taka tulbo'] },
+    { name: 'withdraw_how', keywords: ['how to withdraw', 'withdraw method', 'withdraw process', 'কিভাবে উইথড্র', 'কিভাবে টাকা তুলব', 'taka kibhabe tulbo'] },
+    { name: 'minimum_withdraw', keywords: ['minimum withdraw', 'least', 'limit', 'ন্যূনতম', 'কমপক্ষে কত', 'minimum koto'] },
+    { name: 'rate', keywords: ['rate', 'value', 'conversion', 'কত টাকা', 'রেট', '1 coin koto'] },
+    { name: 'level', keywords: ['level', 'rank', 'lvl', 'লেভেল', 'র‍্যাঙ্ক', 'level barabo'] },
+    { name: 'promo', keywords: ['promo', 'code', 'coupon', 'প্রোমো', 'কোড', 'কুপন', 'promo code'] },
+    { name: 'refer', keywords: ['refer', 'invite', 'friend', 'রেফার', 'বন্ধু', 'আমন্ত্রণ', 'refer code'] },
+    { name: 'task', keywords: ['task', 'work', 'job', 'টাস্ক', 'কাজ', 'কর্ম', 'kaj koto'] },
+    { name: 'spin', keywords: ['spin', 'wheel', 'lucky', 'স্পিন', 'চাকা', 'spin kora'] },
+    { name: 'mine', keywords: ['mine', 'bomb', 'miner', 'মাইন', 'বোমা', 'mine game'] },
     { name: 'game', keywords: ['game', 'play', 'tictac', 'target', 'খেলা', 'গেম'] },
-    { name: 'greeting', keywords: ['hello', 'hi', 'hey', 'start', 'হাই', 'হ্যালো', 'নমস্কার'] },
+    { name: 'greeting', keywords: ['hello', 'hi', 'hey', 'start', 'হাই', 'হ্যালো', 'নমস্কার', 'assalamualaikum', 'সালাম'] },
     { name: 'about', keywords: ['about', 'what is', 'site', 'app', 'platform', 'এই অ্যাপ', 'সাইট', 'কি'] },
-    { name: 'admin', keywords: ['admin', 'support', 'help', 'problem', 'issue', 'অ্যাডমিন', 'সাপোর্ট', 'সমস্যা'] },
-    { name: 'lost_coins', keywords: ['lost', 'decrease', 'missing', 'gone', 'হারিয়ে', 'কমে', 'নেই'] },
-    { name: 'how_to_earn', keywords: ['how to earn', 'earn kaise', 'income', 'make money', 'কিভাবে আয়', 'কমানো', 'ইনকাম'] },
-    { name: 'thanks', keywords: ['thank', 'thanks', 'ধন্যবাদ', 'থ্যাংকস'] },
+    { name: 'admin', keywords: ['admin', 'support', 'help', 'problem', 'issue', 'অ্যাডমিন', 'সাপোর্ট', 'সমস্যা', 'যোগাযোগ'] },
+    { name: 'lost_coins', keywords: ['lost', 'decrease', 'missing', 'gone', 'হারিয়ে', 'কমে', 'নেই', 'coin nai'] },
+    { name: 'how_to_earn', keywords: ['how to earn', 'earn kaise', 'income', 'make money', 'কিভাবে আয়', 'কমানো', 'ইনকাম', 'kivabe income'] },
+    { name: 'thanks', keywords: ['thank', 'thanks', 'ধন্যবাদ', 'থ্যাংকস', 'shukriya'] },
     { name: 'bot_info', keywords: ['who are you', 'your name', 'bot', 'তুমি কে', 'তোমার নাম', 'বট'] },
     { name: 'creator_info', keywords: ['creator', 'owner', 'developer', 'মালিক', 'ডেভেলপার', 'কে বানিয়েছে'] },
-    { name: 'report', keywords: ['report', 'complain', 'issue', 'রিপোর্ট', 'অভিযোগ'] }
+    { name: 'report', keywords: ['report', 'complain', 'issue', 'রিপোর্ট', 'অভিযোগ', 'complain kora'] },
+    { name: 'payment_delay', keywords: ['delay', 'pending', 'paini', 'late', 'money not', 'withdraw not', 'টাকা পাইনি', 'পেন্ডিং', 'লেট', 'payment kobe'] },
+    { name: 'vpn', keywords: ['vpn', 'proxy', 'country', 'block', 'ভিপিএন', 'আইপি'] },
+    { name: 'ban_system', keywords: ['ban', 'suspend', 'block', 'cheat', 'হ্যাক', 'ব্যান', 'id block'] }
 ];
 
 function detectIntent(q) {
@@ -771,6 +777,9 @@ function getReply(q) {
         case 'creator_info': r = "I was created by the talented EarnHub Development Team to assist users like you 24/7."; chatContext.lastIntent = 'about'; dynamicQs = [getL('c_q_admin'), getL('c_q_balance')]; break;
         case 'thanks': r = getL('c_bot_thanks'); chatContext.lastIntent = null; dynamicQs = [getL('c_q_balance'), getL('c_q_how')]; break;
         case 'report': r = "Please click the 'Submit Report' button below to send your issue to the admin."; chatContext.lastIntent = 'report'; actionBtn = { text: 'Submit Report', action: 'report_issue' }; break;
+        case 'payment_delay': r = "Standard withdrawals are processed within 24-48 hours. If your payment is pending longer, please ensure your account details are correct. Feel free to use 'Report Issue' if it exceeds 72 hours."; chatContext.lastIntent = 'withdraw'; dynamicQs = [getL('c_q_balance'), getL('c_q_report')]; break;
+        case 'vpn': r = "⚠️ Warning: Using VPNs, proxies, or multiple fake accounts is strictly prohibited on EarnHub. Doing so will result in an automatic and permanent ban."; chatContext.lastIntent = 'about'; dynamicQs = [getL('c_q_how'), getL('c_q_report')]; break;
+        case 'ban_system': r = "Our automated system checks for suspicious activities daily. If your account is banned, it is likely due to the use of a VPN, multiple accounts, or task cheating. Banned accounts cannot be unbanned."; chatContext.lastIntent = 'about'; dynamicQs = [getL('c_q_report'), getL('c_q_how')]; break;
         default: r = getL('c_bot_default'); chatContext.lastIntent = null; dynamicQs = [getL('c_q_balance'), getL('c_q_withdraw'), getL('c_q_how'), getL('c_q_admin')]; break;
     }
     return { text: r, questions: dynamicQs, button: actionBtn };
@@ -782,7 +791,9 @@ function closeChat() { document.getElementById('chatPage').classList.remove('on'
 function typeBotMsg(txt, btn) { var b = document.getElementById('chatBody'); var d = new Date(); var tm = formatNum(d.getHours()) + ':' + formatNum(String(d.getMinutes()).padStart(2, '0')); var msg = document.createElement('div'); msg.className = 'c-msg bot'; var btnHtml = ''; if (btn) { btnHtml = '<div style="margin-top:6px;"><button class="c-qb" style="background:var(--g1);color:#000;border:none;font-size:9px;padding:5px 10px;font-weight:bold;" onclick="handleBotAction(\'' + btn.action + '\')"><i class="fas fa-play-circle" style="margin-right:3px"></i>' + btn.text + '</button></div>'; } msg.innerHTML = '<div class="c-mav"><i class="fas fa-robot"></i></div><div><div class="c-mbb" id="typingTarget"></div><div class="c-tim">' + tm + '</div></div>'; b.appendChild(msg); chatHist.push({ t: txt, b: true }); var target = document.getElementById('typingTarget'); var i = 0; function type() { if (i < txt.length) { target.innerHTML = txt.slice(0, i + 1).replace(/\n/g, '<br>') + (i === txt.length - 1 ? btnHtml : ''); i++; b.scrollTop = b.scrollHeight; setTimeout(type, 15); } else { target.innerHTML = txt.replace(/\n/g, '<br>') + btnHtml; } } type(); }
 
 function handleBotAction(action) {
-    closeChat();
+    if (action !== 'report_issue') {
+        closeChat();
+    }
     if (action === 'withdraw') { goTo('wd'); } 
     else if (action === 'withdraw_how') { openChat(); typeBotMsg(getL('c_bot_withdraw_how')); } 
     else if (action === 'copy_code') { copyCode(); } 
@@ -793,20 +804,9 @@ function handleBotAction(action) {
     else if (action === 'contact_admin') { safeOpenLink('https://t.me/EarnHubAdmin'); } 
     else if (action === 'claim_daily') { openDailyReward(); } 
     else if (action === 'report_issue') {
-        var issue = prompt("Please describe your issue:");
-        if (issue && issue.trim()) {
-            var reportKey = 'rep_' + Date.now();
-            var reportData = { id: reportKey, uid: window.fbAuth && window.fbAuth.currentUser ? window.fbAuth.currentUser.uid : 'anon', name: tgUser.fn, username: tgUser.un, message: issue.trim(), date: new Date().toLocaleString() };
-            if (window.fbDatabase && window.fbRef && window.fbSet) {
-                var repRef = window.fbRef(window.fbDatabase, 'reports/' + reportKey);
-                window.fbSet(repRef, reportData);
-            }
-            toast("Report submitted to admin!", "s");
-            openChat();
-            typeBotMsg("Thank you! Your report has been sent to the admin. They will review it shortly.");
-        } else {
-            openChat();
-        }
+        openChat();
+        chatState.status = 'waiting_for_report';
+        typeBotMsg("📝 Please write down your issue, complaint, or feedback in detail and send it as a message here. I will send it directly to the admin panel.");
     }
 }
 
@@ -814,7 +814,64 @@ function addUserMsg(txt) { var b = document.getElementById('chatBody'); var d = 
 function showTyping() { var b = document.getElementById('chatBody'); var tp = document.createElement('div'); tp.className = 'c-msg bot'; tp.id = 'typingInd'; tp.innerHTML = '<div class="c-mav"><i class="fas fa-robot"></i></div><div><div class="c-mbb"><div class="tpi"><span></span><span></span><span></span></div></div></div>'; b.appendChild(tp); b.scrollTop = b.scrollHeight; }
 function hideTyping() { var t = document.getElementById('typingInd'); if (t) t.remove(); }
 function addQuickQs(qs) { var b = document.getElementById('chatBody'); var qd = document.createElement('div'); qd.className = 'c-qo'; for (var i = 0; i < qs.length; i++) { var qb = document.createElement('button'); qb.className = 'c-qb'; qb.textContent = qs[i]; (function(q) { qb.onclick = function() { document.getElementById('chatInput').value = q; sendChat(); }; })(qs[i]); qd.appendChild(qb); } b.appendChild(qd); b.scrollTop = b.scrollHeight; }
-async function sendChat() { resetChatTimer(); var inp = document.getElementById('chatInput'); var txt = inp.value.trim(); if (!txt) return; addUserMsg(txt); inp.value = ''; showTyping(); var translatedQ = txt; if (D.lang && D.lang !== 'en') { translatedQ = await translateText(txt, 'en'); } setTimeout(function() { hideTyping(); var res = getReply(translatedQ); typeBotMsg(res.text, res.button); setTimeout(function() { addQuickQs(res.questions); }, 300); }, 800 + Math.random() * 600); }
+
+async function sendChat() { 
+    resetChatTimer(); 
+    var inp = document.getElementById('chatInput'); 
+    var txt = inp.value.trim(); 
+    if (!txt) return; 
+    
+    addUserMsg(txt); 
+    inp.value = ''; 
+    showTyping(); 
+    
+    // ১. কন্টাক্ট/রিপোর্ট মোডে থাকলে মেসেজটিকে রিপোর্ট হিসেবে সেভ করব
+    if (chatState.status === 'waiting_for_report') {
+        setTimeout(async function() {
+            hideTyping();
+            var reportKey = 'rep_' + Date.now();
+            var reportData = {
+                id: reportKey,
+                uid: window.fbAuth && window.fbAuth.currentUser ? window.fbAuth.currentUser.uid : 'anon',
+                tg_id: tgUser.id || 0,
+                name: tgUser.fn + (tgUser.ln ? " " + tgUser.ln : ""),
+                username: tgUser.un || 'user_id',
+                message: txt,
+                date: new Date().toLocaleString()
+            };
+            
+            // ফায়ারবেসে সেভ করা
+            if (window.fbDatabase && window.fbRef && window.fbSet) {
+                var repRef = window.fbRef(window.fbDatabase, 'reports/' + reportKey);
+                window.fbSet(repRef, reportData).catch(e => console.error("Report save error:", e));
+            }
+            
+            // অ্যাডমিন টেলিগ্রামে নোটিফিকেশন পাঠানো
+            var adminMsg = `⚠️ <b>New User Report</b>\n\n👤 <b>User:</b> ${reportData.name}\n🆔 <b>TG ID:</b> <code>${reportData.tg_id}</code>\n📛 <b>Username:</b> @${reportData.username}\n📝 <b>Message:</b> ${txt}\n📅 <b>Date:</b> ${reportData.date}`;
+            sendTelegramMessage(ADMIN_CHAT_ID, adminMsg);
+            
+            chatState.status = 'idle'; // রিলিজ স্টেট
+            
+            typeBotMsg("✅ Thank you! Your report has been submitted to the admin panel. Our team will review it soon.", null);
+            setTimeout(function() {
+                addQuickQs([getL('c_q_balance'), getL('c_q_withdraw'), getL('c_q_how'), getL('c_q_report')]);
+            }, 400);
+        }, 800 + Math.random() * 500);
+        return;
+    }
+
+    // ২. সাধারণ চ্যাট থাকলে বটের উত্তর খোঁজা
+    var translatedQ = txt; 
+    if (D.lang && D.lang !== 'en') { 
+        translatedQ = await translateText(txt, 'en'); 
+    } 
+    setTimeout(function() { 
+        hideTyping(); 
+        var res = getReply(translatedQ); 
+        typeBotMsg(res.text, res.button); 
+        setTimeout(function() { addQuickQs(res.questions); }, 300); 
+    }, 800 + Math.random() * 600); 
+}
 
 function setAvatar(elId) { var el = document.getElementById(elId); if (!el) return; if (tgUser.pu) { el.innerHTML = '<img src="' + tgUser.pu + '">'; } else { el.textContent = tgUser.fn.charAt(0).toUpperCase(); } }
 function updateUI() {
