@@ -233,7 +233,7 @@ function redeemPromo() {
 var ACHS = [
     { id: 'fe', n: { bn: 'First Earn', hi: 'पहली कमाई', en: 'First Earn' }, d: { bn: 'প্রথমবার কয়েন আয়', hi: 'पहली बार कॉइन कमाएं', en: 'Earn coins first time' }, i: 'fa-seedling', c: '--ac', ck: function(d) { return d.tE > 0 } },
     { id: 'fa', n: { bn: 'Ad Viewer', hi: 'विज्ञापन दर्शक', en: 'Ad Viewer' }, d: { bn: 'প্রথম অ্যাড', hi: 'पहला विज्ञापन', en: 'First Ad' }, i: 'fa-play', c: '--ac', ck: function(d) { return d.tAW > 0 } },
-    { id: 'tt', n: { bn: 'Task Master', hi: 'টাঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10 टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
+    { id: 'tt', n: { bn: 'Task Master', hi: 'টাঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
     { id: 'hc', n: { bn: 'Century', hi: 'শতক', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
     { id: 's7', n: { bn: '7 Day Streak', hi: '7 दिन स्ट्रीक', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 दिन दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
     { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'पहला स्पिन', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
@@ -330,7 +330,7 @@ function openDailyReward() { renderStreak('streakHome'); document.getElementById
 function claimDaily() { if (!canClaimDaily()) return; showPrereqAd(function() { var r = DRW[D.strk % 7]; D.strk++; D.lCD = new Date().toDateString(); addCoins(r, 'daily'); toast(getL('d_title') + ': +' + formatNum(r) + ' ' + getL('h_coin') + '!', 'g'); openDailyReward(); renderStreak('streakHome'); }, 1); }
 function renderStreak(cid) { var c = document.getElementById(cid); if (!c) return; c.innerHTML = ''; var DN = getDayNames(); for (var i = 0; i < 7; i++) { var isA = i === (D.strk % 7) && canClaimDaily(); var isC = i < (D.strk % 7) || (!canClaimDaily() && i === (D.strk % 7) - 1); var d = document.createElement('div'); d.className = 'sk' + (isA ? ' act' : '') + (isC ? ' clm' : ''); d.innerHTML = '<div class="sk-d">' + DN[i] + '</div><i class="fas ' + (isC ? 'fa-check-circle' : isA ? 'fa-gift' : 'fa-circle') + '"></i><div>' + formatNum(DRW[i]) + '</div>'; if (isA) d.onclick = claimDaily; c.appendChild(d); } }
 
-var adNames = { bn: ['বেসিক', 'সিলভার', 'গোল্ড', 'প্লাটিনাম', 'ডায়মন্ড', 'ক্রাউন', 'স্পেশাল', 'ভিআইপি', 'প্রিমিয়াম', 'এলিট'], hi: ['बेसिक', 'सिल्वर', 'गोल्ड', 'प्लैटिनম', 'डायमंड', 'क्राउन', 'स्पेशल', 'वीआईपी', 'प्रीमियम', 'एलीट'], en: ['Basic', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Crown', 'Special', 'VIP', 'Premium', 'Elite'] };
+var adNames = { bn: ['বেসিক', 'সিলভার', 'গোল্ড', 'প্লাটিনাম', 'ডায়মন্ড', 'ক্রাউন', 'স্পেশাল', 'ভিআইপি', 'প্রিমিয়াম', 'এলিট'], hi: ['बेसिक', 'सिल्वर', 'गोल्ड', 'प्लैटिनम', 'डायमंड', 'क्राउन', 'स्पेशल', 'वीआईपी', 'प्रीमियम', 'एलीट'], en: ['Basic', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Crown', 'Special', 'VIP', 'Premium', 'Elite'] };
 var ADS_CONFIG = []; for (var i = 1; i <= 50; i++) { var lvl = Math.min(10, Math.ceil(i / 5)); var r = 5 + Math.floor(i / 5) * 2; ADS_CONFIG.push({ id: 'ad' + i, lvl: lvl, r: r, nameIdx: i % 10 }); }
 var currentAdId = null, currentAdReward = 0;
 function renderAds() { var c = document.getElementById('adsList'); if (!c) return; var currentAdNames = adNames[D.lang] || adNames.en; var html = ''; for (var i = 0; i < ADS_CONFIG.length; i++) { var ad = ADS_CONFIG[i]; var unlocked = D.lvl >= ad.lvl; var done = D.adsDone.indexOf(ad.id) !== -1; var icBg = unlocked ? 'rgba(0,230,138,.12)' : 'rgba(107,127,160,.12)'; var icCl = unlocked ? 'var(--ac)' : 'var(--mt)'; var btnHtml = ''; if (done) { btnHtml = '<button class="btn btn-o btn-sm" disabled><i class="fas fa-check"></i> ' + getL('t_done') + '</button>'; } else if (unlocked) { btnHtml = '<button class="btn btn-p btn-sm" onclick="openAdModal(\'' + ad.id + '\',' + ad.r + ')"><i class="fas fa-play"></i> ' + getL('a_play_btn') + '</button>'; } else { btnHtml = '<button class="btn btn-o btn-sm" disabled><i class="fas fa-lock"></i> ' + getL('a_lock_btn') + ' ' + formatNum(ad.lvl) + '</button>'; } html += '<div class="tk" style="text-align:left; display:flex; align-items:center; gap:10px; margin-bottom:6px; padding:8px 12px;"><div style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:' + icBg + ';color:' + icCl + '"><i class="fas ' + (done ? 'fa-check' : unlocked ? 'fa-play-circle' : 'fa-lock') + '"></i></div><div style="flex:1"><div style="font-size:11px;font-weight:700">' + currentAdNames[ad.nameIdx] + ' ' + getL('a_ad_word') + ' ' + formatNum(i + 1) + '</div><div style="font-size:8px;color:var(--mt)">+' + formatNum(ad.r) + ' ' + getL('h_coin') + '</div></div>' + btnHtml + '</div>'; } c.innerHTML = html; }
@@ -342,7 +342,7 @@ function rgbOf(c) { return { '--ac': '0,230,138', '--gd': '251,191,36', '--rd': 
 
 var TASKS = [
     { id: 't1', n: { bn: 'অ্যাপ রেটিং', hi: 'ऐप रेटिंग', en: 'App Rating' }, d: { bn: '৫ স্টার রেটিং দিন', hi: '5 स्टार रेटिंग दें', en: 'Give 5 Star Rating' }, r: 20, i: 'fa-star', c: '--gd', type: 'normal', link: 'https://t.me/EarnHub', time: 10 },
-    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'চ্যানেল জয়েন', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'আधिकारिक চ্যানেল', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
+    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'চ্যানেল জয়েন', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'আधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
     { id: 't3', n: { bn: 'ভিডিও দেখুন', hi: 'ভিডিও দেখেন', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 मिनट का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
     { id: 't4', n: { bn: 'পেজ লাইক', hi: 'পেজ লাইক', en: 'Page Like' }, d: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজে লাইক', en: 'Facebook Page Like' }, r: 12, i: 'fa-thumbs-up', c: '--bl', type: 'normal', link: 'https://facebook.com', time: 15 },
     { id: 't5', n: { bn: 'শেয়ার করুন', hi: 'শেयर करें', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
@@ -355,7 +355,7 @@ var CODE_TASKS = [
     { id: 'ct3', n: { bn: 'ফ্রি কোড', hi: 'ফ্রি কোড', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'код: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
 ];
 var PROOF_TASKS = [
-    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'সব্প্রাইব করুন', en: 'Subscribe' } },
+    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'सब्सक्राइब करें', en: 'Subscribe' } },
     { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোন করুন', en: 'Join' } },
     { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'পেজ লাইক আর শেয়ার', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
     { id: 'pt4', n: { bn: 'টিকটক ফলো', hi: 'টিকটক ফলো', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'ফলো করুন', en: 'Follow' } }
@@ -627,13 +627,26 @@ function changeLeaderboardTimeframe(type, timeframe) {
     else if (type === 'ref') { refTimeframe = timeframe; document.querySelectorAll('#pg-ref .tab-bar .tab-btn').forEach(function(btn) { btn.classList.remove('on'); }); document.getElementById('btn-ref-' + timeframe).classList.add('on'); }
     renderAllLeaderboards();
 }
+
+// মক ডাটাতেও আইডি এবং ইউজারনেম যুক্ত করা হলো যাতে সব ইউজারের ক্ষেত্রে সঠিক রেন্ডার হয়
 function getCombinedLeaderboardList(metricType, timeframe) {
     var base = allCloudUsers.slice();
-    var mocks = [ { name: 'Sakib Khan', tE: 28400, todE: 1450, tR: 48, uid: 'mock_1' }, { name: 'Fariha Yasmin', tE: 21850, todE: 1100, tR: 35, uid: 'mock_2' }, { name: 'Tanvir Hossain', tE: 15200, todE: 890, tR: 22, uid: 'mock_3' }, { name: 'Nusrat Jahan', tE: 9900, todE: 650, tR: 18, uid: 'mock_4' }, { name: 'Rahat Chowdhury', tE: 7800, todE: 520, tR: 14, uid: 'mock_5' }, { name: 'Mita Sen', tE: 6500, todE: 410, tR: 11, uid: 'mock_6' }, { name: 'Sabbir Ahmed', tE: 4900, todE: 320, tR: 8, uid: 'mock_7' }, { name: 'Taskin Karim', tE: 3600, todE: 210, tR: 5, uid: 'mock_8' }, { name: 'Ishrat Ara', tE: 2100, todE: 110, tR: 3, uid: 'mock_9' }, { name: 'Siam Islam', tE: 1200, todE: 50, tR: 1, uid: 'mock_10' } ];
+    var mocks = [ 
+        { name: 'Sakib Khan', tE: 28400, todE: 1450, tR: 48, uid: 'mock_1', username: 'sakib_khan', tg_id: 593849302 }, 
+        { name: 'Fariha Yasmin', tE: 21850, todE: 1100, tR: 35, uid: 'mock_2', username: 'fariha_y', tg_id: 483920194 }, 
+        { name: 'Tanvir Hossain', tE: 15200, todE: 890, tR: 22, uid: 'mock_3', username: 'tanvir_h', tg_id: 739201940 }, 
+        { name: 'Nusrat Jahan', tE: 9900, todE: 650, tR: 18, uid: 'mock_4', username: 'nusrat_j', tg_id: 382910493 }, 
+        { name: 'Rahat Chowdhury', tE: 7800, todE: 520, tR: 14, uid: 'mock_5', username: 'rahat_c', tg_id: 291039482 }, 
+        { name: 'Mita Sen', tE: 6500, todE: 410, tR: 11, uid: 'mock_6', username: 'mita_sen', tg_id: 819203948 }, 
+        { name: 'Sabbir Ahmed', tE: 4900, todE: 320, tR: 8, uid: 'mock_7', username: 'sabbir_a', tg_id: 103948201 }, 
+        { name: 'Taskin Karim', tE: 3600, todE: 210, tR: 5, uid: 'mock_8', username: 'taskin_k', tg_id: 649203948 }, 
+        { name: 'Ishrat Ara', tE: 2100, todE: 110, tR: 3, uid: 'mock_9', username: 'ishrat_ara', tg_id: 502910394 }, 
+        { name: 'Siam Islam', tE: 1200, todE: 50, tR: 1, uid: 'mock_10', username: 'siam_i', tg_id: 930291039 } 
+    ];
     mocks.forEach(function(m) { if (!base.some(function(b) { return b.name === m.name; })) { base.push(m); } });
     var currentUid = window.fbAuth && window.fbAuth.currentUser ? window.fbAuth.currentUser.uid : 'anon';
     var hasMe = base.some(function(u) { return u.uid === currentUid || (u.tg_id && u.tg_id === tgUser.id); });
-    if (!hasMe) { base.push({ uid: currentUid, tg_id: tgUser.id, name: tgUser.fn, tE: D.tE, todE: D.todE, tR: D.tR }); } else { base.forEach(function(u) { if (u.uid === currentUid || (u.tg_id && u.tg_id === tgUser.id)) { u.tE = D.tE; u.todE = D.todE; u.tR = D.tR; u.name = tgUser.fn; } }); }
+    if (!hasMe) { base.push({ uid: currentUid, tg_id: tgUser.id, name: tgUser.fn, tE: D.tE, todE: D.todE, tR: D.tR, username: tgUser.un }); } else { base.forEach(function(u) { if (u.uid === currentUid || (u.tg_id && u.tg_id === tgUser.id)) { u.tE = D.tE; u.todE = D.todE; u.tR = D.tR; u.name = tgUser.fn; u.username = tgUser.un; } }); }
     base.forEach(function(u) { var isMe = (u.uid === currentUid || (u.tg_id && u.tg_id === tgUser.id)); if (metricType === 'home') { if (timeframe === 'daily') { u.calcVal = isMe ? D.todE : (u.todE || Math.floor((u.tE || 0) * 0.05)); } else if (timeframe === 'weekly') { u.calcVal = isMe ? (Math.floor(D.tE * 0.3) + D.todE) : Math.floor((u.tE || 0) * 0.35); } else { u.calcVal = isMe ? D.tE : (u.tE || 50); } } else if (metricType === 'ref') { if (timeframe === 'daily') { u.calcVal = isMe ? Math.max(0, Math.floor(D.tR * 0.08)) : Math.max(0, Math.floor((u.tR || 0) * 0.08)); } else if (timeframe === 'weekly') { u.calcVal = isMe ? Math.max(0, Math.floor(D.tR * 0.45)) : Math.max(0, Math.floor((u.tR || 0) * 0.45)); } else { u.calcVal = isMe ? D.tR : (u.tR || 0); } } });
     return base;
 }
@@ -650,7 +663,9 @@ function renderDynamicLeaderboard(elementId, metricType, timeframe, list) {
         if (rank === 1) { rankClass = 'rank-1'; badge = '🥇'; } else if (rank === 2) { rankClass = 'rank-2'; badge = '🥈'; } else if (rank === 3) { rankClass = 'rank-3'; badge = '🥉'; } else { badge = formatNum(rank); } 
         var displayName = u.name || u.fn || 'User'; 
         
-        var usernameDisplay = u.username ? ('@' + u.username) : '';
+        // সব পজিশনেই ছবি, নাম এবং ইউজারনেম ও সংখ্যাবাচক আইডি প্রদর্শন করার ডাটা অবজেক্ট
+        var idText = u.tg_id ? (' | ID: ' + u.tg_id) : '';
+        var usernameDisplay = u.username ? ('@' + u.username + idText) : (u.tg_id ? ('ID: ' + u.tg_id) : '');
         var val = u.calcVal; 
         
         var userPhoto = u.photo_url || null;
@@ -668,6 +683,8 @@ function renderDynamicLeaderboard(elementId, metricType, timeframe, list) {
         var myData = users[myRank - 1]; 
         var myVal = myData ? myData.calcVal : 0; 
         var myUsername = tgUser.un ? ('@' + tgUser.un) : '';
+        var myIdText = tgUser.id ? (' | ID: ' + tgUser.id) : '';
+        var myDisplayUser = myUsername ? (myUsername + myIdText) : (tgUser.id ? ('ID: ' + tgUser.id) : '');
         var myPhoto = tgUser.pu || null;
         var myAvatarHtml = '';
         if (myPhoto) {
@@ -675,7 +692,7 @@ function renderDynamicLeaderboard(elementId, metricType, timeframe, list) {
         } else {
             myAvatarHtml = '<div class="lb-av" style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--g1);color:#000;font-size:10px;font-weight:900;">' + tgUser.fn.charAt(0).toUpperCase() + '</div>';
         }
-        html += '<div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;"></div><div class="lb-item lb-me" style="border: 1.5px solid var(--ac); display:flex;align-items:center;gap:8px;"><div class="lb-rk">' + formatNum(myRank) + '</div>' + myAvatarHtml + '<div class="lb-nm" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px;"><div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">' + tgUser.fn + ' (<span style="color:var(--ac)">You</span>)</div><div style="font-size:8px;color:var(--mt)">' + myUsername + '</div></div><div class="lb-co">' + formatNum(myVal.toLocaleString('en-US')) + '</div></div>'; 
+        html += '<div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;"></div><div class="lb-item lb-me" style="border: 1.5px solid var(--ac); display:flex;align-items:center;gap:8px;"><div class="lb-rk">' + formatNum(myRank) + '</div>' + myAvatarHtml + '<div class="lb-nm" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px;"><div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">' + tgUser.fn + ' (<span style="color:var(--ac)">You</span>)</div><div style="font-size:8px;color:var(--mt)">' + myDisplayUser + '</div></div><div class="lb-co">' + formatNum(myVal.toLocaleString('en-US')) + '</div></div>'; 
     } 
     else if (myRank === -1) { 
         var fallbackMyVal = 0; 
@@ -689,6 +706,8 @@ function renderDynamicLeaderboard(elementId, metricType, timeframe, list) {
             else fallbackMyVal = D.tR; 
         } 
         var fallbackMyUsername = tgUser.un ? ('@' + tgUser.un) : '';
+        var fallbackMyIdText = tgUser.id ? (' | ID: ' + tgUser.id) : '';
+        var fallbackDisplayUser = fallbackMyUsername ? (fallbackMyUsername + fallbackMyIdText) : (tgUser.id ? ('ID: ' + tgUser.id) : '');
         var myPhoto = tgUser.pu || null;
         var myAvatarHtml = '';
         if (myPhoto) {
@@ -696,7 +715,7 @@ function renderDynamicLeaderboard(elementId, metricType, timeframe, list) {
         } else {
             myAvatarHtml = '<div class="lb-av" style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--g1);color:#000;font-size:10px;font-weight:900;">' + tgUser.fn.charAt(0).toUpperCase() + '</div>';
         }
-        html += '<div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;"></div><div class="lb-item lb-me" style="border: 1.5px solid var(--ac); display:flex;align-items:center;gap:8px;"><div class="lb-rk">?</div>' + myAvatarHtml + '<div class="lb-nm" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px;"><div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">' + tgUser.fn + ' (<span style="color:var(--ac)">You</span>)</div><div style="font-size:8px;color:var(--mt)">' + fallbackMyUsername + '</div></div><div class="lb-co">' + formatNum(fallbackMyVal.toLocaleString('en-US')) + '</div></div>'; 
+        html += '<div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;"></div><div class="lb-item lb-me" style="border: 1.5px solid var(--ac); display:flex;align-items:center;gap:8px;"><div class="lb-rk">?</div>' + myAvatarHtml + '<div class="lb-nm" style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px;"><div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">' + tgUser.fn + ' (<span style="color:var(--ac)">You</span>)</div><div style="font-size:8px;color:var(--mt)">' + fallbackDisplayUser + '</div></div><div class="lb-co">' + formatNum(fallbackMyVal.toLocaleString('en-US')) + '</div></div>'; 
     }
     container.innerHTML = html;
 }
@@ -927,7 +946,7 @@ async function sendChat() {
                 window.fbSet(repRef, reportData).catch(e => console.error("Report save error:", e));
             }
             
-            // অ্যাডমিন টেলিগ্রামে নোটিফিকেশন পাঠানো
+            // অ্যাডমিন নোটিফিকেশন পাঠানো
             var adminMsg = `⚠️ <b>New User Report</b>\n\n👤 <b>User:</b> ${reportData.name}\n🆔 <b>TG ID:</b> <code>${reportData.tg_id}</code>\n📛 <b>Username:</b> @${reportData.username}\n📝 <b>Message:</b> ${txt}\n📅 <b>Date:</b> ${reportData.date}`;
             sendTelegramMessage(ADMIN_CHAT_ID, adminMsg);
             
