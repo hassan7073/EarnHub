@@ -33,7 +33,7 @@ try {
 } catch (e) { console.error("Firebase init error:", e); }
 
 const BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
-const BOT_USERNAME = "YourTelegramBotUsername"; // আপনার টেলিগ্রাম বটের ইউজারনেম (যেমন: EarnHubBot)
+const BOT_USERNAME = "YourTelegramBotUsername"; // আপনার বটের ইউজারনেম (যেমন: EarnHubBot)
 const APP_SHORTNAME = "app"; // আপনার মিনি অ্যাপের শর্টনেম (যেমন: app বা earnhub)
 const ADMIN_CHAT_ID = "YOUR_ADMIN_CHAT_ID";
 const CHANNEL_USERNAME = "@YourChannelUsername";
@@ -207,7 +207,12 @@ function applyLanguage() {
 }
 
 function getLangText(val) { if (typeof val === 'object' && val !== null) { return val[D.lang] || val['en'] || val['bn']; } return val; }
-function getL(key) { return UI_LANG[D.lang] ? (UI_LANG[D.lang][key] || UI_LANG['en'][key]) : key; }
+
+// getL ভাষার ফলব্যাক কোড রিফ্যাক্টর (h_coin বাগ ফিক্সড)
+function getL(key) { 
+    var lang = D.lang || 'en';
+    return (UI_LANG[lang] && UI_LANG[lang][key]) ? UI_LANG[lang][key] : (UI_LANG['en'][key] || key); 
+}
 
 function addCoins(amt, src) { D.coins += amt; D.tE += amt; D.todE += amt; if (src === 'task') D.tD++; if (src === 'ad') D.tAW++; updateLevel(); checkAch(); saveData(); updateUI(); if (amt > 0) flyCoins(amt); }
 function refundCoins(amt) { D.coins += amt; saveData(); updateUI(); }
@@ -325,7 +330,7 @@ function openDailyReward() { renderStreak('streakHome'); document.getElementById
 function claimDaily() { if (!canClaimDaily()) return; showPrereqAd(function() { var r = DRW[D.strk % 7]; D.strk++; D.lCD = new Date().toDateString(); addCoins(r, 'daily'); toast(getL('d_title') + ': +' + formatNum(r) + ' ' + getL('h_coin') + '!', 'g'); openDailyReward(); renderStreak('streakHome'); }, 1); }
 function renderStreak(cid) { var c = document.getElementById(cid); if (!c) return; c.innerHTML = ''; var DN = getDayNames(); for (var i = 0; i < 7; i++) { var isA = i === (D.strk % 7) && canClaimDaily(); var isC = i < (D.strk % 7) || (!canClaimDaily() && i === (D.strk % 7) - 1); var d = document.createElement('div'); d.className = 'sk' + (isA ? ' act' : '') + (isC ? ' clm' : ''); d.innerHTML = '<div class="sk-d">' + DN[i] + '</div><i class="fas ' + (isC ? 'fa-check-circle' : isA ? 'fa-gift' : 'fa-circle') + '"></i><div>' + formatNum(DRW[i]) + '</div>'; if (isA) d.onclick = claimDaily; c.appendChild(d); } }
 
-var adNames = { bn: ['বেসিক', 'সিলভার', 'গোল্ড', 'প্লাটিনাম', 'ডায়মন্ড', 'ক্রাউন', 'স্পেশাল', 'ভিআইপি', 'প্রিমিয়াম', 'এলিট'], hi: ['बेसिक', 'सिल्वर', 'गोल्ड', 'प्लैटिनम', 'डायमंड', 'क्राउन', 'स्पेशल', 'वीआईपी', 'प्रीमियम', 'एलीट'], en: ['Basic', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Crown', 'Special', 'VIP', 'Premium', 'Elite'] };
+var adNames = { bn: ['বেসিক', 'সিলভার', 'গোল্ড', 'প্লাটিনাম', 'ডায়মন্ড', 'ক্রাউন', 'স্পেশাল', 'ভিআইপি', 'প্রিমিয়াম', 'এলিট'], hi: ['बेसिक', 'सिल्वर', 'गोल्ड', 'प्लैटिनম', 'डायमंड', 'क्राउन', 'स्पेशल', 'वीआईपी', 'प्रीमियम', 'एलीट'], en: ['Basic', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Crown', 'Special', 'VIP', 'Premium', 'Elite'] };
 var ADS_CONFIG = []; for (var i = 1; i <= 50; i++) { var lvl = Math.min(10, Math.ceil(i / 5)); var r = 5 + Math.floor(i / 5) * 2; ADS_CONFIG.push({ id: 'ad' + i, lvl: lvl, r: r, nameIdx: i % 10 }); }
 var currentAdId = null, currentAdReward = 0;
 function renderAds() { var c = document.getElementById('adsList'); if (!c) return; var currentAdNames = adNames[D.lang] || adNames.en; var html = ''; for (var i = 0; i < ADS_CONFIG.length; i++) { var ad = ADS_CONFIG[i]; var unlocked = D.lvl >= ad.lvl; var done = D.adsDone.indexOf(ad.id) !== -1; var icBg = unlocked ? 'rgba(0,230,138,.12)' : 'rgba(107,127,160,.12)'; var icCl = unlocked ? 'var(--ac)' : 'var(--mt)'; var btnHtml = ''; if (done) { btnHtml = '<button class="btn btn-o btn-sm" disabled><i class="fas fa-check"></i> ' + getL('t_done') + '</button>'; } else if (unlocked) { btnHtml = '<button class="btn btn-p btn-sm" onclick="openAdModal(\'' + ad.id + '\',' + ad.r + ')"><i class="fas fa-play"></i> ' + getL('a_play_btn') + '</button>'; } else { btnHtml = '<button class="btn btn-o btn-sm" disabled><i class="fas fa-lock"></i> ' + getL('a_lock_btn') + ' ' + formatNum(ad.lvl) + '</button>'; } html += '<div class="tk" style="text-align:left; display:flex; align-items:center; gap:10px; margin-bottom:6px; padding:8px 12px;"><div style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:' + icBg + ';color:' + icCl + '"><i class="fas ' + (done ? 'fa-check' : unlocked ? 'fa-play-circle' : 'fa-lock') + '"></i></div><div style="flex:1"><div style="font-size:11px;font-weight:700">' + currentAdNames[ad.nameIdx] + ' ' + getL('a_ad_word') + ' ' + formatNum(i + 1) + '</div><div style="font-size:8px;color:var(--mt)">+' + formatNum(ad.r) + ' ' + getL('h_coin') + '</div></div>' + btnHtml + '</div>'; } c.innerHTML = html; }
@@ -350,9 +355,9 @@ var CODE_TASKS = [
     { id: 'ct3', n: { bn: 'ফ্রি কোড', hi: 'ফ্রি কোড', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'код: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
 ];
 var PROOF_TASKS = [
-    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'সব্রাইব করুন', en: 'Subscribe' } },
+    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'সব্প্রাইব করুন', en: 'Subscribe' } },
     { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোন করুন', en: 'Join' } },
-    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'पेज लाइक और शेयर', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
+    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'পেজ লাইক আর শেয়ার', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
     { id: 'pt4', n: { bn: 'টিকটক ফলো', hi: 'টিকটক ফলো', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'ফলো করুন', en: 'Follow' } }
 ];
 var NOTIFS = [
@@ -552,17 +557,28 @@ function submitProof(tid) {
 }
 
 function switchTab(t, b) { var tabs = ['tsk', 'ads', 'gm', 'of']; for (var i = 0; i < tabs.length; i++) { var el = document.getElementById('et-' + tabs[i]); if (el) el.style.display = tabs[i] === t ? 'block' : 'none'; } b.parentElement.querySelectorAll('.tab-btn').forEach(function(x) { x.classList.remove('on'); }); b.classList.add('on'); }
-function copyCode() { navigator.clipboard.writeText(D.rCode).then(function() { toast(getL('msg_copied'), 's'); }); }
+function copyCode() { 
+    var refLink = `https://t.me/${BOT_USERNAME}/${APP_SHORTNAME}?startapp=${D.rCode}`;
+    navigator.clipboard.writeText(refLink).then(function() { 
+        toast("Referral link copied!", 's'); 
+    }); 
+}
 
-// রেফারেল লিংক সরাসরি শেয়ার ও মেসেজ কাস্টমাইজ করার ফাংশন
-function shareCode() { 
+function shareCode() {
     var refLink = `https://t.me/${BOT_USERNAME}/${APP_SHORTNAME}?startapp=${D.rCode}`;
     var textMsg = `🎁 Join EarnHub and earn free money! Use my link to get 50 coins instantly:\n${refLink}`;
     if (navigator.share) {
         navigator.share({ title: 'EarnHub Referral', text: textMsg });
     } else {
+        // সরাসরি টেলিগ্রাম শেয়ার প্যানেলে পাঠানোর ফলব্যাক
+        try {
+            if (window.Telegram && Telegram.WebApp) {
+                Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("🎁 Join EarnHub and earn free money! Use my link to get 50 coins instantly:")}`);
+                return;
+            }
+        } catch (e) {}
         navigator.clipboard.writeText(refLink).then(function() {
-            toast("Referral link copied to clipboard!", 's');
+            toast("Referral link copied!", 's');
         });
     }
 }
@@ -765,7 +781,12 @@ var intents = [
     { name: 'report', keywords: ['report', 'complain', 'issue', 'রিপোর্ট', 'অভিযোগ', 'complain kora'] },
     { name: 'payment_delay', keywords: ['delay', 'pending', 'paini', 'late', 'money not', 'withdraw not', 'টাকা পাইনি', 'পেন্ডিং', 'লেট', 'payment kobe'] },
     { name: 'vpn', keywords: ['vpn', 'proxy', 'country', 'block', 'ভিপিএন', 'আইপি'] },
-    { name: 'ban_system', keywords: ['ban', 'suspend', 'block', 'cheat', 'হ্যাক', 'ব্যান', 'id block'] }
+    { name: 'ban_system', keywords: ['ban', 'suspend', 'block', 'cheat', 'হ্যাক', 'ব্যান', 'id block'] },
+    
+    // গ্লোবাল কোয়েশ্চেন এবং ইউজার ইন্টারঅ্যাকশনের নতুন এআই ইনটেন্ট ক্যাটাগরি
+    { name: 'general_info', keywords: ['how are you', 'kemon aco', 'ki koro', 'whats up', 'কেমন আছ', 'কেমন আছো', 'খবর কি', 'kemon acho'] },
+    { name: 'bot_capability', keywords: ['capabilities', 'can you do', 'help me', 'কি করতে পারো', 'সাহায্য', 'kivabe help korbe'] },
+    { name: 'joke', keywords: ['joke', 'funny', 'koutuk', 'কৌতুক', 'হাসি', 'গল্প', 'funny kisu'] }
 ];
 
 function detectIntent(q) {
@@ -801,6 +822,16 @@ function getReply(q) {
         case 'payment_delay': r = "Standard withdrawals are processed within 24-48 hours. If your payment is pending longer, please ensure your account details are correct. Feel free to use 'Report Issue' if it exceeds 72 hours."; chatContext.lastIntent = 'withdraw'; dynamicQs = [getL('c_q_balance'), getL('c_q_report')]; break;
         case 'vpn': r = "⚠️ Warning: Using VPNs, proxies, or multiple fake accounts is strictly prohibited on EarnHub. Doing so will result in an automatic and permanent ban."; chatContext.lastIntent = 'about'; dynamicQs = [getL('c_q_how'), getL('c_q_report')]; break;
         case 'ban_system': r = "Our automated system checks for suspicious activities daily. If your account is banned, it is likely due to the use of a VPN, multiple accounts, or task cheating. Banned accounts cannot be unbanned."; chatContext.lastIntent = 'about'; dynamicQs = [getL('c_q_report'), getL('c_q_how')]; break;
+        
+        // গ্লোবাল এআই জেনারেল নলেজ এবং ফানি রিপ্লাই সেটআপ
+        case 'general_info': r = "I am doing fantastic, thank you! I'm here 24/7 to help you navigate EarnHub, track your points, and resolve queries. How are you doing today?"; chatContext.lastIntent = 'greeting'; break;
+        case 'bot_capability': r = "I am fully capable of explaining how to check balance, how to request withdrawals, how to play games, and how to report system issues. Go ahead, ask me anything!"; chatContext.lastIntent = 'about'; break;
+        case 'joke': var jokes = [
+            "Why did the coin go to school? To get a little 'change'! 😄",
+            "What is a robot's favorite snack? Computer chips! 🤖",
+            "Why don't scientists trust atoms? Because they make up everything! ⚛️"
+        ]; r = jokes[Math.floor(Math.random() * jokes.length)]; chatContext.lastIntent = null; break;
+        
         default: r = getL('c_bot_default'); chatContext.lastIntent = null; dynamicQs = [getL('c_q_balance'), getL('c_q_withdraw'), getL('c_q_how'), getL('c_q_admin')]; break;
     }
     return { text: r, questions: dynamicQs, button: actionBtn };
@@ -809,7 +840,36 @@ function getReply(q) {
 function resetChatTimer() { if (chatTimer) clearTimeout(chatTimer); chatTimer = setTimeout(function() { var b = document.getElementById('chatBody'); if (!b) return; b.innerHTML = ''; chatInited = false; if (document.getElementById('chatPage').classList.contains('on')) { openChat(); } }, 300000); }
 function openChat() { document.getElementById('chatPage').classList.add('on'); if (bodyAdInterval) clearInterval(bodyAdInterval); resetChatTimer(); if (!chatInited) { chatInited = true; typeBotMsg(getL('c_bot_hello')); addQuickQs([getL('c_q_balance'), getL('c_q_withdraw'), getL('c_q_level'), getL('c_q_promo'), getL('c_q_how'), getL('c_q_report')]); } }
 function closeChat() { document.getElementById('chatPage').classList.remove('on'); startBodyAdTimer(); if (chatTimer) clearTimeout(chatTimer); }
-function typeBotMsg(txt, btn) { var b = document.getElementById('chatBody'); var d = new Date(); var tm = formatNum(d.getHours()) + ':' + formatNum(String(d.getMinutes()).padStart(2, '0')); var msg = document.createElement('div'); msg.className = 'c-msg bot'; var btnHtml = ''; if (btn) { btnHtml = '<div style="margin-top:6px;"><button class="c-qb" style="background:var(--g1);color:#000;border:none;font-size:9px;padding:5px 10px;font-weight:bold;" onclick="handleBotAction(\'' + btn.action + '\')"><i class="fas fa-play-circle" style="margin-right:3px"></i>' + btn.text + '</button></div>'; } msg.innerHTML = '<div class="c-mav"><i class="fas fa-robot"></i></div><div><div class="c-mbb" id="typingTarget"></div><div class="c-tim">' + tm + '</div></div>'; b.appendChild(msg); chatHist.push({ t: txt, b: true }); var target = document.getElementById('typingTarget'); var i = 0; function type() { if (i < txt.length) { target.innerHTML = txt.slice(0, i + 1).replace(/\n/g, '<br>') + (i === txt.length - 1 ? btnHtml : ''); i++; b.scrollTop = b.scrollHeight; setTimeout(type, 15); } else { target.innerHTML = txt.replace(/\n/g, '<br>') + btnHtml; } } type(); }
+
+// চ্যাট ওভাররাইটিং বাগ ফিক্স (id="typingTarget" এর পরিবর্তে querySelector ব্যবহার করা হয়েছে)
+function typeBotMsg(txt, btn) { 
+    var b = document.getElementById('chatBody'); 
+    var d = new Date(); 
+    var tm = formatNum(d.getHours()) + ':' + formatNum(String(d.getMinutes()).padStart(2, '0')); 
+    var msg = document.createElement('div'); 
+    msg.className = 'c-msg bot'; 
+    var btnHtml = ''; 
+    if (btn) { 
+        btnHtml = '<div style="margin-top:6px;"><button class="c-qb" style="background:var(--g1);color:#000;border:none;font-size:9px;padding:5px 10px;font-weight:bold;" onclick="handleBotAction(\'' + btn.action + '\')"><i class="fas fa-play-circle" style="margin-right:3px"></i>' + btn.text + '</button></div>'; 
+    } 
+    msg.innerHTML = '<div class="c-mav"><i class="fas fa-robot"></i></div><div><div class="c-mbb"></div><div class="c-tim">' + tm + '</div></div>'; 
+    b.appendChild(msg); 
+    chatHist.push({ t: txt, b: true }); 
+    
+    var target = msg.querySelector('.c-mbb'); 
+    var i = 0; 
+    function type() { 
+        if (i < txt.length) { 
+            target.innerHTML = txt.slice(0, i + 1).replace(/\n/g, '<br>') + (i === txt.length - 1 ? btnHtml : ''); 
+            i++; 
+            b.scrollTop = b.scrollHeight; 
+            setTimeout(type, 15); 
+        } else { 
+            target.innerHTML = txt.replace(/\n/g, '<br>') + btnHtml; 
+        } 
+    } 
+    type(); 
+}
 
 function handleBotAction(action) {
     if (action !== 'report_issue') {
@@ -846,6 +906,7 @@ async function sendChat() {
     inp.value = ''; 
     showTyping(); 
     
+    // ১. কন্টাক্ট/রিপোর্ট মোডে থাকলে মেসেজটিকে রিপোর্ট হিসেবে সেভ করব
     if (chatState.status === 'waiting_for_report') {
         setTimeout(async function() {
             hideTyping();
@@ -860,11 +921,13 @@ async function sendChat() {
                 date: new Date().toLocaleString()
             };
             
+            // ফায়ারবেসে সেভ করা
             if (window.fbDatabase && window.fbRef && window.fbSet) {
                 var repRef = window.fbRef(window.fbDatabase, 'reports/' + reportKey);
                 window.fbSet(repRef, reportData).catch(e => console.error("Report save error:", e));
             }
             
+            // অ্যাডমিন টেলিগ্রামে নোটিফিকেশন পাঠানো
             var adminMsg = `⚠️ <b>New User Report</b>\n\n👤 <b>User:</b> ${reportData.name}\n🆔 <b>TG ID:</b> <code>${reportData.tg_id}</code>\n📛 <b>Username:</b> @${reportData.username}\n📝 <b>Message:</b> ${txt}\n📅 <b>Date:</b> ${reportData.date}`;
             sendTelegramMessage(ADMIN_CHAT_ID, adminMsg);
             
@@ -903,7 +966,16 @@ function updateUI() {
     document.getElementById('hBal').innerHTML = formatNum(D.coins.toLocaleString('en-US')) + '<span data-l="h_coin">' + getL('h_coin') + '</span>';
     document.getElementById('hTodayE').textContent = formatNum(D.todE); document.getElementById('hTotalW').textContent = formatNum(D.tW);
     document.getElementById('wdBal').innerHTML = formatNum(D.coins.toLocaleString('en-US')) + '<span data-l="h_coin">' + getL('h_coin') + '</span>';
-    document.getElementById('refCode').textContent = D.rCode; document.getElementById('totalRef').textContent = formatNum(D.tR); document.getElementById('refEarn').textContent = formatNum(D.tR * 50);
+    
+    // রেফারেল বক্সে সরাসরি রিয়েল-টাইম রেফারেল লিংক প্রদর্শন
+    var refLink = `https://t.me/${BOT_USERNAME}/${APP_SHORTNAME}?startapp=${D.rCode}`;
+    var refCodeEl = document.getElementById('refCode');
+    if (refCodeEl) {
+        refCodeEl.textContent = refLink;
+        refCodeEl.style.fontSize = '9px'; // লিংকটি যাতে বক্সে সুন্দরভাবে ফিট হয়
+    }
+    
+    document.getElementById('totalRef').textContent = formatNum(D.tR); document.getElementById('refEarn').textContent = formatNum(D.tR * 50);
     document.getElementById('pCoins').textContent = formatNum(D.coins.toLocaleString('en-US')); document.getElementById('pEarned').textContent = formatNum(D.tE.toLocaleString('en-US'));
     document.getElementById('pTasks').textContent = formatNum(D.tD); document.getElementById('pDays').textContent = formatNum(D.dA);
     var lp = getLvlProg(); document.getElementById('pLvlP').textContent = formatNum(lp) + '%'; document.getElementById('pLvlF').style.width = lp + '%';
