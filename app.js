@@ -233,9 +233,9 @@ function redeemPromo() {
 var ACHS = [
     { id: 'fe', n: { bn: 'First Earn', hi: 'पहली कमाई', en: 'First Earn' }, d: { bn: 'প্রথমবার কয়েন আয়', hi: 'पहली बार कॉइन कमाएं', en: 'Earn coins first time' }, i: 'fa-seedling', c: '--ac', ck: function(d) { return d.tE > 0 } },
     { id: 'fa', n: { bn: 'Ad Viewer', hi: 'विज्ञापन दर्शक', en: 'Ad Viewer' }, d: { bn: 'প্রথম অ্যাড', hi: 'पहला विज्ञापन', en: 'First Ad' }, i: 'fa-play', c: '--ac', ck: function(d) { return d.tAW > 0 } },
-    { id: 'tt', n: { bn: 'Task Master', hi: 'টাঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
+    { id: 'tt', n: { bn: 'Task Master', hi: 'टाঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
     { id: 'hc', n: { bn: 'Century', hi: 'শতক', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
-    { id: 's7', n: { bn: '7 Day Streak', hi: '7 दिन स्ट्रीक', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 दिन दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
+    { id: 's7', n: { bn: '7 Day Streak', hi: '7 दिन स्ट्रीক', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 दिन दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
     { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'पहला स्पिन', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
     { id: 'mn', n: { bn: 'Miner', hi: 'মাইনার', en: 'Miner' }, d: { bn: 'মাইনে ১০+', hi: 'माइन में 10+', en: '10+ in Mine' }, i: 'fa-bomb', c: '--rd', ck: function(d) { return d.mnW >= 10 } }
 ];
@@ -342,11 +342,11 @@ function rgbOf(c) { return { '--ac': '0,230,138', '--gd': '251,191,36', '--rd': 
 
 var TASKS = [
     { id: 't1', n: { bn: 'অ্যাপ রেটিং', hi: 'ऐप रेटिंग', en: 'App Rating' }, d: { bn: '৫ স্টার রেটিং দিন', hi: '5 स्टार रेटिंग दें', en: 'Give 5 Star Rating' }, r: 20, i: 'fa-star', c: '--gd', type: 'normal', link: 'https://t.me/EarnHub', time: 10 },
-    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'চ্যানেল জয়েন', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'আधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
+    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'চ্যানেল জয়েন', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'आधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
     { id: 't3', n: { bn: 'ভিডিও দেখুন', hi: 'ভিডিও দেখেন', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 मिनट का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
     { id: 't4', n: { bn: 'পেজ লাইক', hi: 'পেজ লাইক', en: 'Page Like' }, d: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজে লাইক', en: 'Facebook Page Like' }, r: 12, i: 'fa-thumbs-up', c: '--bl', type: 'normal', link: 'https://facebook.com', time: 15 },
-    { id: 't5', n: { bn: 'শেয়ার করুন', hi: 'শেयर करें', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
-    { id: 't6', n: { bn: 'প্রোফাইল সম্পূর্ণ', hi: 'प्रोफाइल पूरा करें', en: 'Complete Profile' }, d: { bn: '১০০% প্রোফাইল', hi: '100% प्रोफाइल', en: '100% Profile' }, r: 30, i: 'fa-user-edit', c: '--pp', type: 'normal', link: 'https://t.me/EarnHub', time: 5 }
+    { id: 't5', n: { bn: 'শেয়ার করুন', hi: 'शेयर करें', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
+    { id: 't6', n: { bn: 'প্রোফাইল সম্পূর্ণ', hi: 'प्रोफाइल पूरा करें', en: 'Complete Profile' }, d: { bn: '১০০% প্রোফাইল', hi: '100% პროფილი', en: '100% Profile' }, r: 30, i: 'fa-user-edit', c: '--pp', type: 'normal', link: 'https://t.me/EarnHub', time: 5 }
 ];
 var DAILY_TASKS = [];
 var CODE_TASKS = [
@@ -362,7 +362,7 @@ var PROOF_TASKS = [
 ];
 var NOTIFS = [
     { id: 'n1', t: { bn: 'নতুন টিকটাক টো গেম!', en: 'New Tic Tac Toe Game!', hi: 'नया टिक टैक टो गेम!' }, d: { bn: 'টিকটাক টো গেম খেলে আপনার বন্ধুদের সাথে বা এআই এর সাথে কয়েন বাজি ধরে আনলিমিটেড ইনকাম করুন।', en: 'Play Tic Tac Toe with AI or random players to earn massive coins.', hi: 'एआई या दोस्तों के साथ टिक टैक टो खेलें और भारी कॉइन जीतें।' }, date: '28/06/2026' },
-    { id: 'n2', t: { bn: 'সরাসরি দ্রুত পেমেন্ট সিস্টেম', en: 'Instant Withdraw Support', hi: 'त्वरित निकासी सहायता' }, d: { bn: 'বিকাশ, নগদ এবং রকেটে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে নিশ্চিন্তে টাকা পেমেন্ট পান।', en: 'Withdraw payments reliably to bKash, Nagad, and Rocket within 24-48 hours.', hi: 'বিকাশ, নগদ এবং রকেট পার ২৪-৪৮ ঘণ্টায় গ্যারান্টিড পেমেন্ট পান।' }, date: '27/06/2026' }
+    { id: 'n2', t: { bn: 'সরাসরি দ্রুত পেমেন্ট সিস্টেম', en: 'Instant Withdraw Support', hi: 'ত্বরিত निकासी सहायता' }, d: { bn: 'বিকাশ, নগদ এবং রকেটে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে নিশ্চিন্তে টাকা পেমেন্ট পান।', en: 'Withdraw payments reliably to bKash, Nagad, and Rocket within 24-48 hours.', hi: 'বিকাশ, নগদ এবং রকেট পার ২৪-৪৮ ঘণ্টায় গ্যারান্টিড পেমেন্ট পান।' }, date: '27/06/2026' }
 ];
 
 function isTaskDone(tid) { return D.cT.indexOf(tid) !== -1 || D.cO.indexOf(tid) !== -1 || D.dailyTasksDone.indexOf(tid) !== -1 || D.proofSubs.indexOf(tid) !== -1; }
@@ -628,25 +628,25 @@ function changeLeaderboardTimeframe(type, timeframe) {
     renderAllLeaderboards();
 }
 
-// মক ডাটাতেও আইডি এবং ইউজারনেম যুক্ত করা হলো যাতে সব ইউজারের ক্ষেত্রে সঠিক রেন্ডার হয়
+// মক ডাটাতেও আইডি এবং ইউজারনেম ও রিয়েল ইমেজের লিংক যুক্ত করা হলো
 function getCombinedLeaderboardList(metricType, timeframe) {
     var base = allCloudUsers.slice();
     var mocks = [ 
-        { name: 'Sakib Khan', tE: 28400, todE: 1450, tR: 48, uid: 'mock_1', username: 'sakib_khan', tg_id: 593849302 }, 
-        { name: 'Fariha Yasmin', tE: 21850, todE: 1100, tR: 35, uid: 'mock_2', username: 'fariha_y', tg_id: 483920194 }, 
-        { name: 'Tanvir Hossain', tE: 15200, todE: 890, tR: 22, uid: 'mock_3', username: 'tanvir_h', tg_id: 739201940 }, 
-        { name: 'Nusrat Jahan', tE: 9900, todE: 650, tR: 18, uid: 'mock_4', username: 'nusrat_j', tg_id: 382910493 }, 
-        { name: 'Rahat Chowdhury', tE: 7800, todE: 520, tR: 14, uid: 'mock_5', username: 'rahat_c', tg_id: 291039482 }, 
-        { name: 'Mita Sen', tE: 6500, todE: 410, tR: 11, uid: 'mock_6', username: 'mita_sen', tg_id: 819203948 }, 
-        { name: 'Sabbir Ahmed', tE: 4900, todE: 320, tR: 8, uid: 'mock_7', username: 'sabbir_a', tg_id: 103948201 }, 
-        { name: 'Taskin Karim', tE: 3600, todE: 210, tR: 5, uid: 'mock_8', username: 'taskin_k', tg_id: 649203948 }, 
-        { name: 'Ishrat Ara', tE: 2100, todE: 110, tR: 3, uid: 'mock_9', username: 'ishrat_ara', tg_id: 502910394 }, 
-        { name: 'Siam Islam', tE: 1200, todE: 50, tR: 1, uid: 'mock_10', username: 'siam_i', tg_id: 930291039 } 
+        { name: 'Sakib Khan', tE: 28400, todE: 1450, tR: 48, uid: 'mock_1', username: 'sakib_khan', tg_id: 593849302, photo_url: 'https://i.pravatar.cc/150?img=33' }, 
+        { name: 'Fariha Yasmin', tE: 21850, todE: 1100, tR: 35, uid: 'mock_2', username: 'fariha_y', tg_id: 483920194, photo_url: 'https://i.pravatar.cc/150?img=47' }, 
+        { name: 'Tanvir Hossain', tE: 15200, todE: 890, tR: 22, uid: 'mock_3', username: 'tanvir_h', tg_id: 739201940, photo_url: 'https://i.pravatar.cc/150?img=12' }, 
+        { name: 'Nusrat Jahan', tE: 9900, todE: 650, tR: 18, uid: 'mock_4', username: 'nusrat_j', tg_id: 382910493, photo_url: 'https://i.pravatar.cc/150?img=49' }, 
+        { name: 'Rahat Chowdhury', tE: 7800, todE: 520, tR: 14, uid: 'mock_5', username: 'rahat_c', tg_id: 291039482, photo_url: 'https://i.pravatar.cc/150?img=11' }, 
+        { name: 'Mita Sen', tE: 6500, todE: 410, tR: 11, uid: 'mock_6', username: 'mita_sen', tg_id: 819203948, photo_url: 'https://i.pravatar.cc/150?img=26' }, 
+        { name: 'Sabbir Ahmed', tE: 4900, todE: 320, tR: 8, uid: 'mock_7', username: 'sabbir_a', tg_id: 103948201, photo_url: 'https://i.pravatar.cc/150?img=51' }, 
+        { name: 'Taskin Karim', tE: 3600, todE: 210, tR: 5, uid: 'mock_8', username: 'taskin_k', tg_id: 649203948, photo_url: 'https://i.pravatar.cc/150?img=68' }, 
+        { name: 'Ishrat Ara', tE: 2100, todE: 110, tR: 3, uid: 'mock_9', username: 'ishrat_ara', tg_id: 502910394, photo_url: 'https://i.pravatar.cc/150?img=45' }, 
+        { name: 'Siam Islam', tE: 1200, todE: 50, tR: 1, uid: 'mock_10', username: 'siam_i', tg_id: 930291039, photo_url: 'https://i.pravatar.cc/150?img=59' } 
     ];
     mocks.forEach(function(m) { if (!base.some(function(b) { return b.name === m.name; })) { base.push(m); } });
     var currentUid = window.fbAuth && window.fbAuth.currentUser ? window.fbAuth.currentUser.uid : 'anon';
     var hasMe = base.some(function(u) { return u.uid === currentUid || (u.tg_id && u.tg_id === tgUser.id); });
-    if (!hasMe) { base.push({ uid: currentUid, tg_id: tgUser.id, name: tgUser.fn, tE: D.tE, todE: D.todE, tR: D.tR, username: tgUser.un }); } else { base.forEach(function(u) { if (u.uid === currentUid || (u.tg_id && u.tg_id === tgUser.id)) { u.tE = D.tE; u.todE = D.todE; u.tR = D.tR; u.name = tgUser.fn; u.username = tgUser.un; } }); }
+    if (!hasMe) { base.push({ uid: currentUid, tg_id: tgUser.id, name: tgUser.fn, tE: D.tE, todE: D.todE, tR: D.tR, username: tgUser.un, photo_url: D.photo_url || tgUser.pu }); } else { base.forEach(function(u) { if (u.uid === currentUid || (u.tg_id && u.tg_id === tgUser.id)) { u.tE = D.tE; u.todE = D.todE; u.tR = D.tR; u.name = tgUser.fn; u.username = tgUser.un; u.photo_url = D.photo_url || tgUser.pu; } }); }
     base.forEach(function(u) { var isMe = (u.uid === currentUid || (u.tg_id && u.tg_id === tgUser.id)); if (metricType === 'home') { if (timeframe === 'daily') { u.calcVal = isMe ? D.todE : (u.todE || Math.floor((u.tE || 0) * 0.05)); } else if (timeframe === 'weekly') { u.calcVal = isMe ? (Math.floor(D.tE * 0.3) + D.todE) : Math.floor((u.tE || 0) * 0.35); } else { u.calcVal = isMe ? D.tE : (u.tE || 50); } } else if (metricType === 'ref') { if (timeframe === 'daily') { u.calcVal = isMe ? Math.max(0, Math.floor(D.tR * 0.08)) : Math.max(0, Math.floor((u.tR || 0) * 0.08)); } else if (timeframe === 'weekly') { u.calcVal = isMe ? Math.max(0, Math.floor(D.tR * 0.45)) : Math.max(0, Math.floor((u.tR || 0) * 0.45)); } else { u.calcVal = isMe ? D.tR : (u.tR || 0); } } });
     return base;
 }
@@ -663,7 +663,7 @@ function renderDynamicLeaderboard(elementId, metricType, timeframe, list) {
         if (rank === 1) { rankClass = 'rank-1'; badge = '🥇'; } else if (rank === 2) { rankClass = 'rank-2'; badge = '🥈'; } else if (rank === 3) { rankClass = 'rank-3'; badge = '🥉'; } else { badge = formatNum(rank); } 
         var displayName = u.name || u.fn || 'User'; 
         
-        // সব পজিশনেই ছবি, নাম এবং ইউজারনেম ও সংখ্যাবাচক আইডি প্রদর্শন করার ডাটা অবজেক্ট
+        // ছবি, নাম এবং টেলিগ্রাম ইউজারনেম ও সংখ্যাবাচক আইডি প্রদর্শন লজিক
         var idText = u.tg_id ? (' | ID: ' + u.tg_id) : '';
         var usernameDisplay = u.username ? ('@' + u.username + idText) : (u.tg_id ? ('ID: ' + u.tg_id) : '');
         var val = u.calcVal; 
