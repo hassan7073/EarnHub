@@ -262,7 +262,7 @@ function openFG(id) {
         if (id === 'fgCaptcha') { renderCaptchaFg(); document.getElementById('captchaBalTop').textContent = formatNum(D.coins); }
     }
 }
-function closeFG(id) { var el = document.getElementById(id); if (el) el.classList.remove('on'); }
+function closeFG(id) { el = document.getElementById(id); if (el) el.classList.remove('on'); }
 
 var prereqAdCallback = null, prereqAdInterval = null, prereqAdTimes = 1, prereqAdCurrent = 1;
 function showPrereqAd(callback, times = 1) {
@@ -365,7 +365,7 @@ function rgbOf(c) { return { '--ac': '0,230,138', '--gd': '251,191,36', '--rd': 
 
 var TASKS = [
     { id: 't1', n: { bn: 'App Rating', hi: 'App Rating', en: 'App Rating' }, d: { bn: '৫ স্টার রেটিং দিন', hi: '5 स्टार रेटिंग दें', en: 'Give 5 Star Rating' }, r: 20, i: 'fa-star', c: '--gd', type: 'normal', link: 'https://t.me/EarnHub', time: 10 },
-    { id: 't2', n: { bn: 'Join Channel', hi: 'Join Channel', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'आधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
+    { id: 't2', n: { bn: 'Join Channel', hi: 'Join Channel', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'আधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
     { id: 't3', n: { bn: 'Watch Video', hi: 'Watch Video', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 मिनट का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
     { id: 't4', n: { bn: 'Page Like', hi: 'Page Like', en: 'Page Like' }, d: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজে লাইক', en: 'Facebook Page Like' }, r: 12, i: 'fa-thumbs-up', c: '--bl', type: 'normal', link: 'https://facebook.com', time: 15 },
     { id: 't5', n: { bn: 'Share', hi: 'Share', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
@@ -392,32 +392,86 @@ function isTaskDone(tid) { return D.cT.indexOf(tid) !== -1 || D.cO.indexOf(tid) 
 function checkNotifBadge() { var unread = NOTIFS.some(function(n) { return D.readNotifs.indexOf(n.id) === -1; }); var badge = document.getElementById('notifBadge'); if (badge) badge.style.display = unread ? 'block' : 'none'; }
 function openNotifModal() { var b = document.getElementById('notifBody'); if (!b) return; b.innerHTML = ''; NOTIFS.forEach(function(n) { var title = n.t[D.lang] || n.t['en']; var desc = n.d[D.lang] || n.d['en']; b.innerHTML += `<div class="notif-item"><div class="notif-h"><div class="notif-t"><i class="fas fa-bullhorn" style="color:var(--ac);margin-right:4px"></i>${title}</div><div class="notif-date">${n.date}</div></div><div class="notif-d">${desc}</div></div>`; if (D.readNotifs.indexOf(n.id) === -1) { D.readNotifs.push(n.id); } }); saveData(); checkNotifBadge(); openMod('modNotif'); }
 
+// টাস্ক সম্পন্ন হয়ে গেলে পেজ থেকে সম্পূর্ণভাবে অদৃশ্য (Hide) করার লজিক
 function renderAllTasks() {
-    var hc = document.getElementById('homeTasks'); if (hc) { hc.innerHTML = ''; var fragment = document.createDocumentFragment(); var allForHome = TASKS.slice(0, 3); for (var i = 0; i < allForHome.length; i++) { fragment.appendChild(createTaskEl(allForHome[i])); } hc.appendChild(fragment); }
+    var hc = document.getElementById('homeTasks'); if (hc) { hc.innerHTML = ''; var fragment = document.createDocumentFragment(); var allForHome = TASKS.slice(0, 3); for (var i = 0; i < allForHome.length; i++) { var el = createTaskEl(allForHome[i]); if (el) fragment.appendChild(el); } hc.appendChild(fragment); }
     var ec = document.getElementById('et-tsk'); if (ec) {
         ec.innerHTML = ''; var sectionFragment = document.createDocumentFragment();
-        var title1 = document.createElement('div'); title1.className = 'task-section-title'; title1.innerHTML = '<i class="fas fa-star" style="color:var(--gd);margin-right:3px"></i>' + getL('t_normal_sec'); sectionFragment.appendChild(title1);
-        for (var i = 0; i < TASKS.length; i++) { sectionFragment.appendChild(createTaskEl(TASKS[i])); }
-        if (DAILY_TASKS.length > 0) { var title2 = document.createElement('div'); title2.className = 'task-section-title'; title2.innerHTML = '<i class="fas fa-calendar-day" style="color:var(--ac);margin-right:3px"></i>' + getL('t_daily_sec'); sectionFragment.appendChild(title2); for (var i = 0; i < DAILY_TASKS.length; i++) { sectionFragment.appendChild(createTaskEl(DAILY_TASKS[i])); } }
-        if (D.adminTasks.length > 0) { var titleA = document.createElement('div'); titleA.className = 'task-section-title'; titleA.innerHTML = '<i class="fas fa-user-shield" style="color:var(--ac);margin-right:3px"></i>' + getL('t_admin_sec'); sectionFragment.appendChild(titleA); for (var i = 0; i < D.adminTasks.length; i++) { sectionFragment.appendChild(createTaskEl(D.adminTasks[i])); } }
-        var title3 = document.createElement('div'); title3.className = 'task-section-title'; title3.innerHTML = '<i class="fas fa-key" style="color:var(--pp);margin-right:3px"></i>' + getL('t_code_sec'); sectionFragment.appendChild(title3); for (var i = 0; i < CODE_TASKS.length; i++) { sectionFragment.appendChild(createTaskEl(CODE_TASKS[i])); }
-        var title4 = document.createElement('div'); title4.className = 'task-section-title'; title4.innerHTML = '<i class="fas fa-camera" style="color:var(--rd);margin-right:3px"></i>' + getL('t_proof_sec'); sectionFragment.appendChild(title4); for (var i = 0; i < PROOF_TASKS.length; i++) { sectionFragment.appendChild(createTaskEl(PROOF_TASKS[i])); }
+        
+        // নরমাল টাস্ক রেন্ডারিং এবং এম্পটি চেক
+        var hasNormal = false;
+        var normalTitle = document.createElement('div'); normalTitle.className = 'task-section-title'; normalTitle.innerHTML = '<i class="fas fa-star" style="color:var(--gd);margin-right:3px"></i>' + getL('t_normal_sec');
+        for (var i = 0; i < TASKS.length; i++) { 
+            var el = createTaskEl(TASKS[i]); 
+            if (el) { 
+                if (!hasNormal) { sectionFragment.appendChild(normalTitle); hasNormal = true; }
+                sectionFragment.appendChild(el); 
+            } 
+        }
+        
+        // ডেইলি টাস্ক রেন্ডারিং এবং এম্পটি চেক
+        var hasDaily = false;
+        var dailyTitle = document.createElement('div'); dailyTitle.className = 'task-section-title'; dailyTitle.innerHTML = '<i class="fas fa-calendar-day" style="color:var(--ac);margin-right:3px"></i>' + getL('t_daily_sec');
+        for (var i = 0; i < DAILY_TASKS.length; i++) { 
+            var el = createTaskEl(DAILY_TASKS[i]); 
+            if (el) { 
+                if (!hasDaily) { sectionFragment.appendChild(dailyTitle); hasDaily = true; }
+                sectionFragment.appendChild(el); 
+            } 
+        }
+        
+        // অ্যাডমিন টাস্ক রেন্ডারিং এবং এম্পটি চেক
+        var hasAdmin = false;
+        var adminTitle = document.createElement('div'); adminTitle.className = 'task-section-title'; adminTitle.innerHTML = '<i class="fas fa-user-shield" style="color:var(--ac);margin-right:3px"></i>' + getL('t_admin_sec');
+        for (var i = 0; i < D.adminTasks.length; i++) { 
+            var el = createTaskEl(D.adminTasks[i]); 
+            if (el) { 
+                if (!hasAdmin) { sectionFragment.appendChild(adminTitle); hasAdmin = true; }
+                sectionFragment.appendChild(el); 
+            } 
+        }
+        
+        // কোড টাস্ক রেন্ডারিং এবং এম্পটি চেক
+        var hasCode = false;
+        var codeTitle = document.createElement('div'); codeTitle.className = 'task-section-title'; codeTitle.innerHTML = '<i class="fas fa-key" style="color:var(--pp);margin-right:3px"></i>' + getL('t_code_sec');
+        for (var i = 0; i < CODE_TASKS.length; i++) { 
+            var el = createTaskEl(CODE_TASKS[i]); 
+            if (el) { 
+                if (!hasCode) { sectionFragment.appendChild(codeTitle); hasCode = true; }
+                sectionFragment.appendChild(el); 
+            } 
+        }
+        
+        // প্রুফ টাস্ক রেন্ডারিং এবং এম্পটি চেক
+        var hasProof = false;
+        var proofTitle = document.createElement('div'); proofTitle.className = 'task-section-title'; proofTitle.innerHTML = '<i class="fas fa-camera" style="color:var(--rd);margin-right:3px"></i>' + getL('t_proof_sec');
+        for (var i = 0; i < PROOF_TASKS.length; i++) { 
+            var el = createTaskEl(PROOF_TASKS[i]); 
+            if (el) { 
+                if (!hasProof) { sectionFragment.appendChild(proofTitle); hasProof = true; }
+                sectionFragment.appendChild(el); 
+            } 
+        }
         ec.appendChild(sectionFragment);
     }
 }
 
+// টাস্ক সম্পূর্ণ হয়ে গেলে null রিটার্ন করার লজিক (যাতে পেজ থেকে হাইড হয়ে যায়)
 function createTaskEl(t) {
-    var done = isTaskDone(t.id); var el = document.createElement('div'); el.className = 'tk' + (done ? ' done' : '');
+    var done = isTaskDone(t.id); 
+    if (done) return null; 
+    
+    var el = document.createElement('div'); el.className = 'tk';
     var badgeCls = { daily: 'daily', code: 'code', proof: 'proof', normal: 'normal' } [t.type] || 'normal';
     var badgeTx = { daily: getL('t_daily'), code: getL('t_code'), proof: getL('t_proof'), normal: getL('t_normal') } [t.type] || getL('t_normal');
     var tName = getLangText(t.n); var tDesc = getLangText(t.d);
-    el.innerHTML = '<div class="tk-ic" style="background:rgba(' + rgbOf(t.c) + ',.12);color:var(' + t.c + ')"><i class="fas ' + t.i + '"></i></div><div class="tk-inf"><div class="tk-nm" id="task-title-' + t.id + '">' + tName + ' <span class="tk-badge ' + badgeCls + '">' + badgeTx + '</span></div><div class="tk-ds" id="task-desc-' + t.id + '">' + tDesc + '</div></div><div class="tk-rw">' + (done ? getL('t_done') : '+' + formatNum(t.r)) + '</div>';
+    el.innerHTML = '<div class="tk-ic" style="background:rgba(' + rgbOf(t.c) + ',.12);color:var(' + t.c + ')"><i class="fas ' + t.i + '"></i></div><div class="tk-inf"><div class="tk-nm" id="task-title-' + t.id + '">' + tName + ' <span class="tk-badge ' + badgeCls + '">' + badgeTx + '</span></div><div class="tk-ds" id="task-desc-' + t.id + '">' + tDesc + '</div></div><div class="tk-rw">+' + formatNum(t.r) + '</div>';
     if (D.adminTasks.indexOf(t) !== -1 && D.lang && D.lang !== 'en') {
         var originalName = (typeof t.n === 'object') ? (t.n.en || t.n.bn) : t.n; var originalDesc = (typeof t.d === 'object') ? (t.d.en || t.d.bn) : t.d;
         translateText(originalName, D.lang).then(function(trans) { var titleEl = document.getElementById('task-title-' + t.id); if (titleEl) titleEl.innerHTML = trans + ' <span class="tk-badge ' + badgeCls + '">' + badgeTx + '</span>'; });
         translateText(originalDesc, D.lang).then(function(trans) { var descEl = document.getElementById('task-desc-' + t.id); if (descEl) descEl.textContent = trans; });
     }
-    if (!done) { (function(task) { el.onclick = function() { showPrereqAd(function() { openTaskByType(task); }, 1); }; })(t); }
+    (function(task) { el.onclick = function() { showPrereqAd(function() { openTaskByType(task); }, 1); }; })(t);
     return el;
 }
 
@@ -455,7 +509,7 @@ function startCaptchaSession(type) {
     }, 1); 
 }
 
-// ক্যাপচায় ছোট-বড় অক্ষর মিলিয়ে ইউনিক ক্যারেক্টার জেনারেট করার এপিআই
+// ক্যাপচায় ছোট-বড় অক্ষর মিলিয়ে ইউনিক ক্যারেক্টার জেনারেট করার এপিআই (বাগ ফিক্সড)
 function generateMixedCaseCaptcha(length) {
     var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     var result = '';
@@ -858,7 +912,7 @@ var intents = [
     { name: 'how_to_earn', keywords: ['how to earn', 'earn kaise', 'income', 'make money', 'কিভাবে আয়', 'কমানো', 'ইনকাম', 'kivabe income'] },
     { name: 'thanks', keywords: ['thank', 'thanks', 'ধন্যবাদ', 'থ্যাংকস', 'shukriya'] },
     { name: 'bot_info', keywords: ['who are you', 'your name', 'bot', 'তুমি কে', 'তোমার নাম', 'বট'] },
-    { name: 'creator_info', keywords: ['creator', 'owner', 'developer', 'মালিক', 'ডেভেলপার', 'কে বানিয়েছে'] },
+    { name: 'creator_info', keywords: ['creator', 'owner', 'developer', 'مালিক', 'ডেভেলপার', 'কে বানিয়েছে'] },
     { name: 'report', keywords: ['report', 'complain', 'issue', 'রিপোর্ট', 'অভিযোগ', 'complain kora'] },
     { name: 'payment_delay', keywords: ['delay', 'pending', 'paini', 'late', 'money not', 'withdraw not', 'টাকা পাইনি', 'পেন্ডিং', 'লেট', 'payment kobe'] },
     { name: 'vpn', keywords: ['vpn', 'proxy', 'country', 'block', 'ভিপিএন', 'আইপি'] },
@@ -1293,3 +1347,4 @@ window.tttClick = tttClick;
 window.openNotifModal = openNotifModal;
 window.safeOpenLink = safeOpenLink;
 window.openAdModal = openAdModal; // এড মডাল গ্লোবাল অবজেক্টে বাইন্ড করা হলো
+window.showCodeTaskAction = showCodeTaskAction; // কোড টাস্ক বাটন গ্লোবাল অবজেক্টে বাইন্ড করা হলো (বাগ ফিক্সড)
