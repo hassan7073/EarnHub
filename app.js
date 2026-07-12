@@ -301,24 +301,47 @@ function skipPrereqAd() {
 
 var bodyAdInterval = null, bodyAdTimerInt = null;
 function startBodyAdTimer() { if (bodyAdInterval) clearInterval(bodyAdInterval); bodyAdInterval = setInterval(showBodyAd, 45000); }
+
+// বডির স্পন্সর অ্যাড ফিল্টারিং বাগ ফিক্স (গেম বা অ্যাড দেখার সময় এটি আর পপ-আপ হবে না)
 function showBodyAd() {
-    if (document.getElementById('modBodyAd').classList.contains('on')) return;
-    var isSpinOpen = document.getElementById('fgSpin').classList.contains('on');
-    var isMineOpen = document.getElementById('fgMine').classList.contains('on');
-    var isTttOpen = document.getElementById('fgTicTac').classList.contains('on');
-    var isTargetOpen = document.getElementById('fgTarget').classList.contains('on');
-    var isCaptchaOpen = document.getElementById('fgCaptcha').classList.contains('on');
-    var isWithdrawActive = document.getElementById('pg-wd').classList.contains('on');
-    var isChatActive = document.getElementById('chatPage').classList.contains('on');
-    var isMainAdActive = document.getElementById('modAd').classList.contains('on') || document.getElementById('modPrereqAd').classList.contains('on');
+    var bodyAdMod = document.getElementById('modBodyAd');
+    if (!bodyAdMod || bodyAdMod.classList.contains('on')) return;
+    
+    var isSpinOpen = document.getElementById('fgSpin') && document.getElementById('fgSpin').classList.contains('on');
+    var isMineOpen = document.getElementById('fgMine') && document.getElementById('fgMine').classList.contains('on');
+    var isTttOpen = document.getElementById('fgTicTac') && document.getElementById('fgTicTac').classList.contains('on');
+    var isTargetOpen = document.getElementById('fgTarget') && document.getElementById('fgTarget').classList.contains('on');
+    var isCaptchaOpen = document.getElementById('fgCaptcha') && document.getElementById('fgCaptcha').classList.contains('on');
+    var isWithdrawActive = document.getElementById('pg-wd') && document.getElementById('pg-wd').classList.contains('on');
+    var isChatActive = document.getElementById('chatPage') && document.getElementById('chatPage').classList.contains('on');
+    
+    var isMainAdActive = (document.getElementById('modAd') && document.getElementById('modAd').classList.contains('on')) || 
+                         (document.getElementById('modPrereqAd') && document.getElementById('modPrereqAd').classList.contains('on')) || 
+                         (document.getElementById('modTask') && document.getElementById('modTask').classList.contains('on')) || 
+                         (document.getElementById('modProof') && document.getElementById('modProof').classList.contains('on')) || 
+                         (document.getElementById('modDaily') && document.getElementById('modDaily').classList.contains('on'));
+    
     if (isSpinOpen || isMineOpen || isTttOpen || isTargetOpen || isCaptchaOpen || isWithdrawActive || isChatActive || isMainAdActive || isSpinning || mineState.active || tttState.active) return;
-    openMod('modBodyAd'); document.getElementById('bodyAdCloseBtn').style.display = 'none'; document.getElementById('bodyAdTimer').style.display = 'flex';
+    
+    openMod('modBodyAd'); 
+    document.getElementById('bodyAdCloseBtn').style.display = 'none'; 
+    document.getElementById('bodyAdTimer').style.display = 'flex';
     document.getElementById('bodyAdBox').innerHTML = '<div style="font-size:28px;margin-bottom:3px">🎮</div><div style="font-size:10px">Gaming App!</div>';
-    var count = 5; document.getElementById('bodyAdTimer').textContent = formatNum(count); document.getElementById('bodyAdMsg').textContent = 'Ad running...';
+    var count = 5; 
+    document.getElementById('bodyAdTimer').textContent = formatNum(count); 
+    document.getElementById('bodyAdMsg').textContent = 'Ad running...';
+    
     if (bodyAdTimerInt) clearInterval(bodyAdTimerInt);
     bodyAdTimerInt = setInterval(function() {
-        count--; document.getElementById('bodyAdTimer').textContent = formatNum(count);
-        if (count <= 0) { clearInterval(bodyAdTimerInt); bodyAdTimerInt = null; document.getElementById('bodyAdCloseBtn').style.display = 'flex'; document.getElementById('bodyAdTimer').style.display = 'none'; document.getElementById('bodyAdMsg').innerHTML = '<strong style="color:var(--ac)">Done! Close to continue.</strong>'; }
+        count--; 
+        document.getElementById('bodyAdTimer').textContent = formatNum(count);
+        if (count <= 0) { 
+            clearInterval(bodyAdTimerInt); 
+            bodyAdTimerInt = null; 
+            document.getElementById('bodyAdCloseBtn').style.display = 'flex'; 
+            document.getElementById('bodyAdTimer').style.display = 'none'; 
+            document.getElementById('bodyAdMsg').innerHTML = '<strong style="color:var(--ac)">Done! Close to continue.</strong>'; 
+        }
     }, 1000);
 }
 function closeBodyAd() { closeMod('modBodyAd'); }
@@ -341,24 +364,24 @@ function closeAdModal() { if (adInterval) { clearInterval(adInterval); adInterva
 function rgbOf(c) { return { '--ac': '0,230,138', '--gd': '251,191,36', '--rd': '239,68,68', '--bl': '56,189,248', '--pp': '167,139,250' } [c] || '255,255,255'; }
 
 var TASKS = [
-    { id: 't1', n: { bn: 'অ্যাপ রেটিং', hi: 'ऐप रेटिंग', en: 'App Rating' }, d: { bn: '৫ স্টার রেটিং দিন', hi: '5 स्टार रेटिंग दें', en: 'Give 5 Star Rating' }, r: 20, i: 'fa-star', c: '--gd', type: 'normal', link: 'https://t.me/EarnHub', time: 10 },
-    { id: 't2', n: { bn: 'চ্যানেল জয়েন', hi: 'চ্যানেল জয়েন', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'আधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
-    { id: 't3', n: { bn: 'ভিডিও দেখুন', hi: 'ভিডিও দেখেন', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 मिनट का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
-    { id: 't4', n: { bn: 'পেজ লাইক', hi: 'পেজ লাইক', en: 'Page Like' }, d: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজে লাইক', en: 'Facebook Page Like' }, r: 12, i: 'fa-thumbs-up', c: '--bl', type: 'normal', link: 'https://facebook.com', time: 15 },
-    { id: 't5', n: { bn: 'শেয়ার করুন', hi: 'শেयर करें', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
-    { id: 't6', n: { bn: 'প্রোফাইল সম্পূর্ণ', hi: 'प्रोफाइल पूरा करें', en: 'Complete Profile' }, d: { bn: '১০০% প্রোফাইল', hi: '100% प्रोफाइल', en: '100% Profile' }, r: 30, i: 'fa-user-edit', c: '--pp', type: 'normal', link: 'https://t.me/EarnHub', time: 5 }
+    { id: 't1', n: { bn: 'App Rating', hi: 'App Rating', en: 'App Rating' }, d: { bn: '৫ স্টার রেটিং দিন', hi: '5 स्टार रेटिंग दें', en: 'Give 5 Star Rating' }, r: 20, i: 'fa-star', c: '--gd', type: 'normal', link: 'https://t.me/EarnHub', time: 10 },
+    { id: 't2', n: { bn: 'Join Channel', hi: 'Join Channel', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'आधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
+    { id: 't3', n: { bn: 'Watch Video', hi: 'Watch Video', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 मिनट का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
+    { id: 't4', n: { bn: 'Page Like', hi: 'Page Like', en: 'Page Like' }, d: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজে লাইক', en: 'Facebook Page Like' }, r: 12, i: 'fa-thumbs-up', c: '--bl', type: 'normal', link: 'https://facebook.com', time: 15 },
+    { id: 't5', n: { bn: 'Share', hi: 'Share', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
+    { id: 't6', n: { bn: 'Complete Profile', hi: 'Complete Profile', en: 'Complete Profile' }, d: { bn: '১০০% প্রোফাইল', hi: '100% प्रोफाइल', en: '100% Profile' }, r: 30, i: 'fa-user-edit', c: '--pp', type: 'normal', link: 'https://t.me/EarnHub', time: 5 }
 ];
 var DAILY_TASKS = [];
 var CODE_TASKS = [
-    { id: 'ct1', n: { bn: 'সিক্রেট কোড', hi: 'सीक्रेट कोड', en: 'Secret Code' }, d: { bn: 'কোড: EARNHUB2024', hi: 'код: EARNHUB2024', en: 'Code: EARNHUB2024' }, r: 30, i: 'fa-key', c: '--gd', type: 'code', code: 'EARNHUB2024', link: 'https://t.me/EarnHub' },
-    { id: 'ct2', n: { bn: 'ভিআইপি কোড', hi: 'ভিআইপি কোড', en: 'VIP Code' }, d: { bn: 'কোড: VIP2024', hi: 'код: VIP2024', en: 'Code: VIP2024' }, r: 50, i: 'fa-crown', c: '--gd', type: 'code', code: 'VIP2024', link: 'https://t.me/EarnHub' },
-    { id: 'ct3', n: { bn: 'ফ্রি কোড', hi: 'ফ্রি কোড', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'код: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
+    { id: 'ct1', n: { bn: 'Secret Code', hi: 'Secret Code', en: 'Secret Code' }, d: { bn: 'কোড: EARNHUB2024', hi: 'код: EARNHUB2024', en: 'Code: EARNHUB2024' }, r: 30, i: 'fa-key', c: '--gd', type: 'code', code: 'EARNHUB2024', link: 'https://t.me/EarnHub' },
+    { id: 'ct2', n: { bn: 'VIP Code', hi: 'VIP Code', en: 'VIP Code' }, d: { bn: 'কোড: VIP2024', hi: 'код: VIP2024', en: 'Code: VIP2024' }, r: 50, i: 'fa-crown', c: '--gd', type: 'code', code: 'VIP2024', link: 'https://t.me/EarnHub' },
+    { id: 'ct3', n: { bn: 'Free Code', hi: 'Free Code', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'код: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
 ];
 var PROOF_TASKS = [
-    { id: 'pt1', n: { bn: 'ইউটিউব সাবস্ক্রাইব', hi: 'यूट्यूब सब्सक्राइब', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'সব্রাইব করুন', en: 'Subscribe' } },
-    { id: 'pt2', n: { bn: 'টেলিগ্রাম জয়েন', hi: 'টেলিগ্রাম জয়েন', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোন করুন', en: 'Join' } },
-    { id: 'pt3', n: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজ লাইক', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'পেজ লাইক আর শেয়ার', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
-    { id: 'pt4', n: { bn: 'টিকটক ফলো', hi: 'টিকটক ফলো', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'ফলো করুন', en: 'Follow' } }
+    { id: 'pt1', n: { bn: 'Youtube Subscribe', hi: 'Youtube Subscribe', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'चैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'सब्सक्राइब करें', en: 'Subscribe' } },
+    { id: 'pt2', n: { bn: 'Telegram Join', hi: 'Telegram Join', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোন করুন', en: 'Join' } },
+    { id: 'pt3', n: { bn: 'Facebook Page Like', hi: 'Facebook Page Like', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'পেজ লাইক আর শেয়ার', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
+    { id: 'pt4', n: { bn: 'Tiktok Follow', hi: 'Tiktok Follow', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'ফলো করুন', en: 'Follow' } }
 ];
 var NOTIFS = [
     { id: 'n1', t: { bn: 'নতুন টিকটাক টো গেম!', en: 'New Tic Tac Toe Game!', hi: 'नया टिक टैक टो गेम!' }, d: { bn: 'টিকটাক টো গেম খেলে আপনার বন্ধুদের সাথে বা এআই এর সাথে কয়েন বাজি ধরে আনলিমিটেড ইনকাম করুন।', en: 'Play Tic Tac Toe with AI or random players to earn massive coins.', hi: 'एआई या दोस्तों के साथ टिक टैक टो खेलें और भारी कॉइन जीतें।' }, date: '28/06/2026' },
@@ -425,19 +448,11 @@ function startCaptchaSession(type) {
     if (D.captchaDate !== new Date().toDateString()) { D.captchaCount = 0; D.captchaDate = new Date().toDateString(); saveData(); }
     if (D.captchaCount >= captchaConfig.limit) { toast('Daily limit reached!', 'e'); return; }
     var reward = captchaConfig.rewards[type] || 10;
+    
+    // ক্যাপচা শুরু করার রিকোয়ারমেন্ট অনুযায়ী ঠিক ১টি অ্যাড দেখাবে
     showPrereqAd(function() {
         if (type === 'grid') { openGridCaptcha(reward, type); } else { openCaptchaModal(type, reward); }
-    }, 2);
-}
-
-// ক্যাপচায় ছোট-বড় অক্ষর মিলিয়ে ইউনিক ক্যারেক্টার জেনারেট করার এপিআই
-function generateMixedCaseCaptcha(length) {
-    var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var result = '';
-    for (var i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
+    }, 1); 
 }
 
 function openCaptchaModal(type, reward) {
@@ -469,7 +484,7 @@ function drawCaptcha(text) {
     for (var i = 0; i < text.length; i++) { ctx.save(); ctx.translate(20 + i * 30, 50); ctx.rotate((Math.random() - 0.5) * 0.5); ctx.fillText(text[i], 0, 0); ctx.restore(); }
 }
 
-// কেস-সেন্সিটিভ মিলিয়ে দেখার জন্য তোইউপারকেস সরানো হয়েছে
+// কেস-সেন্সিটিভ মিলিয়ে দেখার জন্য টু-আপারকেস সরানো হয়েছে এবং ক্লেইমে ১টি অ্যাড প্লে করার সিস্টেম যুক্ত
 function verifyCaptchaTask(correctAnswer, reward) {
     var inp = document.getElementById('captchaInput'); if (!inp) return;
     var userAns = inp.value.trim();
@@ -477,7 +492,9 @@ function verifyCaptchaTask(correctAnswer, reward) {
         toast(getL('t_wrong'), 'e'); closeMod('modTask'); return;
     }
     closeMod('modTask');
-    addCoins(reward, 'captcha'); D.captchaCount++; saveData(); renderCaptchaFg(); toast(getL('t_correct'), 'g');
+    showPrereqAd(function() {
+        addCoins(reward, 'captcha'); D.captchaCount++; saveData(); renderCaptchaFg(); toast(getL('t_correct'), 'g');
+    }, 1);
 }
 
 function openGridCaptcha(reward, type) {
@@ -508,12 +525,15 @@ function gridCapClick(el, isTarget) {
     document.getElementById('gridStatus').textContent = window.gridSelected + ' selected';
 }
 
+// গ্রিড ক্যাপচায় ক্লেইমে ১টি অ্যাড প্লে করার সিস্টেম যুক্ত
 function verifyGridCaptcha(reward, requiredTargets) {
     var container = document.getElementById('gridCaptchaContainer');
     var totalTargetsInGrid = container.querySelectorAll('[data-istarget="true"]').length;
     if (window.gridSelected === totalTargetsInGrid && window.gridCorrectSelected === requiredTargets) {
         closeMod('modTask'); window.gridSelected = 0; window.gridCorrectSelected = 0;
-        addCoins(reward, 'captcha'); D.captchaCount++; saveData(); renderCaptchaFg(); toast(getL('t_correct'), 'g');
+        showPrereqAd(function() {
+            addCoins(reward, 'captcha'); D.captchaCount++; saveData(); renderCaptchaFg(); toast(getL('t_correct'), 'g');
+        }, 1);
     } else {
         toast(getL('t_wrong'), 'e'); closeMod('modTask');
         window.gridSelected = 0; window.gridCorrectSelected = 0;
@@ -536,7 +556,17 @@ function startNormalTask(tid) {
     }, 1000);
 }
 function cancelNormalTask() { if (ntTimer) { clearInterval(ntTimer); ntTimer = null; } closeMod('modTask'); toast(getL('t_cancel_msg'), 'e'); }
-function finishNormalTask(tid) { if (D.cT.indexOf(tid) !== -1) return; D.cT.push(tid); var t = TASKS.find(function(x) { return x.id === tid; }) || D.adminTasks.find(function(x) { return x.id === tid; }); closeMod('modTask'); showPrereqAd(function() { addCoins(t.r, 'task'); toast(getL('t_done') + '!', 's'); renderAllTasks(); }, 1); }
+
+// টাস্ক সাবমিট থেকে প্রিরেকুইজিট অ্যাড ক্লিয়ার করা হলো (শুধুমাত্র টাস্ক শুরুতে অ্যাড থাকবে)
+function finishNormalTask(tid) { 
+    if (D.cT.indexOf(tid) !== -1) return; 
+    D.cT.push(tid); 
+    var t = TASKS.find(function(x) { return x.id === tid; }) || D.adminTasks.find(function(x) { return x.id === tid; }); 
+    closeMod('modTask'); 
+    addCoins(t.r, 'task'); 
+    toast(getL('t_done') + '!', 's'); 
+    renderAllTasks(); 
+}
 function openDailyTask(t) { openNormalTask(t); }
 
 function openCodeTask(t) {
@@ -548,11 +578,15 @@ function showCodeTaskAction(tid) {
     var t = CODE_TASKS.find(function(x) { return x.id === tid; });
     document.getElementById('taskModBody').innerHTML = '<div style="padding:4px 0"><div class="proof-link-btn" onclick="safeOpenLink(\'' + t.link + '\')"><i class="fas fa-external-link-alt" style="color:var(--ac)"></i><div class="plb-inf"><div class="plb-tx">' + getL('t_link') + '</div><div class="plb-ds">' + getL('t_find_code') + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border)"><div class="ig"><label><i class="fas fa-key" style="margin-right:3px"></i>' + getL('t_enter_code') + '</label><input type="text" id="codeTaskInput" placeholder="' + getL('t_enter_code') + '" style="text-transform:uppercase;letter-spacing:1px"></div><button class="btn btn-g btn-bk" onclick="submitCodeTask(\'' + t.id + '\',\'' + t.code + '\')">' + getL('t_verify') + '</button></div></div>';
 }
+
+// কোড টাস্ক ভেরিফাই এ প্রিরেকুইজিট অ্যাড ক্লিয়ার করা হলো
 function submitCodeTask(tid, correctCode) {
     var inp = document.getElementById('codeTaskInput'); var code = inp.value.trim().toUpperCase();
     if (code !== correctCode) { toast(getL('t_wrong'), 'e'); closeMod('modTask'); return; }
     if (D.cT.indexOf(tid) !== -1) return; D.cT.push(tid); closeMod('modTask');
-    showPrereqAd(function() { addCoins(CODE_TASKS.find(function(t) { return t.id === tid; }).r, 'task'); toast(getL('t_correct'), 'g'); renderAllTasks(); }, 1);
+    addCoins(CODE_TASKS.find(function(t) { return t.id === tid; }).r, 'task'); 
+    toast(getL('t_correct'), 'g'); 
+    renderAllTasks();
 }
 
 function openProofTask(t) {
@@ -560,18 +594,22 @@ function openProofTask(t) {
     document.getElementById('proofModBody').innerHTML = '<div style="padding:4px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(' + rgbOf(t.c) + ',.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px"><i class="fas ' + t.i + '" style="font-size:22px;color:var(' + t.c + ')"></i></div><h3 style="text-align:center;margin-bottom:4px;font-size:14px">' + getLangText(t.n) + '</h3><p style="text-align:center;font-size:10px;color:var(--mt);margin-bottom:12px">' + getLangText(t.d) + '</p><div style="font-size:20px;font-weight:800;color:var(--ac);text-align:center;margin-bottom:14px;font-family:Space Grotesk">+' + formatNum(t.r) + ' ' + getL('h_coin') + '</div><div style="text-align:left;background:var(--bg2);padding:10px;border-radius:8px;margin-bottom:12px"><div style="font-size:10px;font-weight:800;color:var(--rd);margin-bottom:5px"><i class="fas fa-info-circle"></i> ' + getL('t_instruction') + '</div><p style="font-size:9px;color:var(--mt);line-height:1.5">' + getL('t_proof_step1') + '<br>' + getL('t_proof_step2') + '<br>' + getL('t_proof_step3') + '<br>' + getL('t_proof_step4') + '</p></div><div class="proof-link-btn" onclick="safeOpenLink(\'' + t.link + '\')"><i class="fas fa-external-link-alt" style="color:var(--ac)"></i><div class="plb-inf"><div class="plb-tx">' + getLangText(t.actionLabel) + '</div><div class="plb-ds">' + t.link + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div class="proof-link-btn" onclick="safeOpenLink(\'' + t.groupLink + '\')" style="margin-top:6px"><i class="fas fa-paper-plane" style="color:var(--bl)"></i><div class="plb-inf"><div class="plb-tx">' + getL('t_go_proof') + '</div><div class="plb-ds">' + t.groupLink + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border)"><div class="ig"><label><i class="fas fa-link" style="margin-right:3px"></i>' + getL('t_id_link') + '</label><input type="url" id="proofIdLink" placeholder="' + getL('t_id_link') + '"></div><div class="ig"><label><i class="fas fa-image" style="margin-right:3px"></i>' + getL('t_proof_link') + '</label><input type="url" id="proofScreenLink" placeholder="' + getL('t_proof_link') + '"></div><button class="btn btn-p btn-bk" onclick="submitProof(\'' + t.id + '\')"><i class="fas fa-check-circle"></i> ' + getL('t_submit_proof') + '</button><p style="font-size:8px;color:var(--mt);margin-top:6px;text-align:center">' + getL('t_admin_verify') + '</p></div></div>';
     document.getElementById('modProof').classList.add('on');
 }
+
+// প্রুফ টাস্ক সাবমিট এ প্রিরেকুইজিট অ্যাড ক্লিয়ার করা হলো
 function submitProof(tid) {
     var idLink = document.getElementById('proofIdLink').value.trim(); var screenLink = document.getElementById('proofScreenLink').value.trim();
     if (!idLink) { toast(getL('t_id_link') + '!', 'e'); return; } if (!screenLink) { toast(getL('t_proof_link') + '!', 'e'); return; }
     if (!idLink.startsWith('http')) { toast(getL('msg_valid_link'), 'e'); return; } if (!screenLink.startsWith('http')) { toast(getL('msg_valid_link'), 'e'); return; }
     if (D.proofSubs.indexOf(tid) !== -1) { toast(getL('msg_already_submit'), 'i'); return; }
     D.proofSubs.push(tid); var pt = PROOF_TASKS.find(function(t) { return t.id === tid; }); closeMod('modProof');
-    showPrereqAd(function() { if (pt) { addCoins(pt.r, 'task'); toast(getL('msg_proof_success') + formatNum(pt.r), 'g'); } renderAllTasks(); }, 1);
+    if (pt) { 
+        addCoins(pt.r, 'task'); 
+        toast(getL('msg_proof_success') + formatNum(pt.r), 'g'); 
+    } 
+    renderAllTasks();
 }
 
 function switchTab(t, b) { var tabs = ['tsk', 'ads', 'gm', 'of']; for (var i = 0; i < tabs.length; i++) { var el = document.getElementById('et-' + tabs[i]); if (el) el.style.display = tabs[i] === t ? 'block' : 'none'; } b.parentElement.querySelectorAll('.tab-btn').forEach(function(x) { x.classList.remove('on'); }); b.classList.add('on'); }
-
-// কপির সময় শুধু র কোডটি কপি না করে পুরো রেফারেল লিংক কপি হওয়ার নতুন এপিআই
 function copyCode() { 
     var refLink = `https://t.me/${BOT_USERNAME}/${APP_SHORTNAME}?startapp=${D.rCode}`;
     navigator.clipboard.writeText(refLink).then(function() { 
@@ -585,6 +623,7 @@ function shareCode() {
     if (navigator.share) {
         navigator.share({ title: 'EarnHub Referral', text: textMsg });
     } else {
+        // সরাসরি টেলিগ্রাম শেয়ার প্যানেলে পাঠানোর ফলব্যাক
         try {
             if (window.Telegram && Telegram.WebApp) {
                 Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("🎁 Join EarnHub and earn free money! Use my link to get 50 coins instantly:")}`);
@@ -641,7 +680,6 @@ function changeLeaderboardTimeframe(type, timeframe) {
     else if (type === 'ref') { refTimeframe = timeframe; document.querySelectorAll('#pg-ref .tab-bar .tab-btn').forEach(function(btn) { btn.classList.remove('on'); }); document.getElementById('btn-ref-' + timeframe).classList.add('on'); }
     renderAllLeaderboards();
 }
-
 function getCombinedLeaderboardList(metricType, timeframe) {
     var base = allCloudUsers.slice();
     var mocks = [ 
@@ -1005,7 +1043,7 @@ function updateUI() {
         refCodeEl.style.fontSize = ''; // ফন্ট সাইজ স্বাভাবিক করা হলো
     }
     
-    // রেফারেল কোড সাবমিট বক্সটি হাইড/শো করার লজিক (ইন্ডেক্স ফাইল মডিফাই ছাড়া ডম দিয়ে হ্যান্ডেল করা হয়েছে)
+    // রেফারেল কোড সাবমিট বক্সটি হাইড/শো করার লজিক (ডম দিয়ে হ্যান্ডেল করা হয়েছে)
     var friendRefCodeInput = document.getElementById('friendRefCode');
     if (friendRefCodeInput) {
         var container = friendRefCodeInput.closest('div').parentElement;
@@ -1242,3 +1280,4 @@ window.leaveTicTac = leaveTicTac;
 window.tttClick = tttClick;
 window.openNotifModal = openNotifModal;
 window.safeOpenLink = safeOpenLink;
+window.openAdModal = openAdModal; // এড মডাল গ্লোবাল অবজেক্টে বাইন্ড করা হলো
