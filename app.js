@@ -233,7 +233,7 @@ function redeemPromo() {
 var ACHS = [
     { id: 'fe', n: { bn: 'First Earn', hi: 'पहली कमाई', en: 'First Earn' }, d: { bn: 'প্রথমবার কয়েন আয়', hi: 'पहली बार कॉइन कमाएं', en: 'Earn coins first time' }, i: 'fa-seedling', c: '--ac', ck: function(d) { return d.tE > 0 } },
     { id: 'fa', n: { bn: 'Ad Viewer', hi: 'विज्ञापन दर्शक', en: 'Ad Viewer' }, d: { bn: 'প্রথম অ্যাড', hi: 'पहला विज्ञापन', en: 'First Ad' }, i: 'fa-play', c: '--ac', ck: function(d) { return d.tAW > 0 } },
-    { id: 'tt', n: { bn: 'Task Master', hi: 'টাঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
+    { id: 'tt', n: { bn: 'Task Master', hi: 'टाঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
     { id: 'hc', n: { bn: 'Century', hi: 'শতক', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
     { id: 's7', n: { bn: '7 Day Streak', hi: '7 दिन स्ट्रीक', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 दिन दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
     { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'पहला स्पिन', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
@@ -378,7 +378,7 @@ var CODE_TASKS = [
     { id: 'ct3', n: { bn: 'Free Code', hi: 'Free Code', en: 'Free Code' }, d: { bn: 'কোড: FREE100', hi: 'код: FREE100', en: 'Code: FREE100' }, r: 20, i: 'fa-gift', c: '--pp', type: 'code', code: 'FREE100', link: 'https://t.me/EarnHub' }
 ];
 var PROOF_TASKS = [
-    { id: 'pt1', n: { bn: 'Youtube Subscribe', hi: 'Youtube Subscribe', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'चैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'सब्सक्राइब करें', en: 'Subscribe' } },
+    { id: 'pt1', n: { bn: 'Youtube Subscribe', hi: 'Youtube Subscribe', en: 'Youtube Subscribe' }, d: { bn: 'চ্যানেল সাবস্ক্রাইব করুন', hi: 'চैनल सब्सक्राइब करें', en: 'Subscribe Channel' }, r: 40, i: 'fa-youtube', c: '--rd', type: 'proof', link: 'https://youtube.com/@EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'সাবস্ক্রাইব করুন', hi: 'সব্রাইব করুন', en: 'Subscribe' } },
     { id: 'pt2', n: { bn: 'Telegram Join', hi: 'Telegram Join', en: 'Telegram Join' }, d: { bn: 'গ্রুপে জয়েন করুন', hi: 'গ্রুপ में जॉइन करें', en: 'Join Group' }, r: 25, i: 'fa-paper-plane', c: '--bl', type: 'proof', link: 'https://t.me/EarnHubOfficial', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'জয়েন করুন', hi: 'জোন করুন', en: 'Join' } },
     { id: 'pt3', n: { bn: 'Facebook Page Like', hi: 'Facebook Page Like', en: 'Facebook Page Like' }, d: { bn: 'পেজ লাইক ও শেয়ার', hi: 'পেজ লাইক আর শেয়ার', en: 'Page Like & Share' }, r: 35, i: 'fa-facebook', c: '--bl', type: 'proof', link: 'https://facebook.com/EarnHub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'লাইক করুন', hi: 'লাইক করুন', en: 'Like' } },
     { id: 'pt4', n: { bn: 'Tiktok Follow', hi: 'Tiktok Follow', en: 'Tiktok Follow' }, d: { bn: 'টিকটক অ্যাকাউন্ট ফলো', hi: 'টিকটক অ্যাকাউন্ট ফলো', en: 'Follow Tiktok Account' }, r: 30, i: 'fa-tiktok', c: '--pk', type: 'proof', link: 'https://tiktok.com/@earnhub', groupLink: 'https://t.me/EarnHubProof', actionLabel: { bn: 'ফলো করুন', hi: 'ফলো করুন', en: 'Follow' } }
@@ -453,6 +453,16 @@ function startCaptchaSession(type) {
     showPrereqAd(function() {
         if (type === 'grid') { openGridCaptcha(reward, type); } else { openCaptchaModal(type, reward); }
     }, 1); 
+}
+
+// ক্যাপচায় ছোট-বড় অক্ষর মিলিয়ে ইউনিক ক্যারেক্টার জেনারেট করার এপিআই
+function generateMixedCaseCaptcha(length) {
+    var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var result = '';
+    for (var i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
 }
 
 function openCaptchaModal(type, reward) {
@@ -680,6 +690,8 @@ function changeLeaderboardTimeframe(type, timeframe) {
     else if (type === 'ref') { refTimeframe = timeframe; document.querySelectorAll('#pg-ref .tab-bar .tab-btn').forEach(function(btn) { btn.classList.remove('on'); }); document.getElementById('btn-ref-' + timeframe).classList.add('on'); }
     renderAllLeaderboards();
 }
+
+// মক ডাটাতেও আইডি এবং ইউজারনেম ও রিয়েল ইমেজের লিংক যুক্ত করা হলো
 function getCombinedLeaderboardList(metricType, timeframe) {
     var base = allCloudUsers.slice();
     var mocks = [ 
