@@ -1,26 +1,120 @@
-const express = require('express');
-const cors = require('cors');
-const admin = require('firebase-admin');
-const crypto = require('crypto');
-require('dotenv').config();
+export default {
+  async fetch(request, env, ctx) {
+    // CORS headers
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    };
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+    if (request.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
+    }
 
-// ফায়ারবেস অ্যাডমিন কনফিগারেশন
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
-});
+    if (request.method !== "POST") {
+      return new Response(JSON.stringify({ success: false, error: "Only POST allowed" }), {
+        status: 405,
+        headers: { "Content-Type": "application/json", ...corsHeaders }
+      });
+    }
 
-const db = admin.database();
+    try {
+      const { initData, action, userId } = await request.json();
 
-// টেলিগ্রাম ডেটা আসলেই আসল কিনা তা ভেরিফাই করার মেথড
-function verifyTelegramData(initData) {
-  if (!initData) return false;
-  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      // ১. টেলিগ্রাম সেশন সিকিউর ভেরিফিকেশন
+      const isValidTelegram = await verifyTelegramData(initData, env.TELEGRAM_BOT_TOKEN);
+      if (!isValidTelegram) {
+        return new Response(JSON.stringify({ success: false, error: "Unauthorized Telegram session" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        });
+      }
+
+      const dbUrl = env.FIREBASE_DATABASE_URL.replace(/\/$/, ""); 
+      const dbSecret = env.FIREBASE_DATABASE_SECRET;
+
+      const userUrl = `${dbUrl}/users/${userId}.json?auth=${dbSecret}`;
+      const userRes = await fetch(userUrl);
+      if (!userRes.ok) {
+        return new Response(JSON.stringify({ success: false, error: "Firebase Read Error" }), {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        });
+      }
+
+      const userData = await userRes.json();
+      if (!userData) {
+        return new Response(JSON.stringify({ success: false, error: "User not found" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        });
+      }
+
+      let coinsToAdd = 0;
+      let updates = {};
+
+      // ২. অ্যাকশন চেক
+      if (action === 'daily_reward') {
+        const lastClaim = userData.lCD;
+        const today = new Date().toDateString();
+        if (lastClaim === today) {
+          return new Response(JSON.stringify({ success: false, error: "Already claimed today" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+        coinsToAdd = 10;
+        updates.lCD = today;
+      } else if (action === 'captcha') {
+        coinsToAdd = 10;
+      } else if (action === 'ad') {
+        coinsToAdd = 5;
+      } else {
+        return new Response(JSON.stringify({ success: false, error: "Invalid action" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        });
+      }
+
+      const currentCoins = userData.coins || 0;
+      const currentTotalEarned = userData.tE || 0;
+      const newCoins = currentCoins + coinsToAdd;
+
+      updates.coins = newCoins;
+      updates.tE = currentTotalEarned + coinsToAdd;
+
+      // ৩. ডাটাবেজ আপডেট
+      const updateRes = await fetch(userUrl, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates)
+      });
+
+      if (!updateRes.ok) {
+        return new Response(JSON.stringify({ success: false, error: "Firebase Update Error" }), {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        });
+      }
+
+      return new Response(JSON.stringify({ success: true, coins: newCoins }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders }
+      });
+
+    } catch (err) {
+      return new Response(JSON.stringify({ success: false, error: err.message }), {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...corsHeaders }
+      });
+    }
+  }
+};
+
+// টেলিগ্রাম SHA-256 এনক্রিপশন লজিক
+async function verifyTelegramData(initData, botToken) {
+  if (!initData || !botToken) return false;
+  
   const params = new URLSearchParams(initData);
   const hash = params.get('hash');
   params.delete('hash');
@@ -29,66 +123,39 @@ function verifyTelegramData(initData) {
     .map(([key, value]) => `${key}=${value}`)
     .sort()
     .join('\n');
-    
-  const secretKey = crypto.createHmac('sha256', 'WebAppData').update(botToken).digest();
-  const calculatedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
+
+  const encoder = new TextEncoder();
+  
+  const cWebAppData = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode("WebAppData"),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  
+  const secretKeyBuffer = await crypto.subtle.sign(
+    "HMAC",
+    cWebAppData,
+    encoder.encode(botToken)
+  );
+  
+  const cSecretKey = await crypto.subtle.importKey(
+    "raw",
+    secretKeyBuffer,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  
+  const signatureBuffer = await crypto.subtle.sign(
+    "HMAC",
+    cSecretKey,
+    encoder.encode(dataCheckString)
+  );
+  
+  const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+  const calculatedHash = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
   
   return calculatedHash === hash;
 }
-
-// সিকিউর কয়েন ক্লেইম এপিআই
-app.post('/api/claim-coins', async (req, res) => {
-  try {
-    const { initData, action, userId } = req.body;
-    
-    // ১. টেলিগ্রামের সেশন যাচাই
-    if (!verifyTelegramData(initData)) {
-      return res.status(403).json({ success: false, error: 'Unauthorized Telegram session' });
-    }
-    
-    const userRef = db.ref(`users/${userId}`);
-    const snapshot = await userRef.once('value');
-    if (!snapshot.exists()) {
-      return res.status(404).json({ success: false, error: 'User not found' });
-    }
-    
-    const userData = snapshot.val();
-    let coinsToAdd = 0;
-    
-    // ২. প্রতিটি অ্যাকশন অনুযায়ী কয়েন সেট ও সার্ভার ভেরিফিকেশন
-    if (action === 'daily_reward') {
-      const lastClaim = userData.lCD;
-      const today = new Date().toDateString();
-      if (lastClaim === today) {
-        return res.status(400).json({ success: false, error: 'Already claimed today' });
-      }
-      coinsToAdd = 10; // দৈনিক পুরস্কার কয়েন
-      await userRef.update({ lCD: today });
-    } else if (action === 'captcha') {
-      coinsToAdd = 10; // ক্যাপচা রিওয়ার্ড কয়েন
-    } else if (action === 'ad') {
-      coinsToAdd = 5; // বিজ্ঞাপন রিওয়ার্ড কয়েন
-    } else {
-      return res.status(400).json({ success: false, error: 'Invalid action' });
-    }
-    
-    // ৩. ব্যাকএন্ড থেকে নিরাপদে কয়েন আপডেট করা
-    const currentCoins = userData.coins || 0;
-    const currentTotalEarned = userData.tE || 0;
-    const newCoins = currentCoins + coinsToAdd;
-    
-    await userRef.update({
-      coins: newCoins,
-      tE: currentTotalEarned + coinsToAdd
-    });
-    
-    return res.json({ success: true, coins: newCoins });
-    
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, error: 'Server error' });
-  }
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
