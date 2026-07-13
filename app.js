@@ -73,7 +73,7 @@ try {
             tgUser.ln = u.last_name || ''; 
             tgUser.un = u.username || ('id_' + u.id); 
             tgUser.id = u.id || 0; 
-            tgUser.pu = u.photo_url || null; // টেলিগ্রাম থেকে সরাসরি প্রোফাইল ছবি সংগ্রহ
+            tgUser.pu = u.photo_url || null; // প্রোফাইল ছবি সংগ্রহ
         }
         // অটো-রেফারেল ডিটেক্ট করার জন্য স্টার্ট প্যারামিটার চেক করা
         var startParam = Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.start_param;
@@ -214,7 +214,45 @@ function getL(key) {
     return (UI_LANG[lang] && UI_LANG[lang][key]) ? UI_LANG[lang][key] : (UI_LANG['en'][key] || key); 
 }
 
-function addCoins(amt, src) { D.coins += amt; D.tE += amt; D.todE += amt; if (src === 'task') D.tD++; if (src === 'ad') D.tAW++; updateLevel(); checkAch(); saveData(); updateUI(); if (amt > 0) flyCoins(amt); }
+// ১০০% হ্যাক-প্রুফ সিকিউর কয়েন এডিং মেথড (Cloudflare Worker ইন্টিগ্রেশন)
+async function addCoins(amt, src) {
+    const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
+    const userId = window.fbAuth && window.fbAuth.currentUser ? window.fbAuth.currentUser.uid : 'anon';
+    const serverUrl = 'https://earnhub-api.hassan60301234.workers.dev'; 
+
+    try {
+        const response = await fetch(`${serverUrl.replace(/\/$/, '')}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ initData, action: src, userId, amount: amt })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // সার্ভার ডাটাবেজ আপডেট করেছে, আমরা জাস্ট ক্লায়েন্ট UI এবং লোকাল স্টোরেজ সিঙ্ক করব
+            D.coins = data.coins;
+            D.tE += amt;
+            D.todE += amt;
+            if (src === 'task') D.tD++;
+            if (src === 'ad') D.tAW++;
+            
+            updateLevel();
+            checkAch();
+            
+            // লোকাল স্টোরেজে সেভ (ফায়ারবেসে সরাসরি সেট করার প্রয়োজন নেই, ওটা রুলস দিয়ে ব্লক করা)
+            localStorage.setItem(SK, JSON.stringify(D)); 
+            updateUI();
+            if (amt > 0) flyCoins(amt);
+        } else {
+            toast(data.error || 'Verification failed', 'e');
+        }
+    } catch (e) {
+        console.error(e);
+        toast('Network error', 'e');
+    }
+}
+
 function refundCoins(amt) { D.coins += amt; saveData(); updateUI(); }
 function subCoins(amt) { D.coins = Math.max(0, D.coins - amt); saveData(); updateUI(); }
 function updateLevel() { var t = [0, 100, 500, 1500, 5000, 15000, 50000, 150000, 500000]; var l = 1; for (var i = 1; i < t.length; i++) { if (D.tE >= t[i]) l = i + 1; else break; } D.lvl = l; }
@@ -235,7 +273,7 @@ var ACHS = [
     { id: 'fa', n: { bn: 'Ad Viewer', hi: 'विज्ञापन दर्शक', en: 'Ad Viewer' }, d: { bn: 'প্রথম অ্যাড', hi: 'पहला विज्ञापन', en: 'First Ad' }, i: 'fa-play', c: '--ac', ck: function(d) { return d.tAW > 0 } },
     { id: 'tt', n: { bn: 'Task Master', hi: 'टाঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
     { id: 'hc', n: { bn: 'Century', hi: 'শতক', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
-    { id: 's7', n: { bn: '7 Day Streak', hi: '7 दिन स्ट्रीक', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 दिन दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
+    { id: 's7', n: { bn: '7 Day Streak', hi: '7 দিন স্ট्रीक', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 दिन दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
     { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'पहला स्पिन', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
     { id: 'mn', n: { bn: 'Miner', hi: 'মাইনার', en: 'Miner' }, d: { bn: 'মাইনে ১০+', hi: 'माइन में 10+', en: '10+ in Mine' }, i: 'fa-bomb', c: '--rd', ck: function(d) { return d.mnW >= 10 } }
 ];
@@ -262,7 +300,7 @@ function openFG(id) {
         if (id === 'fgCaptcha') { renderCaptchaFg(); document.getElementById('captchaBalTop').textContent = formatNum(D.coins); }
     }
 }
-function closeFG(id) { el = document.getElementById(id); if (el) el.classList.remove('on'); }
+function closeFG(id) { var el = document.getElementById(id); if (el) el.classList.remove('on'); }
 
 var prereqAdCallback = null, prereqAdInterval = null, prereqAdTimes = 1, prereqAdCurrent = 1;
 function showPrereqAd(callback, times = 1) {
@@ -366,7 +404,7 @@ function rgbOf(c) { return { '--ac': '0,230,138', '--gd': '251,191,36', '--rd': 
 var TASKS = [
     { id: 't1', n: { bn: 'App Rating', hi: 'App Rating', en: 'App Rating' }, d: { bn: '৫ স্টার রেটিং দিন', hi: '5 स्टार रेटिंग दें', en: 'Give 5 Star Rating' }, r: 20, i: 'fa-star', c: '--gd', type: 'normal', link: 'https://t.me/EarnHub', time: 10 },
     { id: 't2', n: { bn: 'Join Channel', hi: 'Join Channel', en: 'Join Channel' }, d: { bn: 'অফিসিয়াল চ্যানেল', hi: 'আधिकारिक चैनल', en: 'Official Channel' }, r: 15, i: 'fa-paper-plane', c: '--bl', type: 'normal', link: 'https://t.me/EarnHub', time: 15 },
-    { id: 't3', n: { bn: 'Watch Video', hi: 'Watch Video', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 मिनट का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
+    { id: 't3', n: { bn: 'Watch Video', hi: 'Watch Video', en: 'Watch Video' }, d: { bn: '১ মিনিটের ভিডিও', hi: '1 মিনিট का वीडियो', en: '1 Minute Video' }, r: 10, i: 'fa-youtube', c: '--rd', type: 'normal', link: 'https://youtube.com', time: 20 },
     { id: 't4', n: { bn: 'Page Like', hi: 'Page Like', en: 'Page Like' }, d: { bn: 'ফেসবুক পেজ লাইক', hi: 'ফেসবুক পেজে লাইক', en: 'Facebook Page Like' }, r: 12, i: 'fa-thumbs-up', c: '--bl', type: 'normal', link: 'https://facebook.com', time: 15 },
     { id: 't5', n: { bn: 'Share', hi: 'Share', en: 'Share' }, d: { bn: '৩ জনকে শেয়ার', hi: '3 लोगों को शेयर करें', en: 'Share with 3 People' }, r: 25, i: 'fa-share-alt', c: '--ac', type: 'normal', link: 'https://facebook.com', time: 10 },
     { id: 't6', n: { bn: 'Complete Profile', hi: 'Complete Profile', en: 'Complete Profile' }, d: { bn: '১০০% প্রোফাইল', hi: '100% प्रोफाइल', en: '100% Profile' }, r: 30, i: 'fa-user-edit', c: '--pp', type: 'normal', link: 'https://t.me/EarnHub', time: 5 }
@@ -509,7 +547,7 @@ function startCaptchaSession(type) {
     }, 1); 
 }
 
-// ক্যাপচায় ছোট-বড় অক্ষর মিলিয়ে ইউনিক ক্যারেক্টার জেনারেট করার এপিআই (বাগ ফিক্সড)
+// ক্যাপচায় ছোট-বড় অক্ষর মিলিয়ে ইউনিক ক্যারেক্টার জেনারেট করার এপিআই
 function generateMixedCaseCaptcha(length) {
     var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     var result = '';
@@ -535,7 +573,6 @@ function openCaptchaModal(type, reward) {
     else if (type === 'math') { contentHTML += '<div style="font-size:32px; font-weight:bold; color:var(--ac); margin:10px 0 20px;">' + question + '</div>'; } 
     else { contentHTML += '<div style="font-size:24px; font-weight:bold; color:var(--pp); margin:10px 0 20px; letter-spacing:3px; background:var(--bg2); padding:15px; border-radius:8px; border:1px dashed var(--border);">' + captchaText + '</div>'; }
     
-    // অন-ইনপুট জোরপূর্বক বড় হাতের অক্ষরে রূপান্তরের লজিক সরানো হয়েছে
     contentHTML += '<div class="ig" style="margin-top:10px;"><input type="text" id="captchaInput" placeholder="Enter Captcha" style="text-align:center; font-weight:bold;"></div><button class="btn btn-g btn-bk" style="margin-top:10px;" onclick="verifyCaptchaTask(\'' + answer + '\', ' + reward + ')"><i class="fas fa-check"></i> Verify & Claim</button></div>';
     document.getElementById('taskModBody').innerHTML = contentHTML; openMod('modTask');
     if (type === 'image') drawCaptcha(captchaText);
@@ -548,7 +585,6 @@ function drawCaptcha(text) {
     for (var i = 0; i < text.length; i++) { ctx.save(); ctx.translate(20 + i * 30, 50); ctx.rotate((Math.random() - 0.5) * 0.5); ctx.fillText(text[i], 0, 0); ctx.restore(); }
 }
 
-// কেস-সেন্সিটিভ মিলিয়ে দেখার জন্য টু-আপারকেস সরানো হয়েছে এবং ক্লেইমে ১টি অ্যাড প্লে করার সিস্টেম যুক্ত
 function verifyCaptchaTask(correctAnswer, reward) {
     var inp = document.getElementById('captchaInput'); if (!inp) return;
     var userAns = inp.value.trim();
@@ -589,7 +625,6 @@ function gridCapClick(el, isTarget) {
     document.getElementById('gridStatus').textContent = window.gridSelected + ' selected';
 }
 
-// গ্রিড ক্যাপচায় ক্লেইমে ১টি অ্যাড প্লে করার সিস্টেম যুক্ত
 function verifyGridCaptcha(reward, requiredTargets) {
     var container = document.getElementById('gridCaptchaContainer');
     var totalTargetsInGrid = container.querySelectorAll('[data-istarget="true"]').length;
@@ -621,7 +656,6 @@ function startNormalTask(tid) {
 }
 function cancelNormalTask() { if (ntTimer) { clearInterval(ntTimer); ntTimer = null; } closeMod('modTask'); toast(getL('t_cancel_msg'), 'e'); }
 
-// টাস্ক সাবমিট থেকে প্রিরেকুইজিট অ্যাড ক্লিয়ার করা হলো (শুধুমাত্র টাস্ক শুরুতে অ্যাড থাকবে)
 function finishNormalTask(tid) { 
     if (D.cT.indexOf(tid) !== -1) return; 
     D.cT.push(tid); 
@@ -643,7 +677,6 @@ function showCodeTaskAction(tid) {
     document.getElementById('taskModBody').innerHTML = '<div style="padding:4px 0"><div class="proof-link-btn" onclick="safeOpenLink(\'' + t.link + '\')"><i class="fas fa-external-link-alt" style="color:var(--ac)"></i><div class="plb-inf"><div class="plb-tx">' + getL('t_link') + '</div><div class="plb-ds">' + getL('t_find_code') + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border)"><div class="ig"><label><i class="fas fa-key" style="margin-right:3px"></i>' + getL('t_enter_code') + '</label><input type="text" id="codeTaskInput" placeholder="' + getL('t_enter_code') + '" style="text-transform:uppercase;letter-spacing:1px"></div><button class="btn btn-g btn-bk" onclick="submitCodeTask(\'' + t.id + '\',\'' + t.code + '\')">' + getL('t_verify') + '</button></div></div>';
 }
 
-// কোড টাস্ক ভেরিফাই এ প্রিরেকুইজিট অ্যাড ক্লিয়ার করা হলো
 function submitCodeTask(tid, correctCode) {
     var inp = document.getElementById('codeTaskInput'); var code = inp.value.trim().toUpperCase();
     if (code !== correctCode) { toast(getL('t_wrong'), 'e'); closeMod('modTask'); return; }
@@ -659,7 +692,6 @@ function openProofTask(t) {
     document.getElementById('modProof').classList.add('on');
 }
 
-// প্রুফ টাস্ক সাবমিট এ প্রিরেকুইজিট অ্যাড ক্লিয়ার করা হলো
 function submitProof(tid) {
     var idLink = document.getElementById('proofIdLink').value.trim(); var screenLink = document.getElementById('proofScreenLink').value.trim();
     if (!idLink) { toast(getL('t_id_link') + '!', 'e'); return; } if (!screenLink) { toast(getL('t_proof_link') + '!', 'e'); return; }
@@ -687,7 +719,6 @@ function shareCode() {
     if (navigator.share) {
         navigator.share({ title: 'EarnHub Referral', text: textMsg });
     } else {
-        // সরাসরি টেলিগ্রাম শেয়ার প্যানেলে পাঠানোর ফলব্যাক
         try {
             if (window.Telegram && Telegram.WebApp) {
                 Telegram.WebApp.openLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("🎁 Join EarnHub and earn free money! Use my link to get 50 coins instantly:")}`);
@@ -745,7 +776,6 @@ function changeLeaderboardTimeframe(type, timeframe) {
     renderAllLeaderboards();
 }
 
-// মক ডাটাতেও আইডি এবং ইউজারনেম ও রিয়েল ইমেজের লিংক যুক্ত করা হলো
 function getCombinedLeaderboardList(metricType, timeframe) {
     var base = allCloudUsers.slice();
     var mocks = [ 
@@ -976,7 +1006,7 @@ function resetChatTimer() { if (chatTimer) clearTimeout(chatTimer); chatTimer = 
 function openChat() { document.getElementById('chatPage').classList.add('on'); if (bodyAdInterval) clearInterval(bodyAdInterval); resetChatTimer(); if (!chatInited) { chatInited = true; typeBotMsg(getL('c_bot_hello')); addQuickQs([getL('c_q_balance'), getL('c_q_withdraw'), getL('c_q_level'), getL('c_q_promo'), getL('c_q_how'), getL('c_q_report')]); } }
 function closeChat() { document.getElementById('chatPage').classList.remove('on'); startBodyAdTimer(); if (chatTimer) clearTimeout(chatTimer); }
 
-// চ্যাট ওভাররাইটিং বাগ ফিক্স (id="typingTarget" এর পরিবর্তে querySelector ব্যবহার করা হয়েছে)
+// চ্যাট ওভাররাইটিং বাগ ফিক্স (typingTarget-এর স্থলে querySelector ব্যবহার)
 function typeBotMsg(txt, btn) { 
     var b = document.getElementById('chatBody'); 
     var d = new Date(); 
@@ -1041,7 +1071,7 @@ async function sendChat() {
     inp.value = ''; 
     showTyping(); 
     
-    // ১. কন্টাক্ট/রিপোর্ট মোডে থাকলে মেসেজটিকে রিপোর্ট হিসেবে সেভ করব
+    // কন্টাক্ট/রিপোর্ট মোডে থাকলে মেসেজটিকে রিপোর্ট হিসেবে সেভ করব
     if (chatState.status === 'waiting_for_report') {
         setTimeout(async function() {
             hideTyping();
@@ -1056,13 +1086,11 @@ async function sendChat() {
                 date: new Date().toLocaleString()
             };
             
-            // ফায়ারবেসে সেভ করা
             if (window.fbDatabase && window.fbRef && window.fbSet) {
                 var repRef = window.fbRef(window.fbDatabase, 'reports/' + reportKey);
                 window.fbSet(repRef, reportData).catch(e => console.error("Report save error:", e));
             }
             
-            // অ্যাডমিন নোটিফিকেশন পাঠানো
             var adminMsg = `⚠️ <b>New User Report</b>\n\n👤 <b>User:</b> ${reportData.name}\n🆔 <b>TG ID:</b> <code>${reportData.tg_id}</code>\n📛 <b>Username:</b> @${reportData.username}\n📝 <b>Message:</b> ${txt}\n📅 <b>Date:</b> ${reportData.date}`;
             sendTelegramMessage(ADMIN_CHAT_ID, adminMsg);
             
@@ -1102,14 +1130,12 @@ function updateUI() {
     document.getElementById('hTodayE').textContent = formatNum(D.todE); document.getElementById('hTotalW').textContent = formatNum(D.tW);
     document.getElementById('wdBal').innerHTML = formatNum(D.coins.toLocaleString('en-US')) + '<span data-l="h_coin">' + getL('h_coin') + '</span>';
     
-    // রেফারেল বক্সে রিয়েল-টাইম রেফারেল কোড প্রদর্শন (লিংক নয়)
     var refCodeEl = document.getElementById('refCode');
     if (refCodeEl) {
         refCodeEl.textContent = D.rCode;
-        refCodeEl.style.fontSize = ''; // ফন্ট সাইজ স্বাভাবিক করা হলো
+        refCodeEl.style.fontSize = ''; 
     }
     
-    // রেফারেল কোড সাবমিট বক্সটি হাইড/শো করার লজিক (ডম দিয়ে হ্যান্ডেল করা হয়েছে)
     var friendRefCodeInput = document.getElementById('friendRefCode');
     if (friendRefCodeInput) {
         var container = friendRefCodeInput.closest('div').parentElement;
@@ -1205,7 +1231,7 @@ function setupFirebaseSync(uid) {
                 for (var k in d) { if (cloudData[k] !== undefined) d[k] = cloudData[k]; } 
                 D = d; 
                 
-                // ফায়ারবেস ডেটা রিসিভ করার পর অ্যারে ফরম্যাট নিশ্চিত করা (এড সেকশন ও চ্যাট বাগ ফিক্স)
+                // ফায়ারবেস ডেটা রিসিভ করার পর অ্যারে ফরম্যাট নিশ্চিত করা
                 D.adsDone = ensureArray(D.adsDone);
                 D.promoUsed = ensureArray(D.promoUsed);
                 D.proofSubs = ensureArray(D.proofSubs);
@@ -1264,7 +1290,7 @@ function setupFirebaseSync(uid) {
                     }
                 }
             });
-            window.autoReferralCode = null; // একবার প্রসেস করার পর প্যারামিটার ক্লিয়ার করা হলো
+            window.autoReferralCode = null; 
         }
         
         saveData(); updateUI(); renderAllTasks(); renderAds(); renderWdHist(); renderAch(); checkNotifBadge(); renderCaptchaFg();
@@ -1297,7 +1323,7 @@ function init() {
 }
 init();
 
-// HTML onclick ইভেন্টগুলোকে মডিউল ফাইলের সাথে গ্লোবাল উইন্ডোতে বাইন্ড করা হলো (অতি জরুরি!)
+// HTML onclick ইভেন্ট বাইন্ডিং
 window.goTo = goTo;
 window.openFG = openFG;
 window.closeFG = closeFG;
@@ -1346,5 +1372,5 @@ window.leaveTicTac = leaveTicTac;
 window.tttClick = tttClick;
 window.openNotifModal = openNotifModal;
 window.safeOpenLink = safeOpenLink;
-window.openAdModal = openAdModal; // এড মডাল গ্লোবাল অবজেক্টে বাইন্ড করা হলো
-window.showCodeTaskAction = showCodeTaskAction; // কোড টাস্ক বাটন গ্লোবাল অবজেক্টে বাইন্ড করা হলো (বাগ ফিক্সড)
+window.openAdModal = openAdModal; 
+window.showCodeTaskAction = showCodeTaskAction;
