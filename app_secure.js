@@ -31,11 +31,11 @@ try {
     window.fbRemove = remove;
 } catch (e) { console.error("Firebase init error:", e); }
 
-const BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
-const BOT_USERNAME = "YourTelegramBotUsername"; 
+const BOT_TOKEN = "8219024307:AAFahhYYcJTU1WXnkfHcTCN9cIBkFCZzGeg";
+const BOT_USERNAME = "@t_earnhube_bot"; 
 const APP_SHORTNAME = "app"; 
 const ADMIN_CHAT_ID = "YOUR_ADMIN_CHAT_ID";
-const CHANNEL_USERNAME = "@YourChannelUsername";
+const CHANNEL_USERNAME = "@real_time_earn";
 
 var SK = 'eh_v21';
 var ntTimer = null;
