@@ -45,6 +45,7 @@ var allCloudUsers = [];
 var homeTimeframe = 'daily';
 var refTimeframe = 'daily';
 var captchaConfig = { limit: 20, rewards: { image: 10, math: 15, text: 12, grid: 20 } };
+var systemSettings = {}; // অ্যাডমিন সেটিংস লোকাল ক্যাশ হোল্ডার
 
 var chatState = { status: 'idle' };
 
@@ -266,10 +267,10 @@ function redeemPromo() {
 var ACHS = [
     { id: 'fe', n: { bn: 'First Earn', hi: 'पहली कमाई', en: 'First Earn' }, d: { bn: 'প্রথমবার কয়েন আয়', hi: 'पहली बार कॉइन कमाएं', en: 'Earn coins first time' }, i: 'fa-seedling', c: '--ac', ck: function(d) { return d.tE > 0 } },
     { id: 'fa', n: { bn: 'Ad Viewer', hi: 'বিজ্ঞাপন দর্শক', en: 'Ad Viewer' }, d: { bn: 'প্রথম বিজ্ঞাপন', hi: 'প্রথম বিজ্ঞাপন', en: 'First Ad' }, i: 'fa-play', c: '--ac', ck: function(d) { return d.tAW > 0 } },
-    { id: 'tt', n: { bn: 'Task Master', hi: 'टाঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
+    { id: 'tt', n: { bn: 'Task Master', hi: 'টাঙ্ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
     { id: 'hc', n: { bn: 'Century', hi: 'শতক', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
     { id: 's7', n: { bn: '7 Day Streak', hi: '7 দিন স্ট्रीক', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 দিন दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
-    { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'पहला स्पिन', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
+    { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'প্রথম স্পিন', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
     { id: 'mn', n: { bn: 'Miner', hi: 'মাইনার', en: 'Miner' }, d: { bn: 'মাইনে ১০+', hi: 'মাইন में 10+', en: '10+ in Mine' }, i: 'fa-bomb', c: '--rd', ck: function(d) { return d.mnW >= 10 } }
 ];
 
@@ -286,7 +287,19 @@ function goTo(p) {
 function closeMod(id) { var m = document.getElementById(id); if (m) m.classList.remove('on'); if (ntTimer) { clearInterval(ntTimer); ntTimer = null; } }
 function openMod(id) { var m = document.getElementById(id); if (m) m.classList.add('on'); }
 
+// গেম সেটিংস ডাইনামিক চেকার ও ব্লকার
+function isGameActive(gameKey) {
+    if (systemSettings && systemSettings.games && systemSettings.games[gameKey]) {
+        return systemSettings.games[gameKey].active;
+    }
+    return true; 
+}
+
 function openFG(id) {
+    if (id === 'fgSpin' && !isGameActive('lucky_spin')) { toast('This game is currently disabled by Admin!', 'e'); return; }
+    if (id === 'fgMine' && !isGameActive('coin_mine')) { toast('This game is currently disabled by Admin!', 'e'); return; }
+    if (id === 'fgTicTac' && !isGameActive('tic_tac_toe')) { toast('This game is currently disabled by Admin!', 'e'); return; }
+
     var el = document.getElementById(id); if (el) { el.classList.add('on'); applyLanguage();
         if (id === 'fgSpin') { drawWheel(); document.getElementById('spinBalTop').textContent = formatNum(D.coins); document.getElementById('spinCost').textContent = formatNum(10); document.getElementById('spinMax').textContent = formatNum(100); }
         if (id === 'fgMine') { renderMineGrid(); updateMineUI(); document.getElementById('mineBalTop').textContent = formatNum(D.coins); }
@@ -400,7 +413,7 @@ var DAILY_TASKS = [];
 var CODE_TASKS = [];
 var PROOF_TASKS = [];
 var NOTIFS = [
-    { id: 'n1', t: { bn: 'নতুন টিকটাক টো গেম!', en: 'New Tic Tac Toe Game!', hi: 'नया टिक टैक टो गेम!' }, d: { bn: 'টিকটাক টো গেম খেলে আপনার বন্ধুদের সাথে বা এআই এর সাথে কয়েন বাজি ধরে আনলিমিটেড ইনকাম করুন।', en: 'Play Tic Tac Toe with AI or random players to earn massive coins.', hi: 'एआई या दोस्तों के साथ टिक टैक टो खेलें और भारी कॉইন জিতুন।' }, date: '28/06/2026' },
+    { id: 'n1', t: { bn: 'নতুন টিকটাক টো গেম!', en: 'New Tic Tac Toe Game!', hi: 'नया टिक टैक टो गेम!' }, d: { bn: 'টিকটাক টো গেম খেলে আপনার বন্ধুদের সাথে বা এআই এর সাথে কয়েন বাজি ধরে আনলিমিটেড ইনকাম করুন।', en: 'Play Tic Tac Toe with AI or random players to earn massive coins.', hi: 'এআই বা বন্ধুদের সাথে টিক ট্যাক টো খেলেন এবং ভারী কয়েন জিতুন।' }, date: '28/06/2026' },
     { id: 'n2', t: { bn: 'সরাসরি দ্রুত পেমেন্ট সিস্টেম', en: 'Instant Withdraw Support', hi: 'ত্বরিত निकासी सहायता' }, d: { bn: 'বিকাশ, নগদ এবং রকেটে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে নিশ্চিন্তে টাকা পেমেন্ট পান।', en: 'Withdraw payments reliably to bKash, Nagad, and Rocket within 24-48 hours.', hi: 'বিকাশ, নগদ এবং রকেট পার ২৪-৪৮ ঘণ্টায় গ্যারান্টিড পেমেন্ট পান।' }, date: '27/06/2026' }
 ];
 
@@ -408,61 +421,86 @@ function isTaskDone(tid) { return D.cT.indexOf(tid) !== -1 || D.cO.indexOf(tid) 
 function checkNotifBadge() { var unread = NOTIFS.some(function(n) { return D.readNotifs.indexOf(n.id) === -1; }); var badge = document.getElementById('notifBadge'); if (badge) badge.style.display = unread ? 'block' : 'none'; }
 function openNotifModal() { var b = document.getElementById('notifBody'); if (!b) return; b.innerHTML = ''; NOTIFS.forEach(function(n) { var title = n.t[D.lang] || n.t['en']; var desc = n.d[D.lang] || n.d['en']; b.innerHTML += `<div class="notif-item"><div class="notif-h"><div class="notif-t"><i class="fas fa-bullhorn" style="color:var(--ac);margin-right:4px"></i>${title}</div><div class="notif-date">${n.date}</div></div><div class="notif-d">${desc}</div></div>`; if (D.readNotifs.indexOf(n.id) === -1) { D.readNotifs.push(n.id); } }); saveData(); checkNotifBadge(); openMod('modNotif'); }
 
+// অ্যাডমিন প্যানেল স্কিমা ম্যাপিং হেল্পারস
+function getTaskName(t) { if (!t) return ''; return t.name || getLangText(t.n) || ''; }
+function getTaskDesc(t) { if (!t) return ''; return t.desc || getLangText(t.d) || ''; }
+function getTaskReward(t) { if (!t) return 0; return t.reward !== undefined ? Number(t.reward) : (t.r || 0); }
+function getTaskTimer(t) { if (!t) return 0; return t.timer !== undefined ? Number(t.timer) : (t.time || 0); }
+function getTaskProofGroup(t) { if (!t) return ''; return t.proofGroup || t.groupLink || ''; }
+
+// ৩টি ক্যাটাগরিতে বিভক্ত টাস্ক সেকশন (নরমাল, কোড এবং প্রুফ টাস্কস)
 function renderAllTasks() {
-    var hc = document.getElementById('homeTasks'); if (hc) { hc.innerHTML = ''; var fragment = document.createDocumentFragment(); var allForHome = TASKS.slice(0, 3); for (var i = 0; i < allForHome.length; i++) { var el = createTaskEl(allForHome[i]); if (el) fragment.appendChild(el); } hc.appendChild(fragment); }
-    var ec = document.getElementById('et-tsk'); if (ec) {
-        ec.innerHTML = ''; var sectionFragment = document.createDocumentFragment();
-        
-        var hasNormal = false;
-        var normalTitle = document.createElement('div'); normalTitle.className = 'task-section-title'; normalTitle.innerHTML = '<i class="fas fa-star" style="color:var(--gd);margin-right:3px"></i>' + getL('t_normal_sec');
-        for (var i = 0; i < TASKS.length; i++) { 
-            var el = createTaskEl(TASKS[i]); 
-            if (el) { 
-                if (!hasNormal) { sectionFragment.appendChild(normalTitle); hasNormal = true; }
-                sectionFragment.appendChild(el); 
-            } 
+    var ec = document.getElementById('et-tsk'); if (!ec) return;
+    ec.innerHTML = ''; 
+    var fragment = document.createDocumentFragment();
+    
+    // ১. নরমাল টাস্ক (Normal Tasks)
+    var normalTasks = [];
+    TASKS.concat(D.adminTasks || []).forEach(function(t) {
+        if (t.type === 'normal' && !isTaskDone(t.id)) { normalTasks.push(t); }
+    });
+    if (normalTasks.length > 0) {
+        var title = document.createElement('div');
+        title.className = 'task-section-title';
+        title.innerHTML = '<i class="fas fa-tasks" style="color:var(--ac);margin-right:5px"></i> নরমাল টাস্ক (Normal Tasks)';
+        fragment.appendChild(title);
+        normalTasks.forEach(function(t) {
+            var el = createTaskEl(t); if (el) fragment.appendChild(el);
+        });
+    }
+    
+    // ২. কোড টাস্ক (Code Tasks)
+    var codeTasks = [];
+    CODE_TASKS.concat(D.adminTasks || []).forEach(function(t) {
+        if (t.type === 'code' && !isTaskDone(t.id)) { codeTasks.push(t); }
+    });
+    if (codeTasks.length > 0) {
+        var title = document.createElement('div');
+        title.className = 'task-section-title';
+        title.innerHTML = '<i class="fas fa-key" style="color:var(--pp);margin-right:5px"></i> কোড টাস্ক (Code Tasks)';
+        fragment.appendChild(title);
+        codeTasks.forEach(function(t) {
+            var el = createTaskEl(t); if (el) fragment.appendChild(el);
+        });
+    }
+    
+    // ৩. প্রুফ টাস্ক (Proof Tasks)
+    var proofTasks = [];
+    var cloudProofTasks = D.adminProofTasks || [];
+    PROOF_TASKS.concat(cloudProofTasks).forEach(function(t) {
+        if (!isTaskDone(t.id)) { proofTasks.push(t); }
+    });
+    if (proofTasks.length > 0) {
+        var title = document.createElement('div');
+        title.className = 'task-section-title';
+        title.innerHTML = '<i class="fas fa-camera" style="color:var(--rd);margin-right:5px"></i> প্রুফ টাস্ক (Proof Tasks)';
+        fragment.appendChild(title);
+        proofTasks.forEach(function(t) {
+            var el = createTaskEl(t); if (el) fragment.appendChild(el);
+        });
+    }
+    
+    if (normalTasks.length === 0 && codeTasks.length === 0 && proofTasks.length === 0) {
+        var noTask = document.createElement('div');
+        noTask.style.cssText = 'text-align:center; padding:30px; color:var(--mt); font-size:12px;';
+        noTask.textContent = 'No tasks available!';
+        fragment.appendChild(noTask);
+    }
+    
+    ec.appendChild(fragment);
+    
+    // হোম পেজের টপ টাস্ক রেন্ডারিং
+    var hc = document.getElementById('homeTasks'); 
+    if (hc) { 
+        hc.innerHTML = ''; 
+        var hFragment = document.createDocumentFragment(); 
+        var count = 0;
+        for (var i = 0; i < normalTasks.length; i++) {
+            if (count >= 3) break;
+            var el = createTaskEl(normalTasks[i]);
+            if (el) { hFragment.appendChild(el); count++; }
         }
-        
-        var hasDaily = false;
-        var dailyTitle = document.createElement('div'); dailyTitle.className = 'task-section-title'; dailyTitle.innerHTML = '<i class="fas fa-calendar-day" style="color:var(--ac);margin-right:3px"></i>' + getL('t_daily_sec');
-        for (var i = 0; i < DAILY_TASKS.length; i++) { 
-            var el = createTaskEl(DAILY_TASKS[i]); 
-            if (el) { 
-                if (!hasDaily) { sectionFragment.appendChild(dailyTitle); hasDaily = true; }
-                sectionFragment.appendChild(el); 
-            } 
-        }
-        
-        var hasAdmin = false;
-        var adminTitle = document.createElement('div'); adminTitle.className = 'task-section-title'; adminTitle.innerHTML = '<i class="fas fa-user-shield" style="color:var(--ac);margin-right:3px"></i>' + getL('t_admin_sec');
-        for (var i = 0; i < D.adminTasks.length; i++) { 
-            var el = createTaskEl(D.adminTasks[i]); 
-            if (el) { 
-                if (!hasAdmin) { sectionFragment.appendChild(adminTitle); hasAdmin = true; }
-                sectionFragment.appendChild(el); 
-            } 
-        }
-        
-        var hasCode = false;
-        var codeTitle = document.createElement('div'); codeTitle.className = 'task-section-title'; codeTitle.innerHTML = '<i class="fas fa-key" style="color:var(--pp);margin-right:3px"></i>' + getL('t_code_sec');
-        for (var i = 0; i < CODE_TASKS.length; i++) { 
-            var el = createTaskEl(CODE_TASKS[i]); 
-            if (el) { 
-                if (!hasCode) { sectionFragment.appendChild(codeTitle); hasCode = true; }
-                sectionFragment.appendChild(el); 
-            } 
-        }
-        
-        var hasProof = false;
-        var proofTitle = document.createElement('div'); proofTitle.className = 'task-section-title'; proofTitle.innerHTML = '<i class="fas fa-camera" style="color:var(--rd);margin-right:3px"></i>' + getL('t_proof_sec');
-        for (var i = 0; i < PROOF_TASKS.length; i++) { 
-            var el = createTaskEl(PROOF_TASKS[i]); 
-            if (el) { 
-                if (!hasProof) { sectionFragment.appendChild(proofTitle); hasProof = true; }
-                sectionFragment.appendChild(el); 
-            } 
-        }
-        ec.appendChild(sectionFragment);
+        hc.appendChild(hFragment); 
     }
 }
 
@@ -473,13 +511,13 @@ function createTaskEl(t) {
     var el = document.createElement('div'); el.className = 'tk';
     var badgeCls = { daily: 'daily', code: 'code', proof: 'proof', normal: 'normal' } [t.type] || 'normal';
     var badgeTx = { daily: getL('t_daily'), code: getL('t_code'), proof: getL('t_proof'), normal: getL('t_normal') } [t.type] || getL('t_normal');
-    var tName = getLangText(t.n); var tDesc = getLangText(t.d);
-    el.innerHTML = '<div class="tk-ic" style="background:rgba(' + rgbOf(t.c) + ',.12);color:var(' + t.c + ')"><i class="fas ' + t.i + '"></i></div><div class="tk-inf"><div class="tk-nm" id="task-title-' + t.id + '">' + tName + ' <span class="tk-badge ' + badgeCls + '">' + badgeTx + '</span></div><div class="tk-ds" id="task-desc-' + t.id + '">' + tDesc + '</div></div><div class="tk-rw">+' + formatNum(t.r) + '</div>';
-    if (D.adminTasks.indexOf(t) !== -1 && D.lang && D.lang !== 'en') {
-        var originalName = (typeof t.n === 'object') ? (t.n.en || t.n.bn) : t.n; var originalDesc = (typeof t.d === 'object') ? (t.d.en || t.d.bn) : t.d;
-        translateText(originalName, D.lang).then(function(trans) { var titleEl = document.getElementById('task-title-' + t.id); if (titleEl) titleEl.innerHTML = trans + ' <span class="tk-badge ' + badgeCls + '">' + badgeTx + '</span>'; });
-        translateText(originalDesc, D.lang).then(function(trans) { var descEl = document.getElementById('task-desc-' + t.id); if (descEl) descEl.textContent = trans; });
-    }
+    
+    var tName = getTaskName(t); 
+    var tDesc = getTaskDesc(t);
+    var tReward = getTaskReward(t);
+    
+    el.innerHTML = '<div class="tk-ic" style="background:rgba(' + rgbOf(t.c || '--ac') + ',.12);color:var(' + (t.c || '--ac') + ')"><i class="fas ' + (t.i || 'fa-tasks') + '"></i></div><div class="tk-inf"><div class="tk-nm" id="task-title-' + t.id + '">' + tName + ' <span class="tk-badge ' + badgeCls + '">' + badgeTx + '</span></div><div class="tk-ds" id="task-desc-' + t.id + '">' + tDesc + '</div></div><div class="tk-rw">+' + formatNum(tReward) + '</div>';
+    
     (function(task) { el.onclick = function() { showPrereqAd(function() { openTaskByType(task); }, 1); }; })(t);
     return el;
 }
@@ -609,18 +647,28 @@ function verifyGridCaptcha(reward, requiredTargets) {
 }
 
 function openNormalTask(t) {
-    document.getElementById('taskModTitle').textContent = getLangText(t.n);
-    document.getElementById('taskModBody').innerHTML = '<div style="text-align:center;padding:12px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(' + rgbOf(t.c) + ',.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px"><i class="fas ' + t.i + '" style="font-size:22px;color:var(' + t.c + ')"></i></div><h3 style="margin-bottom:4px;font-size:14px">' + getLangText(t.n) + '</h3><p style="font-size:10px;color:var(--mt);margin-bottom:10px">' + getLangText(t.d) + '</p><div style="font-size:20px;font-weight:800;color:var(--ac);margin-bottom:12px;font-family:Space Grotesk">+' + formatNum(t.r) + ' ' + getL('h_coin') + '</div><div style="text-align:left;background:var(--bg2);padding:10px;border-radius:8px;margin-bottom:12px"><div style="font-size:10px;font-weight:800;color:var(--ac);margin-bottom:5px"><i class="fas fa-info-circle"></i> ' + getL('t_instruction') + '</div><p style="font-size:9px;color:var(--mt);line-height:1.5">' + getL('t_step1') + '<br>' + getL('t_step2') + ' (' + formatNum(t.time) + 's)<br>' + getL('t_step3') + '<br><span style="color:var(--rd)">' + getL('t_warn') + '</span></p></div><button class="btn btn-p btn-bk" onclick="startNormalTask(\'' + t.id + '\')">' + getL('t_start') + '</button></div>';
+    var tName = getTaskName(t);
+    var tDesc = getTaskDesc(t);
+    var tReward = getTaskReward(t);
+    var tTime = getTaskTimer(t);
+    
+    document.getElementById('taskModTitle').textContent = tName;
+    document.getElementById('taskModBody').innerHTML = '<div style="text-align:center;padding:12px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(' + rgbOf(t.c || '--ac') + ',.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px"><i class="fas ' + (t.i || 'fa-tasks') + '" style="font-size:22px;color:var(' + (t.c || '--ac') + ')"></i></div><h3 style="margin-bottom:4px;font-size:14px">' + tName + '</h3><p style="font-size:10px;color:var(--mt);margin-bottom:10px">' + tDesc + '</p><div style="font-size:20px;font-weight:800;color:var(--ac);margin-bottom:12px;font-family:Space Grotesk">+' + formatNum(tReward) + ' ' + getL('h_coin') + '</div><div style="text-align:left;background:var(--bg2);padding:10px;border-radius:8px;margin-bottom:12px"><div style="font-size:10px;font-weight:800;color:var(--ac);margin-bottom:5px"><i class="fas fa-info-circle"></i> ' + getL('t_instruction') + '</div><p style="font-size:9px;color:var(--mt);line-height:1.5">' + getL('t_step1') + '<br>' + getL('t_step2') + ' (' + formatNum(tTime) + 's)<br>' + getL('t_step3') + '<br><span style="color:var(--rd)">' + getL('t_warn') + '</span></p></div><button class="btn btn-p btn-bk" onclick="startNormalTask(\'' + t.id + '\')">' + getL('t_start') + '</button></div>';
     openMod('modTask');
 }
 function startNormalTask(tid) {
-    var t = TASKS.find(function(x) { return x.id === tid; }) || D.adminTasks.find(function(x) { return x.id === tid; }); if (!t) return; safeOpenLink(t.link); var tl = t.time;
-    document.getElementById('taskModTitle').textContent = getLangText(t.n);
+    var t = TASKS.find(function(x) { return x.id === tid; }) || (D.adminTasks || []).find(function(x) { return x.id === tid; }); 
+    if (!t) return; 
+    safeOpenLink(t.link); 
+    var tl = getTaskTimer(t);
+    if (tl <= 0) tl = 15;
+    
+    document.getElementById('taskModTitle').textContent = getTaskName(t);
     document.getElementById('taskModBody').innerHTML = '<div style="text-align:center;padding:20px 0"><i class="fas fa-clock" style="font-size:34px;color:var(--ac);margin-bottom:10px"></i><h3 style="font-size:14px;margin-bottom:8px">' + getL('t_running') + '</h3><div id="ntTimer" style="font-size:40px;font-weight:800;font-family:Space Grotesk;color:var(--gd);margin-bottom:8px">' + formatNum(tl) + '</div><p style="font-size:10px;color:var(--mt);margin-bottom:16px">' + getL('t_wait') + '</p><button class="btn btn-r btn-bk" onclick="cancelNormalTask()"><i class="fas fa-times"></i> ' + getL('t_cancel') + '</button></div>';
     if (ntTimer) clearInterval(ntTimer);
     ntTimer = setInterval(function() {
         tl--; var el = document.getElementById('ntTimer'); if (el) el.textContent = formatNum(tl);
-        if (tl <= 0) { clearInterval(ntTimer); ntTimer = null; document.getElementById('taskModBody').innerHTML = '<div style="text-align:center;padding:20px 0"><i class="fas fa-check-circle" style="font-size:40px;color:var(--ac);margin-bottom:10px"></i><h3 style="font-size:14px;margin-bottom:4px">' + getL('t_complete') + '</h3><p style="font-size:10px;color:var(--mt);margin-bottom:16px">' + getL('t_claim_r') + '</p><button class="btn btn-g btn-bk" onclick="finishNormalTask(\'' + t.id + '\')"><i class="fas fa-gift"></i> ' + getL('t_claim_r') + ' (+' + formatNum(t.r) + ')</button></div>'; }
+        if (tl <= 0) { clearInterval(ntTimer); ntTimer = null; document.getElementById('taskModBody').innerHTML = '<div style="text-align:center;padding:20px 0"><i class="fas fa-check-circle" style="font-size:40px;color:var(--ac);margin-bottom:10px"></i><h3 style="font-size:14px;margin-bottom:4px">' + getL('t_complete') + '</h3><p style="font-size:10px;color:var(--mt);margin-bottom:16px">' + getL('t_claim_r') + '</p><button class="btn btn-g btn-bk" onclick="finishNormalTask(\'' + t.id + '\')"><i class="fas fa-gift"></i> ' + getL('t_claim_r') + ' (+' + formatNum(getTaskReward(t)) + ')</button></div>'; }
     }, 1000);
 }
 function cancelNormalTask() { if (ntTimer) { clearInterval(ntTimer); ntTimer = null; } closeMod('modTask'); toast(getL('t_cancel_msg'), 'e'); }
@@ -628,21 +676,25 @@ function cancelNormalTask() { if (ntTimer) { clearInterval(ntTimer); ntTimer = n
 function finishNormalTask(tid) { 
     if (D.cT.indexOf(tid) !== -1) return; 
     D.cT.push(tid); 
-    var t = TASKS.find(function(x) { return x.id === tid; }) || D.adminTasks.find(function(x) { return x.id === tid; }); 
+    var t = TASKS.find(function(x) { return x.id === tid; }) || (D.adminTasks || []).find(function(x) { return x.id === tid; }); 
     closeMod('modTask'); 
-    addCoins(t.r, 'task'); 
+    addCoins(getTaskReward(t), 'task'); 
     toast(getL('t_done') + '!', 's'); 
     renderAllTasks(); 
 }
 function openDailyTask(t) { openNormalTask(t); }
 
 function openCodeTask(t) {
-    document.getElementById('taskModTitle').textContent = getLangText(t.n);
-    document.getElementById('taskModBody').innerHTML = '<div style="text-align:center;padding:12px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(' + rgbOf(t.c) + ',.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px"><i class="fas ' + t.i + '" style="font-size:22px;color:var(' + t.c + ')"></i></div><h3 style="margin-bottom:4px;font-size:14px">' + getLangText(t.n) + '</h3><p style="font-size:10px;color:var(--mt);margin-bottom:10px">' + getLangText(t.d) + '</p><div style="font-size:20px;font-weight:800;color:var(--ac);margin-bottom:12px;font-family:Space Grotesk">+' + formatNum(t.r) + ' ' + getL('h_coin') + '</div><div style="text-align:left;background:var(--bg2);padding:10px;border-radius:8px;margin-bottom:12px"><div style="font-size:10px;font-weight:800;color:var(--pp);margin-bottom:5px"><i class="fas fa-info-circle"></i> ' + getL('t_instruction') + '</div><p style="font-size:9px;color:var(--mt);line-height:1.5">' + getL('t_code_step1') + '<br>' + getL('t_code_step2') + '<br>' + getL('t_code_step3') + '</p></div><button class="btn btn-p btn-bk" onclick="showCodeTaskAction(\'' + t.id + '\')">' + getL('t_start') + '</button></div>';
+    var tName = getTaskName(t);
+    var tDesc = getTaskDesc(t);
+    var tReward = getTaskReward(t);
+    
+    document.getElementById('taskModTitle').textContent = tName;
+    document.getElementById('taskModBody').innerHTML = '<div style="text-align:center;padding:12px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(' + rgbOf(t.c || '--pp') + ',.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px"><i class="fas ' + (t.i || 'fa-key') + '" style="font-size:22px;color:var(' + (t.c || '--pp') + ')"></i></div><h3 style="margin-bottom:4px;font-size:14px">' + tName + '</h3><p style="font-size:10px;color:var(--mt);margin-bottom:10px">' + tDesc + '</p><div style="font-size:20px;font-weight:800;color:var(--ac);margin-bottom:12px;font-family:Space Grotesk">+' + formatNum(tReward) + ' ' + getL('h_coin') + '</div><div style="text-align:left;background:var(--bg2);padding:10px;border-radius:8px;margin-bottom:12px"><div style="font-size:10px;font-weight:800;color:var(--pp);margin-bottom:5px"><i class="fas fa-info-circle"></i> ' + getL('t_instruction') + '</div><p style="font-size:9px;color:var(--mt);line-height:1.5">' + getL('t_code_step1') + '<br>' + getL('t_code_step2') + '<br>' + getL('t_code_step3') + '</p></div><button class="btn btn-p btn-bk" onclick="showCodeTaskAction(\'' + t.id + '\')">' + getL('t_start') + '</button></div>';
     openMod('modTask');
 }
 function showCodeTaskAction(tid) {
-    var t = CODE_TASKS.find(function(x) { return x.id === tid; });
+    var t = CODE_TASKS.find(function(x) { return x.id === tid; }) || (D.adminTasks || []).find(function(x) { return x.id === tid; });
     document.getElementById('taskModBody').innerHTML = '<div style="padding:4px 0"><div class="proof-link-btn" onclick="safeOpenLink(\'' + t.link + '\')"><i class="fas fa-external-link-alt" style="color:var(--ac)"></i><div class="plb-inf"><div class="plb-tx">' + getL('t_link') + '</div><div class="plb-ds">' + getL('t_find_code') + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border)"><div class="ig"><label><i class="fas fa-key" style="margin-right:3px"></i>' + getL('t_enter_code') + '</label><input type="text" id="codeTaskInput" placeholder="' + getL('t_enter_code') + '" style="text-transform:uppercase;letter-spacing:1px"></div><button class="btn btn-g btn-bk" onclick="submitCodeTask(\'' + t.id + '\',\'' + t.code + '\')">' + getL('t_verify') + '</button></div></div>';
 }
 
@@ -650,27 +702,61 @@ function submitCodeTask(tid, correctCode) {
     var inp = document.getElementById('codeTaskInput'); var code = inp.value.trim().toUpperCase();
     if (code !== correctCode) { toast(getL('t_wrong'), 'e'); closeMod('modTask'); return; }
     if (D.cT.indexOf(tid) !== -1) return; D.cT.push(tid); closeMod('modTask');
-    addCoins(CODE_TASKS.find(function(t) { return t.id === tid; }).r, 'task'); 
+    var t = CODE_TASKS.find(function(x) { return x.id === tid; }) || (D.adminTasks || []).find(function(x) { return x.id === tid; });
+    addCoins(getTaskReward(t), 'task'); 
     toast(getL('t_correct'), 'g'); 
     renderAllTasks();
 }
 
 function openProofTask(t) {
-    document.getElementById('proofModTitle').textContent = getLangText(t.n);
-    document.getElementById('proofModBody').innerHTML = '<div style="padding:4px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(' + rgbOf(t.c) + ',.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px"><i class="fas ' + t.i + '" style="font-size:22px;color:var(' + t.c + ')"></i></div><h3 style="text-align:center;margin-bottom:4px;font-size:14px">' + getLangText(t.n) + '</h3><p style="text-align:center;font-size:10px;color:var(--mt);margin-bottom:12px">' + getLangText(t.d) + '</p><div style="font-size:20px;font-weight:800;color:var(--ac);text-align:center;margin-bottom:14px;font-family:Space Grotesk">+' + formatNum(t.r) + ' ' + getL('h_coin') + '</div><div style="text-align:left;background:var(--bg2);padding:10px;border-radius:8px;margin-bottom:12px"><div style="font-size:10px;font-weight:800;color:var(--rd);margin-bottom:5px"><i class="fas fa-info-circle"></i> ' + getL('t_instruction') + '</div><p style="font-size:9px;color:var(--mt);line-height:1.5">' + getL('t_proof_step1') + '<br>' + getL('t_proof_step2') + '<br>' + getL('t_proof_step3') + '<br>' + getL('t_proof_step4') + '</p></div><div class="proof-link-btn" onclick="safeOpenLink(\'' + t.link + '\')"><i class="fas fa-external-link-alt" style="color:var(--ac)"></i><div class="plb-inf"><div class="plb-tx">' + getLangText(t.actionLabel) + '</div><div class="plb-ds">' + t.link + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div class="proof-link-btn" onclick="safeOpenLink(\'' + t.groupLink + '\')" style="margin-top:6px"><i class="fas fa-paper-plane" style="color:var(--bl)"></i><div class="plb-inf"><div class="plb-tx">' + getL('t_go_proof') + '</div><div class="plb-ds">' + t.groupLink + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border)"><div class="ig"><label><i class="fas fa-link" style="margin-right:3px"></i>' + getL('t_id_link') + '</label><input type="url" id="proofIdLink" placeholder="' + getL('t_id_link') + '"></div><div class="ig"><label><i class="fas fa-image" style="margin-right:3px"></i>' + getL('t_proof_link') + '</label><input type="url" id="proofScreenLink" placeholder="' + getL('t_proof_link') + '"></div><button class="btn btn-p btn-bk" onclick="submitProof(\'' + t.id + '\')"><i class="fas fa-check-circle"></i> ' + getL('t_submit_proof') + '</button><p style="font-size:8px;color:var(--mt);margin-top:6px;text-align:center">' + getL('t_admin_verify') + '</p></div></div>';
+    var tName = getTaskName(t);
+    var tDesc = getTaskDesc(t);
+    var tReward = getTaskReward(t);
+    var proofGroup = getTaskProofGroup(t);
+    var actionLabel = t.actionLabel ? getLangText(t.actionLabel) : 'টাস্ক লিংক';
+    
+    document.getElementById('proofModTitle').textContent = tName;
+    document.getElementById('proofModBody').innerHTML = '<div style="padding:4px 0"><div style="width:56px;height:56px;border-radius:50%;background:rgba(' + rgbOf(t.c || '--rd') + ',.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px"><i class="fas ' + (t.i || 'fa-camera') + '" style="font-size:22px;color:var(' + (t.c || '--rd') + ')"></i></div><h3 style="text-align:center;margin-bottom:4px;font-size:14px">' + tName + '</h3><p style="text-align:center;font-size:10px;color:var(--mt);margin-bottom:12px">' + tDesc + '</p><div style="font-size:20px;font-weight:800;color:var(--ac);text-align:center;margin-bottom:14px;font-family:Space Grotesk">+' + formatNum(tReward) + ' ' + getL('h_coin') + '</div><div style="text-align:left;background:var(--bg2);padding:10px;border-radius:8px;margin-bottom:12px"><div style="font-size:10px;font-weight:800;color:var(--rd);margin-bottom:5px"><i class="fas fa-info-circle"></i> ' + getL('t_instruction') + '</div><p style="font-size:9px;color:var(--mt);line-height:1.5">' + getL('t_proof_step1') + '<br>' + getL('t_proof_step2') + '<br>' + getL('t_proof_step3') + '<br>' + getL('t_proof_step4') + '</p></div><div class="proof-link-btn" onclick="safeOpenLink(\'' + t.link + '\')"><i class="fas fa-external-link-alt" style="color:var(--ac)"></i><div class="plb-inf"><div class="plb-tx">' + actionLabel + '</div><div class="plb-ds">' + t.link + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div class="proof-link-btn" onclick="safeOpenLink(\'' + proofGroup + '\')" style="margin-top:6px"><i class="fas fa-paper-plane" style="color:var(--bl)"></i><div class="plb-inf"><div class="plb-tx">' + getL('t_go_proof') + '</div><div class="plb-ds">' + proofGroup + '</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div><div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border)">' + (t.profileLinkRequired !== 'no' ? '<div class="ig"><label><i class="fas fa-link" style="margin-right:3px"></i>' + getL('t_id_link') + '</label><input type="url" id="proofIdLink" placeholder="' + getL('t_id_link') + '"></div>' : '') + '<div class="ig"><label><i class="fas fa-image" style="margin-right:3px"></i>' + getL('t_proof_link') + '</label><input type="url" id="proofScreenLink" placeholder="' + getL('t_proof_link') + '"></div><button class="btn btn-p btn-bk" onclick="submitProof(\'' + t.id + '\')"><i class="fas fa-check-circle"></i> ' + getL('t_submit_proof') + '</button><p style="font-size:8px;color:var(--mt);margin-top:6px;text-align:center">' + getL('t_admin_verify') + '</p></div></div>';
     document.getElementById('modProof').classList.add('on');
 }
 
 function submitProof(tid) {
-    var idLink = document.getElementById('proofIdLink').value.trim(); var screenLink = document.getElementById('proofScreenLink').value.trim();
-    if (!idLink) { toast(getL('t_id_link') + '!', 'e'); return; } if (!screenLink) { toast(getL('t_proof_link') + '!', 'e'); return; }
-    if (!idLink.startsWith('http')) { toast(getL('msg_valid_link'), 'e'); return; } if (!screenLink.startsWith('http')) { toast(getL('msg_valid_link'), 'e'); return; }
+    var t = PROOF_TASKS.find(function(x) { return x.id === tid; }) || (D.adminProofTasks || []).find(function(x) { return x.id === tid; });
+    if (!t) return;
+    
+    var idLinkEl = document.getElementById('proofIdLink');
+    var idLink = idLinkEl ? idLinkEl.value.trim() : '';
+    var screenLink = document.getElementById('proofScreenLink').value.trim();
+    
+    if (t.profileLinkRequired !== 'no' && !idLink) { toast(getL('t_id_link') + '!', 'e'); return; } 
+    if (!screenLink) { toast(getL('t_proof_link') + '!', 'e'); return; }
+    if (t.profileLinkRequired !== 'no' && !idLink.startsWith('http')) { toast(getL('msg_valid_link'), 'e'); return; } 
+    if (!screenLink.startsWith('http')) { toast(getL('msg_valid_link'), 'e'); return; }
     if (D.proofSubs.indexOf(tid) !== -1) { toast(getL('msg_already_submit'), 'i'); return; }
-    D.proofSubs.push(tid); var pt = PROOF_TASKS.find(function(t) { return t.id === tid; }); closeMod('modProof');
-    if (pt) { 
-        addCoins(pt.r, 'task'); 
-        toast(getL('msg_proof_success') + formatNum(pt.r), 'g'); 
-    } 
+    
+    // ফায়ারবেসে প্রুফ টাস্ক সাবমিশন রেকর্ড পাঠানো (অ্যাডমিন প্যানেল এপ্রুভ করতে পারবে)
+    var subKey = 'sub_' + Date.now();
+    var submissionData = {
+        id: subKey,
+        uid: window.fbAuth && window.fbAuth.currentUser ? window.fbAuth.currentUser.uid : 'anon',
+        username: tgUser.un || 'user_id',
+        task_id: tid,
+        task_name: getTaskName(t),
+        profile_link: idLink || 'N/A',
+        proof_link: screenLink,
+        reward: getTaskReward(t),
+        status: 'pending'
+    };
+    
+    if (window.fbDatabase && window.fbRef && window.fbSet) {
+        var globalSubRef = window.fbRef(window.fbDatabase, 'proof_submissions/' + subKey);
+        window.fbSet(globalSubRef, submissionData).catch(function(e) { console.error("Global submission error:", e); });
+    }
+    
+    D.proofSubs.push(tid); 
+    closeMod('modProof');
+    toast('Proof Submitted! Waiting for Admin approval.', 'g');
+    saveData();
     renderAllTasks();
 }
 
@@ -713,9 +799,10 @@ function submitReferralCode() {
                 for (var uid in users) { if (users[uid].rCode === code) { foundUid = uid; foundUser = users[uid]; break; } }
                 if (foundUid) {
                     showPrereqAd(function() {
+                        var refBonus = (systemSettings.referral && systemSettings.referral.commission) ? Number(systemSettings.referral.commission) : 50;
                         var refRef = window.fbRef(window.fbDatabase, 'users/' + foundUid);
-                        window.fbUpdate(refRef, { coins: (foundUser.coins || 0) + 50, tE: (foundUser.tE || 0) + 50, tR: (foundUser.tR || 0) + 1 });
-                        D.referredBy = code; addCoins(50, 'referral'); toast(getL('r_success_msg'), 'g'); codeInp.value = ''; saveData();
+                        window.fbUpdate(refRef, { coins: (foundUser.coins || 0) + refBonus, tE: (foundUser.tE || 0) + refBonus, tR: (foundUser.tR || 0) + 1 });
+                        D.referredBy = code; addCoins(refBonus, 'referral'); toast(getL('r_success_msg'), 'g'); codeInp.value = ''; saveData();
                     }, 1);
                 } else { toast('Invalid code!', 'e'); }
             } else { toast('No data!', 'e'); }
@@ -725,8 +812,19 @@ function submitReferralCode() {
 
 function doWithdraw() {
     var a = document.getElementById('wdAcc').value.trim(); var am = parseInt(document.getElementById('wdAmt').value) || 0;
-    if (!a || a.length < 11) { toast(getL('msg_valid_num'), 'e'); return; } if (am < 100) { toast(getL('msg_min_wd'), 'e'); return; } if (am > D.coins) { toast(getL('msg_no_bal'), 'e'); return; }
-    var sel = document.querySelector('.wm.sel'); var m = sel ? sel.getAttribute('data-m') : 'bkash'; var t = (am * 0.01).toFixed(2); var requestKey = 'req_' + Date.now();
+    
+    var minWd = (systemSettings.withdraw_rules && systemSettings.withdraw_rules.min_coins) ? Number(systemSettings.withdraw_rules.min_coins) : 100;
+    var coinRate = (systemSettings.withdraw_rules && systemSettings.withdraw_rules.coin_rate) ? Number(systemSettings.withdraw_rules.coin_rate) : 10; 
+    var rate = coinRate / 1000;
+    
+    if (!a || a.length < 11) { toast(getL('msg_valid_num'), 'e'); return; } 
+    if (am < minWd) { toast(getL('msg_min_wd') + " " + formatNum(minWd), 'e'); return; } 
+    if (am > D.coins) { toast(getL('msg_no_bal'), 'e'); return; }
+    
+    var sel = document.querySelector('.wm.sel'); var m = sel ? sel.getAttribute('data-m') : 'bkash'; 
+    var t = (am * rate).toFixed(2); 
+    var requestKey = 'req_' + Date.now();
+    
     var withdrawalData = { id: requestKey, uid: window.fbAuth && window.fbAuth.currentUser ? window.fbAuth.currentUser.uid : 'anon', tg_id: tgUser.id, name: tgUser.fn, username: tgUser.un, method: m, account: a, amount: am, taka: t, status: 'pending', date: new Date().toLocaleDateString('bn-BD') };
     D.wH.unshift(withdrawalData); D.coins -= am; D.tW += am; saveData();
     if (window.fbDatabase && window.fbRef && window.fbSet) { var globalWdRef = window.fbRef(window.fbDatabase, 'withdrawals/' + requestKey); window.fbSet(globalWdRef, withdrawalData).catch(function(e) { console.error("Global withdraw save error:", e); }); }
@@ -737,7 +835,7 @@ function doWithdraw() {
 }
 function renderWdHist() { var c = document.getElementById('wdHist'); if (!D.wH.length) { c.innerHTML = '<div style="text-align:center;padding:14px;color:var(--mt);font-size:10px">' + getL('msg_empty') + '</div>'; return; } var html = ''; for (var i = 0; i < Math.min(D.wH.length, 10); i++) { var w = D.wH[i]; var statusClass = w.status === 'approved' ? 'approved' : 'pending'; html += '<div class="hi-item"><div class="hi-ic" style="background:rgba(251,191,36,.12);color:var(--gd)"><i class="fas fa-paper-plane"></i></div><div class="hi-inf"><div class="hi-t">' + w.method.toUpperCase() + ' <span class="hi-status ' + statusClass + '">' + (w.status || 'pending') + '</span></div><div class="hi-tm">@' + w.username + ' | ' + w.date + '</div></div><div class="hi-am minus">-' + formatNum(w.amount) + '</div></div>'; } c.innerHTML = html; }
 
-function renderAch() { var c = document.getElementById('achList'); if (!c) return; var html = ''; for (var i = 0; i < ACHS.length; i++) { var a = ACHS[i]; var ul = D.ach.indexOf(a.id) !== -1; html += '<div class="ach' + (ul ? ' ul' : '') + '"><div class="ach-ic" style="background:rgba(' + rgbOf(a.c) + ',.12);color:var(' + a.c + ');' + (ul ? '' : 'opacity:.4;') + '"><i class="fas ' + a.i + '"></i></div><div style="flex:1"><div class="ach-nm">' + getLangText(a.n) + '</div><div class="ach-ds">' + getLangText(a.d) + '</div></div>' + (ul ? '<i class="fas fa-check-circle" style="color:var(--gd);font-size:12px"></i>' : '<i class="fas fa-lock" style="color:var(--mt);font-size:10px"></i>') + '</div>'; } c.innerHTML = html; }
+function renderAch() { var c = document.getElementById('achList'); if (!c) return; var html = ''; for (var i = 0; i < ACHS.length; i++) { var a = ACHS[i]; var ul = D.ach.indexOf(a.id) !== -1; html += '<div class="ach' + (ul ? ' ul' : '') + '"><div class="ach-ic" style="background:rgba(' + rgbOf(a.c || '--ac') + ',.12);color:var(' + (a.c || '--ac') + ');' + (ul ? '' : 'opacity:.4;') + '"><i class="fas ' + a.i + '"></i></div><div style="flex:1"><div class="ach-nm">' + getLangText(a.n) + '</div><div class="ach-ds">' + getLangText(a.d) + '</div></div>' + (ul ? '<i class="fas fa-check-circle" style="color:var(--gd);font-size:12px"></i>' : '<i class="fas fa-lock" style="color:var(--mt);font-size:10px"></i>') + '</div>'; } c.innerHTML = html; }
 
 function changeLeaderboardTimeframe(type, timeframe) {
     if (type === 'home') { homeTimeframe = timeframe; document.querySelectorAll('#pg-home .tab-bar .tab-btn').forEach(function(btn) { btn.classList.remove('on'); }); document.getElementById('btn-home-' + timeframe).classList.add('on'); } 
@@ -1143,6 +1241,82 @@ function updateUI() {
 function listenGlobalUsers() { if (!window.fbDatabase || !window.fbOnValue || !window.fbRef) return; var usersGlobalRef = window.fbRef(window.fbDatabase, 'users'); window.fbOnValue(usersGlobalRef, function(snapshot) { if (snapshot.exists()) { var data = snapshot.val(); var tempUsers = []; for (var uid in data) { var u = data[uid]; u.uid = uid; tempUsers.push(u); } allCloudUsers = tempUsers; renderAllLeaderboards(); } }); }
 function listenAdminTasks() { if (!window.fbDatabase || !window.fbOnValue || !window.fbRef) return; var tasksRef = window.fbRef(window.fbDatabase, 'tasks'); window.fbOnValue(tasksRef, function(snapshot) { if (snapshot.exists()) { var tasksData = snapshot.val(); var loadedTasks = []; for (var key in tasksData) { var t = tasksData[key]; t.id = key; loadedTasks.push(t); if (D.adminTasks.findIndex(function(x) { return x.id === key; }) === -1) { var taskName = (typeof t.n === 'object') ? (t.n.en || t.n.bn) : t.n; var taskDesc = (typeof t.d === 'object') ? (t.d.en || t.d.bn) : t.d; var msg = '🚨 <b>New Task Available!</b>\n\n📝 <b>Task:</b> ' + taskName + '\n📄 <b>Description:</b> ' + taskDesc + '\n🎁 <b>Reward:</b> ' + t.r + ' Coins\n\nGo to the app to complete it now!'; sendTelegramMessage(CHANNEL_USERNAME, msg); } } D.adminTasks = loadedTasks; renderAllTasks(); } }); }
 
+// ফায়ারবেস থেকে লাইভ প্রুফ টাস্ক লিসেনার [NEW FEATURE]
+function listenAdminProofTasks() {
+    if (!window.fbDatabase || !window.fbOnValue || !window.fbRef) return; 
+    var proofTasksRef = window.fbRef(window.fbDatabase, 'proof_tasks'); 
+    window.fbOnValue(proofTasksRef, function(snapshot) {
+        if (snapshot.exists()) {
+            var tasksData = snapshot.val();
+            var loadedTasks = [];
+            for (var key in tasksData) {
+                var t = tasksData[key];
+                t.id = key;
+                t.type = 'proof'; 
+                loadedTasks.push(t);
+            }
+            D.adminProofTasks = loadedTasks;
+            renderAllTasks();
+        }
+    });
+}
+
+// অ্যাডমিন প্যানেল সেটিংস লিসেনার (লাইভ কানেকশন ও সিকিউর সিঙ্ক) [NEW FEATURE]
+function listenSystemSettings() {
+    if (!window.fbDatabase || !window.fbOnValue || !window.fbRef) return;
+    var settingsRef = window.fbRef(window.fbDatabase, 'system_settings');
+    window.fbOnValue(settingsRef, function(snapshot) {
+        if (snapshot.exists()) {
+            systemSettings = snapshot.val() || {};
+            
+            // ১. বট মেইনটেন্যান্স চেক (অন থাকলে অ্যাপ ব্লক হবে)
+            if (systemSettings.bot_maintenance) {
+                document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:var(--bg);color:var(--fg);padding:20px;text-align:center;"><i class="fas fa-tools" style="font-size:48px;color:var(--gd);margin-bottom:15px;animation:pls 2s infinite"></i><h2 style="font-family:Space Grotesk;font-size:22px;">System Maintenance</h2><p style="color:var(--mt);font-size:12px;margin-top:5px;line-height:1.5;">Our system is currently undergoing a scheduled maintenance.<br>We will be back online shortly. Thank you for your patience!</p></div>';
+                return;
+            }
+            
+            // ২. ডাইনামিক বট/অ্যাপ টাইটেল পরিবর্তন
+            if (systemSettings.app_title) {
+                document.title = systemSettings.app_title;
+                document.querySelectorAll('.logo-tx').forEach(function(el) {
+                    el.textContent = systemSettings.app_title;
+                });
+            }
+            
+            // ৩. ডাইনামিক উইথড্র ন্যূনতম কয়েন ও টাকা রেট হিসাব
+            if (systemSettings.withdraw_rules) {
+                var coinRate = Number(systemSettings.withdraw_rules.coin_rate) || 10;
+                var rateText = `1 Coin = ${(coinRate / 1000).toFixed(4)} Taka`;
+                document.querySelectorAll('[data-l="w_rate"]').forEach(function(el) {
+                    el.textContent = rateText;
+                });
+                document.querySelectorAll('[data-l="w_min"]').forEach(function(el) {
+                    el.textContent = `Min: ${systemSettings.withdraw_rules.min_coins || 100}`;
+                });
+            }
+            
+            // ৪. ডাইনামিক অ্যাড লেভেল কাস্টম কয়েন রিওয়ার্ড সেটিংস
+            if (systemSettings.ad_rewards) {
+                ADS_CONFIG.forEach(function(ad) {
+                    if (ad.lvl === 1 && systemSettings.ad_rewards.basic) ad.r = Number(systemSettings.ad_rewards.basic);
+                    else if (ad.lvl === 2 && systemSettings.ad_rewards.silver) ad.r = Number(systemSettings.ad_rewards.silver);
+                    else if (ad.lvl >= 3 && systemSettings.ad_rewards.gold) ad.r = Number(systemSettings.ad_rewards.gold);
+                });
+                renderAds();
+            }
+            
+            // ৫. ডাইনামিক রেফারেল কমিশন টেক্সট সেটিংস
+            if (systemSettings.referral) {
+                var refBonus = Number(systemSettings.referral.commission) || 50;
+                var refDescText = `Get ${formatNum(refBonus)} coins per referral + ${formatNum(systemSettings.referral.commission_percent || 5)}% commission on their withdrawals!`;
+                document.querySelectorAll('[data-l="r_desc"]').forEach(function(el) {
+                    el.textContent = refDescText;
+                });
+            }
+        }
+    });
+}
+
 function listenWithdrawalStatus() {
     if (!window.fbDatabase || !window.fbOnValue || !window.fbRef) return;
     var wdRef = window.fbRef(window.fbDatabase, 'withdrawals');
@@ -1277,7 +1451,7 @@ function setupFirebaseSync(uid) {
         }
         
         saveData(); updateUI(); renderAllTasks(); renderAds(); renderWdHist(); renderAch(); checkNotifBadge(); renderCaptchaFg();
-        listenAdminTasks(); listenPromoCodes(); listenNotifications(); listenGlobalUsers(); listenWithdrawalStatus(); listenCaptchaConfig();
+        listenAdminTasks(); listenAdminProofTasks(); listenSystemSettings(); listenPromoCodes(); listenNotifications(); listenGlobalUsers(); listenWithdrawalStatus(); listenCaptchaConfig();
     }).catch(function(err) { 
         console.error("Error loading database: ", err); 
         updateUI(); renderAllTasks(); renderAds(); renderWdHist(); renderAch(); checkNotifBadge(); renderCaptchaFg();
