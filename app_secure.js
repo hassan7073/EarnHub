@@ -1,4 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref, set, get, update, child, onValue, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -9,6 +10,7 @@ const firebaseConfig = {
     storageBucket: "earn-tm-24.firebasestorage.app",
     messagingSenderId: "45412649481",
     appId: "1:45412649481:web:762e6c849d5450e8a646d8",
+    measurementId: "G-LN66FTFNCV",
     databaseURL: "https://earn-tm-24-default-rtdb.asia-southeast1.firebasedatabase.app" // সিঙ্গাপুর ডাটাবেজ লিংক
 };
 
@@ -31,11 +33,12 @@ try {
     window.fbRemove = remove;
 } catch (e) { console.error("Firebase init error:", e); }
 
+// --- আপনার টেলিগ্রাম সেটিংস বসান (এখানে আপনার আসল তথ্যগুলো দিয়ে দিন) ---
 const BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
 const BOT_USERNAME = "YourTelegramBotUsername"; 
 const APP_SHORTNAME = "app"; 
 const ADMIN_CHAT_ID = "YOUR_ADMIN_CHAT_ID";
-const CHANNEL_USERNAME = "@YourChannelUsername";
+const CHANNEL_USERNAME = "@YourChannelUsername"; 
 
 var SK = 'eh_v21';
 var ntTimer = null;
@@ -434,7 +437,7 @@ function openDailyReward() { renderStreak('streakHome'); document.getElementById
 function claimDaily() { if (!canClaimDaily()) return; showPrereqAd(function() { var r = DRW[D.strk % 7]; D.strk++; D.lCD = new Date().toDateString(); addCoins(r, 'daily'); toast(getL('d_title') + ': +' + formatNum(r) + ' ' + getL('h_coin') + '!', 'g'); openDailyReward(); renderStreak('streakHome'); }, 1); }
 function renderStreak(cid) { var c = document.getElementById(cid); if (!c) return; c.innerHTML = ''; var DN = getDayNames(); for (var i = 0; i < 7; i++) { var isA = i === (D.strk % 7) && canClaimDaily(); var isC = i < (D.strk % 7) || (!canClaimDaily() && i === (D.strk % 7) - 1); var d = document.createElement('div'); d.className = 'sk' + (isA ? ' act' : '') + (isC ? ' clm' : ''); d.innerHTML = '<div class="sk-d">' + DN[i] + '</div><i class="fas ' + (isC ? 'fa-check-circle' : isA ? 'fa-gift' : 'fa-circle') + '"></i><div>' + formatNum(DRW[i]) + '</div>'; if (isA) d.onclick = claimDaily; c.appendChild(d); } }
 
-var adNames = { bn: ['বেসিক', 'সিলভার', 'গোল্ড', 'প্লাটিনাম', 'ডায়মন্ড', 'ক্রাউন', 'স্পেশাল', 'ভিআইপি', 'প্রিমিয়াম', 'এলিট'], hi: ['बेसिक', 'सिल्वर', 'गोल्ड', 'प्लैटिनम', 'डायमंड', 'क्राउन', 'स्पेशल', 'वीआईपी', 'प्रीमियम', 'এলীট'], en: ['Basic', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Crown', 'Special', 'VIP', 'Premium', 'Elite'] };
+var adNames = { bn: ['বেসিক', 'সিলভার', 'গোল্ড', 'প্লাটিনাম', 'ডায়মন্ড', 'ক্রাউন', 'স্পেশাল', 'ভিআইপি', 'প্রিমিয়াম', 'এলিট'], hi: ['বেসিক', 'সিলভার', 'গোল্ড', 'প্লাটিনাম', 'ডায়মন্ড', 'ক্রাউন', 'স্পেশাল', 'ভিআইপি', 'প্রিমিয়াম', 'এলিট'], en: ['Basic', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Crown', 'Special', 'VIP', 'Premium', 'Elite'] };
 var ADS_CONFIG = []; for (var i = 1; i <= 50; i++) { var lvl = Math.min(10, Math.ceil(i / 5)); var r = 5 + Math.floor(i / 5) * 2; ADS_CONFIG.push({ id: 'ad' + i, lvl: lvl, r: r, nameIdx: i % 10 }); }
 var currentAdId = null, currentAdReward = 0;
 function renderAds() { var c = document.getElementById('adsList'); if (!c) return; var currentAdNames = adNames[D.lang] || adNames.en; var html = ''; for (var i = 0; i < ADS_CONFIG.length; i++) { var ad = ADS_CONFIG[i]; var unlocked = D.lvl >= ad.lvl; var done = D.adsDone.indexOf(ad.id) !== -1; var icBg = unlocked ? 'rgba(0,230,138,.12)' : 'rgba(107,127,160,.12)'; var icCl = unlocked ? 'var(--ac)' : 'var(--mt)'; var btnHtml = ''; if (done) { btnHtml = '<button class="btn btn-o btn-sm" disabled><i class="fas fa-check"></i> ' + getL('t_done') + '</button>'; } else if (unlocked) { btnHtml = '<button class="btn btn-p btn-sm" onclick="openAdModal(\'' + ad.id + '\',' + ad.r + ')"><i class="fas fa-play"></i> ' + getL('a_play_btn') + '</button>'; } else { btnHtml = '<button class="btn btn-o btn-sm" disabled><i class="fas fa-lock"></i> ' + getL('a_lock_btn') + ' ' + formatNum(ad.lvl) + '</button>'; } html += '<div class="tk" style="text-align:left; display:flex; align-items:center; gap:10px; margin-bottom:6px; padding:8px 12px;"><div style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:' + icBg + ';color:' + icCl + '"><i class="fas ' + (done ? 'fa-check' : unlocked ? 'fa-play-circle' : 'fa-lock') + '"></i></div><div style="flex:1"><div style="font-size:11px;font-weight:700">' + currentAdNames[ad.nameIdx] + ' ' + getL('a_ad_word') + ' ' + formatNum(i + 1) + '</div><div style="font-size:8px;color:var(--mt)">+' + formatNum(ad.r) + ' ' + getL('h_coin') + '</div></div>' + btnHtml + '</div>'; } c.innerHTML = html; }
@@ -873,8 +876,17 @@ function doWithdraw() {
     var withdrawalData = { id: requestKey, uid: window.fbAuth && window.fbAuth.currentUser ? window.fbAuth.currentUser.uid : 'anon', tg_id: tgUser.id, name: tgUser.fn, username: tgUser.un, method: m, account: a, amount: am, taka: t, status: 'pending', date: new Date().toLocaleDateString('bn-BD') };
     D.wH.unshift(withdrawalData); D.coins -= am; D.tW += am; saveData();
     if (window.fbDatabase && window.fbRef && window.fbSet) { var globalWdRef = window.fbRef(window.fbDatabase, 'withdrawals/' + requestKey); window.fbSet(globalWdRef, withdrawalData).catch(function(e) { console.error("Global withdraw save error:", e); }); }
+    
+    // ইউজার ইনবক্স কনফার্মেশন ও পাবলিক চ্যানেল নোটিফিকেশন [NEW REG & INTERCONNECT]
+    const userMsg = `📥 <b>Withdrawal Request Received</b>\n\n🪙 <b>Amount:</b> ${formatNum(am)} Coins\n💵 <b>Taka:</b> ${formatNum(t)} Taka\n💳 <b>Method:</b> ${m.toUpperCase()}\n📱 <b>Account:</b> <code>${a}</code>\n\n<i>Your withdrawal is currently pending. Please wait 24-48 hours for admin approval.</i>`;
+    sendTelegramMessage(tgUser.id, userMsg);
+    
+    const channelMsg = `📣 <b>New Withdrawal Request!</b>\n\n👤 <b>User:</b> ${tgUser.fn}\n🪙 <b>Amount:</b> ${formatNum(am)} Coins (${formatNum(t)} Taka)\n💳 <b>Method:</b> ${m.toUpperCase()}\n⏱️ <b>Status:</b> Pending`;
+    sendTelegramMessage(CHANNEL_USERNAME, channelMsg);
+    
     var msg = '🔔 <b>New Withdrawal Request</b>\n\n👤 <b>User:</b> ' + tgUser.fn + '\n🆔 <b>TG ID:</b> <code>' + tgUser.id + '</code>\n📛 <b>Username:</b> @' + tgUser.un + '\n💰 <b>Method:</b> ' + m + '\n💳 <b>Account:</b> ' + a + '\n🪙 <b>Amount:</b> ' + am + ' Coins\n💵 <b>Taka:</b> ' + t + ' ৳\n\nRequest ID: ' + requestKey;
     sendTelegramMessage(ADMIN_CHAT_ID, msg);
+    
     document.getElementById('wdAcc').value = ''; document.getElementById('wdAmt').value = ''; document.getElementById('wdTk').textContent = formatNum('0');
     toast(getL('msg_wd_req') + ' ' + formatNum(t) + ' Taka', 's'); updateUI(); renderWdHist();
 }
@@ -1480,7 +1492,6 @@ function setupFirebaseSync(uid) {
     var userPath = (tgUser && tgUser.id) ? ('users/tg_' + tgUser.id) : ('users/' + uid);
     fbUserRef = window.fbRef(window.fbDatabase, userPath);
     
-    // এককালীন fbGet এর বদলে রিয়েল-টাইম fbOnValue সিঙ্ক মেথড [BUG FIX & REAL-TIME CONNECTIVITY]
     window.fbOnValue(fbUserRef, function(snapshot) {
         try {
             if (snapshot.exists()) { 
