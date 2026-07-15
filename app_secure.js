@@ -34,10 +34,10 @@ try {
 } catch (e) { console.error("Firebase init error:", e); }
 
 // --- আপনার টেলিগ্রাম সেটিংস বসান (এখানে আপনার আসল তথ্যগুলো দিয়ে দিন) ---
-const BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
-const BOT_USERNAME = "YourTelegramBotUsername"; 
+const BOT_TOKEN = "8219024307:AAFahhYYcJTU1WXnkfHcTCN9cIBkFCZzGeg";
+const BOT_USERNAME = "@t_earnhube_bot"; 
 const APP_SHORTNAME = "app"; 
-const ADMIN_CHAT_ID = "YOUR_ADMIN_CHAT_ID";
+const ADMIN_CHAT_ID = "6737218555";
 const CHANNEL_USERNAME = "@YourChannelUsername"; 
 
 var SK = 'eh_v21';
