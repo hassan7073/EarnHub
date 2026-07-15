@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>EarnHub</title>
-    <!-- টেলিগ্রামের মূল স্ক্রিপ্ট ফাইল (এটি যুক্ত করা হলো) -->
+    <!-- টেলিগ্রামের মূল স্ক্রিপ্ট ফাইল -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <!-- ক্যাশ বাস্টিং (Cache Busting) সহ নতুন স্ক্রিপ্ট লিংক -->
-    <script type="module" src="app_secure.js?v=999"></script>
+    <!-- ক্যাশ বাস্টিং (Cache Busting) সহ নতুন সিকিউর স্ক্রিপ্ট লিংক -->
+    <script type="module" src="app_secure.js?v=2000"></script>
 
     <!-- Language Selection -->
     <div id="langSelect" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
         <div id="langSelectContent">
             <div style="font-size:50px; margin-bottom:20px;">🌐</div>
             <h2 style="font-family:'Space Grotesk'; font-size:22px; margin-bottom:10px; color:var(--fg);">Select Language</h2>
-            <p style="font-size:13px; color:var(--mt); margin-bottom:30px;">দয়া করে আপনার ভাষা নির্বাচন করুন / कृपया अपनी भाषा चुनें</p>
+            <p style="font-size:13px; color:var(--mt); margin-bottom:30px;">দয়া করে আপনার ভাষা নির্বাচন করুন / कृपया अपनी भाषा चुनें</p>
             <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:300px;">
                 <button class="btn btn-p" style="padding:14px; font-size:14px;" onclick="setLang('bn')">🇧🇩 বাংলা</button>
                 <button class="btn btn-p" style="padding:14px; font-size:14px;" onclick="setLang('hi')">🇮🇳 हिन्दी</button>
@@ -50,7 +50,7 @@
     </div>
 
     <!-- Full-page: Spin -->
-    <div class="fg-page" id="fgSpin">
+    <div class="page-fg fg-page" id="fgSpin">
         <div class="fg-hdr"><div class="fg-back" onclick="closeFG('fgSpin')"><i class="fas fa-arrow-left"></i></div><div class="fg-title" data-l="g_spin">Lucky Spin</div><div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="spinBalTop">0</div></div>
         <div class="fg-body">
             <div class="spin-hero"><h2>LUCKY SPIN</h2><p data-l="g_spin_d">Spin to win coins!</p></div>
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Full-page: Mine -->
-    <div class="fg-page" id="fgMine">
+    <div class="page-fg fg-page" id="fgMine">
         <div class="fg-hdr"><div class="fg-back" onclick="closeFG('fgMine')"><i class="fas fa-arrow-left"></i></div><div class="fg-title" data-l="g_mine">Coin Mine</div><div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="mineBalTop">0</div></div>
         <div class="fg-body">
             <div class="mine-hero"><h2>COIN MINE</h2><p data-l="g_mine_d">Avoid mines and find coins!</p></div>
@@ -74,13 +74,13 @@
     </div>
 
     <!-- Full-page: Tic Tac Toe -->
-    <div class="fg-page" id="fgTicTac">
+    <div class="page-fg fg-page" id="fgTicTac">
         <div class="fg-hdr"><div class="fg-back" onclick="closeFG('fgTicTac')"><i class="fas fa-arrow-left"></i></div><div class="fg-title" data-l="g_ttt">Tic Tac Toe</div><div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="tttBalTop">0</div></div>
         <div class="fg-body" id="tttBody"></div>
     </div>
 
     <!-- Full-page: Target -->
-    <div class="fg-page" id="fgTarget">
+    <div class="page-fg fg-page" id="fgTarget">
         <div class="fg-hdr"><div class="fg-back" onclick="closeFG('fgTarget')"><i class="fas fa-arrow-left"></i></div><div class="fg-title" data-l="g_target">Target Strike</div><div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="targetBalTop">0</div></div>
         <div class="fg-body">
             <div class="mine-hero"><h2>TARGET STRIKE</h2><p data-l="g_target_d">Tap the moving target to win!</p></div>
@@ -91,7 +91,7 @@
     </div>
 
     <!-- Full-page: 2Captcha Tasks -->
-    <div class="fg-page" id="fgCaptcha">
+    <div class="page-fg fg-page" id="fgCaptcha">
         <div class="fg-hdr">
             <div class="fg-back" onclick="closeFG('fgCaptcha')"><i class="fas fa-arrow-left"></i></div>
             <div class="fg-title">2Captcha Tasks</div>
@@ -240,13 +240,19 @@
             <div class="logo"><div class="logo-ic"><i class="fas fa-wallet"></i></div><div class="logo-tx" data-l="w_title">Withdraw</div></div>
         </div>
         <div class="bcard" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"><div class="b-lb" style="color:rgba(0,0,0,.5)" data-l="w_able">Withdrawable</div><div class="b-val" id="wdBal">0<span data-l="h_coin">Coins</span></div><div class="b-sub"><div data-l="w_min">Min: 100</div><div data-l="w_rate">1 Coin = 0.01 Taka</div></div></div>
+        
+        <!-- Dynamic Referral Requirement Warning Box -->
+        <div style="background:rgba(251,191,36,.12); color:var(--gd); padding:12px; border-radius:8px; font-size:11px; font-weight:700; display:none; margin-bottom:12px; text-align:center; border:1px solid rgba(251,191,36,.2);" id="wdRefReqBox">
+            <i class="fas fa-exclamation-triangle"></i> <span id="wdRefReqText">উইথড্র করতে কমপক্ষে রেফার প্রয়োজন!</span>
+        </div>
+
         <div class="sec-h" style="margin-top:20px"><h3 data-l="w_method">Method</h3></div>
         <div class="wm sel" data-m="bkash" onclick="pickMethod(this)"><div class="wm-ic" style="background:rgba(229,46,46,.12);color:#e52e2e"><i class="fas fa-mobile-alt"></i></div><div style="flex:1"><div style="font-size:12px;font-weight:700" data-l="w_bkash">bKash</div><div style="font-size:9px;color:var(--mt)" data-l="w_min">Min: 100</div></div><i class="fas fa-check-circle" style="color:var(--ac);font-size:12px"></i></div>
         <div class="wm" data-m="nagad" onclick="pickMethod(this)"><div class="wm-ic" style="background:rgba(245,158,11,.12);color:#f59e0b"><i class="fas fa-mobile-alt"></i></div><div style="flex:1"><div style="font-size:12px;font-weight:700" data-l="w_nagad">Nagad</div><div style="font-size:9px;color:var(--mt)" data-l="w_min">Min: 100</div></div></div>
         <div class="wm" data-m="rocket" onclick="pickMethod(this)"><div class="wm-ic" style="background:rgba(139,92,246,.12);color:#8b5cf6"><i class="fas fa-mobile-alt"></i></div><div style="flex:1"><div style="font-size:12px;font-weight:700" data-l="w_rocket">Rocket</div><div style="font-size:9px;color:var(--mt)" data-l="w_min">Min: 100</div></div></div>
         <div style="margin-top:20px"></div>
         <div class="ig"><label data-l="w_acc">Account Number</label><i class="fas fa-user ig-ic"></i><input type="tel" id="wdAcc" data-l="w_ph_acc" placeholder="01XXXXXXXXX" maxlength="11"></div>
-        <div class="ig"><label data-l="w_amt">Coin Amount</label><i class="fas fa-coins ig-ic"></i><input type="number" id="wdAmt" data-l="w_ph_amt" placeholder="Coins" min="100" oninput="document.getElementById('wdTk').textContent=formatNum(((parseInt(this.value)||0)*0.01).toFixed(2))"></div>
+        <div class="ig"><label data-l="w_amt">Coin Amount</label><i class="fas fa-coins ig-ic"></i><input type="number" id="wdAmt" data-l="w_ph_amt" placeholder="Coins" min="100" oninput="updateWithdrawTk(this.value)"></div>
         <div style="background:var(--card); padding:15px; border-radius:12px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <span style="font-size:12px; color:var(--mt); font-weight:600;" data-l="w_get">You get</span>
             <div style="text-align:right;"><strong style="color:var(--ac); font-size:18px; font-family:'Space Grotesk';" id="wdTk">0</strong><span style="color:var(--mt); font-size:10px;" data-l="w_taka">Taka</span></div>
