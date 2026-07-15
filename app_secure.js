@@ -34,9 +34,9 @@ try {
 
 // --- আপনার টেলিগ্রাম সেটিংস বসান (এখানে আপনার আসল তথ্যগুলো দিয়ে দিন) ---
 const BOT_TOKEN = "8219024307:AAFahhYYcJTU1WXnkfHcTCN9cIBkFCZzGeg"; 
-const BOT_USERNAME = "YourTelegramBotUsername"; 
-const APP_SHORTNAME = "app"; 
-const ADMIN_CHAT_ID = "YourAdminChatID"; 
+const BOT_USERNAME = "@t_earnhube_bot"; 
+const APP_SHORTNAME = "EarnHub"; 
+const ADMIN_CHAT_ID = "6737218555"; 
 const CHANNEL_USERNAME = "@real_time_earn"; 
 
 var SK = 'eh_v21';
