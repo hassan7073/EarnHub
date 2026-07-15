@@ -34,10 +34,10 @@ try {
 
 // --- আপনার টেলিগ্রাম সেটিংস বসান (এখানে আপনার আসল তথ্যগুলো দিয়ে দিন) ---
 const BOT_TOKEN = "8219024307:AAFahhYYcJTU1WXnkfHcTCN9cIBkFCZzGeg"; 
-const BOT_USERNAME = "@t_earnhube_bot"; 
-const APP_SHORTNAME = "EarnHub"; 
-const ADMIN_CHAT_ID = "6737218555"; 
-const CHANNEL_USERNAME = "@real_time_earn"; 
+const BOT_USERNAME = "YourTelegramBotUsername"; // বটের ইউজারনেম দিন (যেমন: EarnHubBot - কোনো @ ছাড়া)
+const APP_SHORTNAME = "app"; 
+const ADMIN_CHAT_ID = "YourAdminChatID"; // আপনার @userinfobot থেকে পাওয়া চ্যাট আইডি বসান
+const CHANNEL_USERNAME = "@real_time_earn"; // পাবলিক পেমেন্ট চ্যানেলের নাম
 
 var SK = 'eh_v21';
 var ntTimer = null;
@@ -301,11 +301,11 @@ function redeemPromo() {
 }
 
 var ACHS = [
-    { id: 'fe', n: { bn: 'First Earn', hi: 'पहला लाभ', en: 'First Earn' }, d: { bn: 'প্রথমবার কয়েন আয়', hi: 'पहली बार कॉइन कमाएं', en: 'Earn coins first time' }, i: 'fa-seedling', c: '--ac', ck: function(d) { return d.tE > 0 } },
+    { id: 'fe', n: { bn: 'First Earn', hi: 'पहला লাভ', en: 'First Earn' }, d: { bn: 'প্রথমবার কয়েন আয়', hi: 'पहली बार कॉइन कमाएं', en: 'Earn coins first time' }, i: 'fa-seedling', c: '--ac', ck: function(d) { return d.tE > 0 } },
     { id: 'fa', n: { bn: 'Ad Viewer', hi: 'विज्ञापन दर्शक', en: 'Ad Viewer' }, d: { bn: 'প্রথম বিজ্ঞাপন', hi: 'প্রথম বিজ্ঞাপন', en: 'First Ad' }, i: 'fa-play', c: '--ac', ck: function(d) { return d.tAW > 0 } },
-    { id: 'tt', n: { bn: 'Task Master', hi: 'टाङ्क मास्टर', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
+    { id: 'tt', n: { bn: 'Task Master', hi: 'টাङ्ক মাস্টার', en: 'Task Master' }, d: { bn: '১০ টাস্ক', hi: '10  टास्क', en: '10 Tasks' }, i: 'fa-tasks', c: '--bl', ck: function(d) { return d.tD >= 10 } },
     { id: 'hc', n: { bn: 'Century', hi: 'শতক', en: 'Century' }, d: { bn: '১০০ কয়েন', hi: '100 कॉइन', en: '100 Coins' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.tE >= 100 } },
-    { id: 's7', n: { bn: '7 Day Streak', hi: '7 দিন স্ট્રીক', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 দিন दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
+    { id: 's7', n: { bn: '7 Day Streak', hi: '7 দিন স্ট্রীক', en: '7 Day Streak' }, d: { bn: '৭ দিন ক্লেইম', hi: '7 দিন दावा', en: 'Claim 7 Days' }, i: 'fa-fire', c: '--gd', ck: function(d) { return d.strk >= 7 } },
     { id: 'sp', n: { bn: 'Spinner', hi: 'স্পিনর', en: 'Spinner' }, d: { bn: 'প্রথম স্পিন', hi: 'প্রথম স্পিন', en: 'First Spin' }, i: 'fa-dharmachakra', c: '--pp', ck: function(d) { return d.spnT > 0 } },
     { id: 'mn', n: { bn: 'Miner', hi: 'মাইনার', en: 'Miner' }, d: { bn: 'মাইনে ১০+', hi: 'মাইন में 10+', en: '10+ in Mine' }, i: 'fa-bomb', c: '--rd', ck: function(d) { return d.mnW >= 10 } }
 ];
@@ -1052,7 +1052,7 @@ function startMine() {
         document.getElementById('mineOver').className = 'mine-over'; 
     }, 1); 
 }
-function renderMineGrid() { var c = document.getElementById('mineGrid'); if (!c) return; var html = ''; var fragment = document.createDocumentFragment(); for (var i = 0; i < 25; i++) { var cell = document.createElement('div'); cell.className = 'mine-cell'; if (mineState.grid.length && mineState.grid[i].revealed) { cell.classList.add('rv'); if (mineState.grid[i].isMine) { cell.classList.add('bomb'); cell.innerHTML = '<i class="fas fa-bomb cell-icon"></i>'; } else { cell.classList.add('coin'); cell.innerHTML = '<i class="fas fa-coins cell-icon"></i>'; } } else if (mineState.grid.length && !mineState.active) { cell.classList.add('dead'); } if (!mineState.grid.length || (!mineState.grid[i].revealed && mineState.active)) { (function(idx) { cell.onclick = function() { revealCell(idx); }; })(i); } fragment.appendChild(cell); } c.appendChild(fragment); }
+function renderMineGrid() { var c = document.getElementById('mineGrid'); if (!c) return; c.innerHTML = ''; var html = ''; var fragment = document.createDocumentFragment(); for (var i = 0; i < 25; i++) { var cell = document.createElement('div'); cell.className = 'mine-cell'; if (mineState.grid.length && mineState.grid[i].revealed) { cell.classList.add('rv'); if (mineState.grid[i].isMine) { cell.classList.add('bomb'); cell.innerHTML = '<i class="fas fa-bomb cell-icon"></i>'; } else { cell.classList.add('coin'); cell.innerHTML = '<i class="fas fa-coins cell-icon"></i>'; } } else if (mineState.grid.length && !mineState.active) { cell.classList.add('dead'); } if (!mineState.grid.length || (!mineState.grid[i].revealed && mineState.active)) { (function(idx) { cell.onclick = function() { revealCell(idx); }; })(i); } fragment.appendChild(cell); } c.appendChild(fragment); }
 function revealCell(idx) { if (!mineState.active) return; if (mineState.grid[idx].revealed) return; mineState.grid[idx].revealed = true; if (mineState.grid[idx].isMine) { mineState.active = false; renderMineGrid(); setTimeout(function() { for (var i = 0; i < 25; i++) { if (mineState.grid[i].isMine && !mineState.grid[i].revealed) mineState.grid[i].revealed = true; } renderMineGrid(); var ov = document.getElementById('mineOver'); ov.className = 'mine-over show'; document.getElementById('mineOverIcon').innerHTML = '💣'; document.getElementById('mineOverText').textContent = getL('msg_boom'); document.getElementById('mineOverText').style.color = 'var(--rd)'; document.getElementById('mineOverSub').textContent = getL('msg_mine_hit'); document.getElementById('mineOverAmt').textContent = '-' + formatNum(mineState.bet); document.getElementById('mineOverAmt').style.color = 'var(--rd)'; }, 300); updateMineUI(); return; } mineState.revealed++; mineState.foundCoins += Math.max(1, Math.floor(mineState.bet * 0.3)); mineState.currentMult = calcMult(); renderMineGrid(); updateMineUI(); if (mineState.revealed >= mineState.totalSafe) { mineState.active = false; var w = Math.floor(mineState.bet * mineState.currentMult); addCoins(w, 'mine'); D.mnW += w; if (w > D.bestMine) { D.bestMine = w; saveData(); } var ov = document.getElementById('mineOver'); ov.className = 'mine-over show'; document.getElementById('mineOverIcon').innerHTML = '🏆'; document.getElementById('mineOverText').textContent = getL('msg_all_found'); document.getElementById('mineOverText').style.color = 'var(--ac)'; document.getElementById('mineOverSub').textContent = getL('msg_safe'); document.getElementById('mineOverAmt').textContent = '+' + formatNum(w); document.getElementById('mineOverAmt').style.color = 'var(--ac)'; updateMineUI(); } }
 function cashOut() { if (!mineState.active || mineState.revealed === 0) return; var w = Math.floor(mineState.bet * mineState.currentMult); mineState.active = false; addCoins(w, 'mine'); D.mnW += w; if (w > D.bestMine) { D.bestMine = w; saveData(); } var ov = document.getElementById('mineOver'); ov.className = 'mine-over show'; document.getElementById('mineOverIcon').innerHTML = '💰'; document.getElementById('mineOverText').textContent = getL('msg_cashout'); document.getElementById('mineOverText').style.color = 'var(--gd)'; document.getElementById('mineOverSub').textContent = formatNum(mineState.revealed) + ' ' + getL('msg_found_num'); document.getElementById('mineOverAmt').textContent = '+' + formatNum(w); document.getElementById('mineOverAmt').style.color = 'var(--ac)'; for (var i = 0; i < 25; i++) { if (mineState.grid[i].isMine && !mineState.grid[i].revealed) mineState.grid[i].revealed = true; } renderMineGrid(); updateMineUI(); }
 function closeMineOver() { document.getElementById('mineOver').className = 'mine-over'; mineState.grid = []; mineState.active = false; mineState.revealed = 0; mineState.foundCoins = 0; mineState.currentMult = 1; renderMineGrid(); updateMineUI(); }
@@ -1355,7 +1355,7 @@ function updateUI() {
 }
 
 function listenGlobalUsers() { if (!window.fbDatabase || !window.fbOnValue || !window.fbRef) return; var usersGlobalRef = window.fbRef(window.fbDatabase, 'users'); window.fbOnValue(usersGlobalRef, function(snapshot) { if (snapshot.exists()) { var data = snapshot.val(); var tempUsers = []; for (var uid in data) { var u = data[uid]; u.uid = uid; tempUsers.push(u); } allCloudUsers = tempUsers; renderAllLeaderboards(); } }); }
-function listenAdminTasks() { if (!window.fbDatabase || !window.fbOnValue || !window.fbRef) return; var tasksRef = window.fbRef(window.fbDatabase, 'tasks'); window.fbOnValue(tasksRef, function(snapshot) { if (snapshot.exists()) { var tasksData = snapshot.val(); var loadedTasks = []; for (var key in tasksData) { var t = tasksData[key]; t.id = key; loadedTasks.push(t); if (D.adminTasks.findIndex(function(x) { return x.id === key; }) === -1) { var taskName = (typeof t.n === 'object') ? (t.n.en || t.n.bn) : t.n; var taskDesc = (typeof t.d === 'object') ? (t.d.en || t.d.bn) : t.d; var msg = '🚨 <b>New Task Available!</b>\n\n📝 <b>Task:</b> ' + taskName + '\n📄 <b>Description:</b> ' + taskDesc + '\n🎁 <b>Reward:</b> ' + t.r + ' Coins\n\nGo to the app to complete it now!'; sendTelegramMessage(CHANNEL_USERNAME, msg); } } D.adminTasks = loadedTasks; renderAllTasks(); } }); }
+function listenAdminTasks() { if (!window.fbDatabase || !window.fbOnValue || !window.fbRef) return; var tasksRef = window.fbRef(window.fbDatabase, 'tasks'); window.fbOnValue(tasksRef, function(snapshot) { if (snapshot.exists()) { var tasksData = snapshot.val(); var loadedTasks = []; for (var key in tasksData) { var t = tasksData[key]; t.id = key; loadedTasks.push(t); } D.adminTasks = loadedTasks; renderAllTasks(); } }); }
 
 // ফায়ারবেস থেকে লাইভ প্রুফ টাস্ক লিসেনার
 function listenAdminProofTasks() {
@@ -1498,7 +1498,7 @@ function setupFirebaseSync(uid) {
     var userPath = (tgUser && tgUser.id) ? ('users/tg_' + tgUser.id) : ('users/' + uid);
     fbUserRef = window.fbRef(window.fbDatabase, userPath);
     
-    // এককালীন fbGet এর বদলে রিয়েল-টাইম fbOnValue সিঙ্ক মেথড [BUG FIX & REAL-TIME CONNECTIVITY]
+    // এককালীন fbGet এর বদলে রিয়েল-টাইম fbOnValue সিঙ্ক মেথড
     window.fbOnValue(fbUserRef, function(snapshot) {
         try {
             if (snapshot.exists()) { 
@@ -1584,6 +1584,18 @@ function initFirebaseAuth() {
     }
 }
 
+// উইথড্র পেজে রিয়েল-টাইম কয়েন টু টাকা হিসাব [BUG FIX & DYNAMIC UPDATE]
+function updateWithdrawTk(val) {
+    var am = parseInt(val) || 0;
+    var coinRate = (systemSettings.withdraw_rules && systemSettings.withdraw_rules.coin_rate) ? Number(systemSettings.withdraw_rules.coin_rate) : 10;
+    var rate = coinRate / 1000;
+    var t = (am * rate).toFixed(2);
+    var tkEl = document.getElementById('wdTk');
+    if (tkEl) {
+        tkEl.textContent = formatNum(t);
+    }
+}
+
 function init() {
     applyLanguage(); updateUI(); renderStreak('streakHome'); renderAllTasks(); renderAds(); renderAllLeaderboards(); renderAch(); renderWdHist(); renderCaptchaFg(); drawWheel(); renderMineGrid(); updateMineUI(); startBodyAdTimer();
     
@@ -1644,3 +1656,4 @@ window.openNotifModal = openNotifModal;
 window.safeOpenLink = safeOpenLink;
 window.openAdModal = openAdModal; 
 window.showCodeTaskAction = showCodeTaskAction; 
+window.updateWithdrawTk = updateWithdrawTk;
