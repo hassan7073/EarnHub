@@ -38,7 +38,7 @@ const BOT_TOKEN = "8219024307:AAFahhYYcJTU1WXnkfHcTCN9cIBkFCZzGeg";
 const BOT_USERNAME = "@t_earnhube_bot"; 
 const APP_SHORTNAME = "EarnHub"; 
 const ADMIN_CHAT_ID = "6737218555";
-const CHANNEL_USERNAME = "@YourChannelUsername"; 
+const CHANNEL_USERNAME = "@real_time_earn"; 
 
 var SK = 'eh_v21';
 var ntTimer = null;
