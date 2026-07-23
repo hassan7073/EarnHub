@@ -1,3 +1,5 @@
+/* --- আপনার পুরোনো সব কোড শুরু (১ - ৪১৩ লাইন পর্যন্ত) --- */
+
 :root {
     --bg: #070b14; --bg2: #0d1321; --card: #141c2e; --card2: #1a2540; --border: #1e2d4a;
     --fg: #e8edf5; --mt: #6b7fa0; --ac: #00e68a; --gd: #fbbf24; --rd: #ef4444; --bl: #38bdf8; --pp: #a78bfa; --pk: #ec4899;
@@ -330,68 +332,41 @@ body { font-family: 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Space Grotesk'
 @media(min-width:500px) { body { max-width: 420px; margin: 0 auto; border-left: 1px solid var(--border); border-right: 1px solid var(--border) } .nav { max-width: 420px; left: 50%; transform: translateX(-50%) } .fg-page { max-width: 420px; left: 50%; transform: translateX(-50%) } .cpg { max-width: 420px; left: 50%; transform: translateX(-50%) } }
 @media(prefers-reduced-motion:reduce) { * { animation-duration: 0s !important; transition-duration: 0s !important } }
 
-/* --- EarnBot AI Glowing Glassmorphism UI --- */
-.cpg {
-    background: radial-gradient(circle at top, #0f162a 0%, var(--bg) 100%) !important;
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+/* --- আপনার পুরোনো কোড শেষ --- */
+
+
+/* --- নতুন Wallet UI এর কোড (ভিডিও অনুযায়ী যোগ করা হলো) --- */
+
+.wallet-main-card {
+    background: linear-gradient(135deg, #141c2e 0%, #0d1321 100%);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 20px;
 }
-.c-hdr {
-    background: rgba(20, 28, 46, 0.85) !important;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 230, 138, 0.15) !important;
-}
-.c-msg.bot .c-mbb {
-    background: linear-gradient(135deg, rgba(20, 28, 46, 0.95), rgba(13, 19, 33, 0.95)) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-left: 3px solid var(--ac) !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-    border-bottom-left-radius: 4px !important;
-    color: #e8edf5 !important;
-}
-.c-msg.usr .c-mbb {
-    background: linear-gradient(135deg, rgba(0, 230, 138, 0.15), rgba(0, 184, 212, 0.08)) !important;
-    border: 1px solid rgba(0, 230, 138, 0.25) !important;
-    box-shadow: 0 4px 15px rgba(0, 230, 138, 0.05);
-    border-bottom-right-radius: 4px !important;
-    color: #e8edf5 !important;
-}
-.c-mav i {
-    filter: drop-shadow(0 0 5px var(--ac));
-}
-.c-qb {
-    background: rgba(0, 230, 138, 0.05) !important;
-    border: 1px solid rgba(0, 230, 138, 0.2) !important;
-    box-shadow: 0 2px 8px rgba(0, 230, 138, 0.05);
-    color: #00e68a !important;
-    transition: all 0.25s ease !important;
-    font-weight: bold !important;
-}
-.c-qb:hover, .c-qb:active {
-    background: var(--g1) !important;
-    color: #000 !important;
-    border-color: transparent !important;
-    transform: scale(0.96);
-    box-shadow: 0 4px 15px rgba(0, 230, 138, 0.3) !important;
-}
-.c-inp {
-    background: rgba(13, 19, 33, 0.95) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
-.c-inp input {
-    background: #0f162a !important;
-    border: 1px solid var(--border) !important;
-    color: var(--fg) !important;
-    font-size: 12px !important;
-    border-radius: 20px !important;
-    padding: 12px 16px !important;
-}
-.c-inp input:focus {
-    border-color: var(--ac) !important;
-    box-shadow: 0 0 10px rgba(0, 230, 138, 0.15) !important;
-}
-/* Typing Indicator Animation */
-@keyframes wave {
-    0%, 100% { height: 2px; }
-    50% { height: 10px; }
-}
+.w-ov-label { font-size: 9px; font-weight: 800; color: var(--mt); letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; }
+.w-total-val { font-size: 30px; font-weight: 900; font-family: 'Space Grotesk'; margin-bottom: 20px; color: var(--fg); }
+.w-total-val span { font-size: 13px; color: var(--mt); font-weight: 500; margin-left: 4px; }
+.w-asset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.w-asset-card { background: var(--card); padding: 12px; border-radius: 16px; display: flex; align-items: center; border: 1px solid var(--border); }
+.w-asset-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; flex-shrink: 0; }
+.w-asset-info { margin-left: 10px; }
+.w-asset-amt { font-size: 14px; font-weight: 800; font-family: 'Space Grotesk'; color: var(--fg); }
+.w-asset-nm { font-size: 7px; color: var(--mt); font-weight: 800; text-transform: uppercase; margin-top: 1px; }
+
+.w-action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+.w-action-item { text-align: center; cursor: pointer; transition: 0.2s; }
+.w-action-ic { width: 48px; height: 48px; background: rgba(0, 230, 138, 0.08); border: 1px solid rgba(0, 230, 138, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; color: var(--ac); font-size: 16px; transition: 0.2s; }
+.w-action-item:active .w-action-ic { transform: scale(0.9); background: var(--ac); color: #000; box-shadow: 0 0 15px rgba(0, 230, 138, 0.3); }
+.w-action-tx { font-size: 9px; font-weight: 700; color: var(--mt); }
+
+.saved-addr-card { background: var(--card); border: 1px solid var(--border); padding: 12px; border-radius: 16px; display: flex; align-items: center; margin-top: 10px; }
+.req-item { display: flex; align-items: center; gap: 10px; font-size: 11px; margin-bottom: 12px; color: var(--mt); background: var(--bg2); padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
+.req-item i { color: var(--ac); font-size: 14px; }
+.req-item.fail { border-color: rgba(239, 68, 68, 0.3); }
+.req-item.fail i { color: var(--rd); }
+
+/* VIP Badge for withdrawal modal */
+.vip-badge {
+    background: var(--card); padding: 10px; border-radius: 12px; display: flex; align-items: center; margin-bottom: 15px; border: 1px solid var(--border);
+    }
