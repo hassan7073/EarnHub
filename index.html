@@ -233,28 +233,142 @@
         <div id="refLB"></div>
     </div>
 
-    <!-- Withdraw Page -->
-    <div class="page" id="pg-wd">
-        <div class="hdr">
-            <div class="fg-back" onclick="goTo('prof')" style="margin-right:10px;"><i class="fas fa-arrow-left"></i></div>
-            <div class="logo"><div class="logo-ic"><i class="fas fa-wallet"></i></div><div class="logo-tx" data-l="w_title">Withdraw</div></div>
-        </div>
-        <div class="bcard" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"><div class="b-lb" style="color:rgba(0,0,0,.5)" data-l="w_able">Withdrawable</div><div class="b-val" id="wdBal">0<span data-l="h_coin">Coins</span></div><div class="b-sub"><div data-l="w_min">Min: 100</div><div data-l="w_rate">1 Coin = 0.01 Taka</div></div></div>
-        <div class="sec-h" style="margin-top:20px"><h3 data-l="w_method">Method</h3></div>
-        <div class="wm sel" data-m="bkash" onclick="pickMethod(this)"><div class="wm-ic" style="background:rgba(229,46,46,.12);color:#e52e2e"><i class="fas fa-mobile-alt"></i></div><div style="flex:1"><div style="font-size:12px;font-weight:700" data-l="w_bkash">bKash</div><div style="font-size:9px;color:var(--mt)" data-l="w_min">Min: 100</div></div><i class="fas fa-check-circle" style="color:var(--ac);font-size:12px"></i></div>
-        <div class="wm" data-m="nagad" onclick="pickMethod(this)"><div class="wm-ic" style="background:rgba(245,158,11,.12);color:#f59e0b"><i class="fas fa-mobile-alt"></i></div><div style="flex:1"><div style="font-size:12px;font-weight:700" data-l="w_nagad">Nagad</div><div style="font-size:9px;color:var(--mt)" data-l="w_min">Min: 100</div></div></div>
-        <div class="wm" data-m="rocket" onclick="pickMethod(this)"><div class="wm-ic" style="background:rgba(139,92,246,.12);color:#8b5cf6"><i class="fas fa-mobile-alt"></i></div><div style="flex:1"><div style="font-size:12px;font-weight:700" data-l="w_rocket">Rocket</div><div style="font-size:9px;color:var(--mt)" data-l="w_min">Min: 100</div></div></div>
-        <div style="margin-top:20px"></div>
-        <div class="ig"><label data-l="w_acc">Account Number</label><i class="fas fa-user ig-ic"></i><input type="tel" id="wdAcc" data-l="w_ph_acc" placeholder="01XXXXXXXXX" maxlength="11"></div>
-        <div class="ig"><label data-l="w_amt">Coin Amount</label><i class="fas fa-coins ig-ic"></i><input type="number" id="wdAmt" data-l="w_ph_amt" placeholder="Coins" min="100" oninput="document.getElementById('wdTk').textContent=formatNum(((parseInt(this.value)||0)*0.01).toFixed(2))"></div>
-        <div style="background:var(--card); padding:15px; border-radius:12px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <span style="font-size:12px; color:var(--mt); font-weight:600;" data-l="w_get">You get</span>
-            <div style="text-align:right;"><strong style="color:var(--ac); font-size:18px; font-family:'Space Grotesk';" id="wdTk">0</strong><span style="color:var(--mt); font-size:10px;" data-l="w_taka">Taka</span></div>
-        </div>
-        <button class="btn btn-g btn-bk" onclick="doWithdraw()"><i class="fas fa-paper-plane"></i> <span data-l="w_req">Request Withdraw</span></button>
-        <div class="sec-h" style="margin-top:20px"><h3 data-l="w_hist">History</h3></div>
-        <div id="wdHist"></div>
+    <!-- Withdraw (Wallet) Page -->
+<div class="page" id="pg-wd">
+    <div class="hdr">
+        <div class="logo"><div class="logo-ic" style="background:var(--g1)"><i class="fas fa-wallet" style="color:#000"></i></div><div class="logo-tx">Wallet</div></div>
     </div>
+
+    <!-- Balance Overview -->
+    <div class="wallet-main-card">
+        <div class="w-ov-label"><i class="fas fa-circle" style="color:var(--ac); font-size: 8px; margin-right: 5px;"></i> BALANCE OVERVIEW</div>
+        <div class="w-total-val">≈ <span id="wdTotalUSDT">0.00</span> <span>USDT</span></div>
+        
+        <div class="w-asset-grid">
+            <div class="w-asset-card">
+                <div class="w-asset-icon" style="background: var(--g1); color: #000;">V</div>
+                <div class="w-asset-info">
+                    <div class="w-asset-amt" id="wdVenomBal">0</div>
+                    <div class="w-asset-nm">$VENOM</div>
+                </div>
+            </div>
+            <div class="w-asset-card">
+                <div class="w-asset-icon" style="background: rgba(0,230,138,0.1); color: var(--ac);"><i class="fas fa-arrow-up-right-from-square"></i></div>
+                <div class="w-asset-info">
+                    <div class="w-asset-amt" id="wdTotalEarned">0</div>
+                    <div class="w-asset-nm">TOTAL EARNED</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Grid -->
+    <div class="w-action-grid">
+        <div class="w-action-item" onclick="openWdFlow()">
+            <div class="w-action-ic"><i class="fas fa-arrow-down"></i></div>
+            <div class="w-action-tx">Withdraw</div>
+        </div>
+        <div class="w-action-item" onclick="openMod('modConvert')">
+            <div class="w-action-ic"><i class="fas fa-exchange-alt"></i></div>
+            <div class="w-action-tx">Convert</div>
+        </div>
+        <div class="w-action-item" onclick="openMod('modSetWallet')">
+            <div class="w-action-ic"><i class="fas fa-wallet"></i></div>
+            <div class="w-action-tx">Set wallet</div>
+        </div>
+        <div class="w-action-item" onclick="openMod('modWdHistory')">
+            <div class="w-action-ic"><i class="fas fa-history"></i></div>
+            <div class="w-action-tx">History</div>
+        </div>
+    </div>
+
+    <!-- Saved Addresses -->
+    <div class="sec-h" style="margin-top: 20px;">
+        <h3><i class="fas fa-shield-alt" style="color:var(--ac); margin-right: 5px;"></i> Saved addresses</h3>
+        <button class="btn-sm btn-o" style="border-radius: 20px; font-size: 8px;">Manage</button>
+    </div>
+    <div class="saved-addr-card" id="savedAddrDisplay">
+        <div class="w-asset-icon" style="background: #26a17b;"><i class="fab fa-ethereum"></i></div>
+        <div style="flex:1; margin-left: 10px;">
+            <div style="font-size: 11px; font-weight: 700;">USDT (BEP20)</div>
+            <div style="font-size: 8px; color: var(--mt); word-break: break-all;" id="savedAddrTxt">Not set yet</div>
+        </div>
+    </div>
+
+    <div class="sec-h" style="margin-top: 20px;">
+        <h3><i class="fas fa-clock" style="color:var(--mt); margin-right: 5px;"></i> Recent</h3>
+        <button class="btn-sm btn-o" style="border-radius: 20px; font-size: 8px;" onclick="openMod('modWdHistory')">View all</button>
+    </div>
+    <div id="recentWdList"></div>
+</div>
+
+<!-- Convert Modal -->
+<div class="modal" id="modConvert">
+    <div class="modal-c" style="background: #111928;">
+        <div class="modal-h"><h3>Convert to USDT</h3><button class="modal-x" onclick="closeMod('modConvert')"><i class="fas fa-times"></i></button></div>
+        <p style="font-size: 9px; color: var(--mt); margin-bottom: 15px;">Rate: 1,000 Coins = 1 USDT</p>
+        <div class="ig"><label>You pay (Coins)</label><input type="number" id="convInp" placeholder="0" oninput="updateConv()"></div>
+        <div style="text-align: center; margin: 10px 0;"><i class="fas fa-arrow-down" style="color:var(--ac)"></i></div>
+        <div class="ig"><label>You get (USDT)</label><input type="text" id="convOut" placeholder="0.00" disabled></div>
+        <button class="btn btn-p btn-bk" style="margin-top: 15px;" onclick="processConvert()">Convert Coins</button>
+    </div>
+</div>
+
+<!-- Multi-step Withdraw Modal (ভিডিওর মতো) -->
+<div class="modal" id="modWdFlow">
+    <div class="modal-c" style="background: #0d1321; border-top: 2px solid var(--ac);">
+        <div class="modal-h"><h3 id="wdFlowTitle">Withdraw</h3><button class="modal-x" onclick="closeMod('modWdFlow')"><i class="fas fa-times"></i></button></div>
+        
+        <!-- Step 1: Requirements -->
+        <div id="wdStep1">
+            <div class="vip-badge" style="background: var(--card); padding: 10px; border-radius: 12px; display: flex; align-items: center; margin-bottom: 15px;">
+                <div style="background:var(--gd); width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #000;"><i class="fas fa-crown"></i></div>
+                <div style="margin-left: 10px;"><div style="font-size: 10px; font-weight: 800;">Daily withdrawals</div><div style="font-size: 8px; color: var(--gd);">VIP 1 (1 left today)</div></div>
+            </div>
+            <div class="req-item" id="reqBal"><i class="fas fa-check-circle"></i> Minimum balance (100 Coins)</div>
+            <div class="req-item" id="reqTasks"><i class="fas fa-check-circle"></i> Complete 5 tasks (last 24h)</div>
+            <button class="btn btn-p btn-bk" style="margin-top: 20px;" onclick="wdToStep2()">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <!-- Step 2: Watch Ad -->
+        <div id="wdStep2" style="display:none; text-align: center; padding: 20px 0;">
+            <i class="fas fa-play-circle" style="font-size: 40px; color: var(--ac); margin-bottom: 10px;"></i>
+            <h3>Watch an ad</h3>
+            <p style="font-size: 10px; color: var(--mt); margin-bottom: 20px;">One short ad is required before placing a withdrawal.</p>
+            <button class="btn btn-g btn-bk" onclick="watchWdAd()">Watch ad</button>
+        </div>
+
+        <!-- Step 3: Amount & Method -->
+        <div id="wdStep3" style="display:none;">
+            <div class="ig"><label>Amount (Coins)</label><input type="number" id="wdAmtFinal" placeholder="0"></div>
+            <div class="ig"><label>Method</label>
+                <select id="wdMethodFinal" style="width: 100%; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 10px; color: #fff;">
+                    <option value="bkash">bKash</option>
+                    <option value="nagad">Nagad</option>
+                    <option value="rocket">Rocket</option>
+                </select>
+            </div>
+            <button class="btn btn-p btn-bk" style="margin-top: 15px;" onclick="confirmFinalWd()">Place withdrawal</button>
+        </div>
+    </div>
+</div>
+
+<!-- History Modal -->
+<div class="modal" id="modWdHistory">
+    <div class="modal-c">
+        <div class="modal-h"><h3>Transaction history</h3><button class="modal-x" onclick="closeMod('modWdHistory')"><i class="fas fa-times"></i></button></div>
+        <div id="fullWdHist" style="max-height: 400px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+<!-- Set Wallet Modal -->
+<div class="modal" id="modSetWallet">
+    <div class="modal-c">
+        <div class="modal-h"><h3>Set withdrawal wallet</h3><button class="modal-x" onclick="closeMod('modSetWallet')"><i class="fas fa-times"></i></button></div>
+        <div class="ig"><label>Wallet Address / Number</label><input type="text" id="walletAddrInp" placeholder="Enter bKash/Nagad number"></div>
+        <button class="btn btn-p btn-bk" onclick="saveWalletAddr()">Save wallet</button>
+    </div>
+</div>
 
     <!-- Profile Page -->
     <div class="page" id="pg-prof">
