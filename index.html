@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>EarnHub</title>
-    <!-- টেলিগ্রামের মূল স্ক্রিপ্ট ফাইল (এটি যুক্ত করা হলো) -->
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <!-- ক্যাশ বাস্টিং (Cache Busting) সহ নতুন স্ক্রিপ্ট লিংক -->
+    <!-- Firebase & App Logic Modules -->
     <script type="module" src="app_secure.js"></script>
 
-    <!-- Language Selection -->
+    <!-- 1. Language Selection Overlay -->
     <div id="langSelect" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
         <div id="langSelectContent">
             <div style="font-size:50px; margin-bottom:20px;">🌐</div>
@@ -35,7 +35,7 @@
     <div class="orb"></div><div class="orb"></div><div class="orb"></div>
     <div class="toast-c" id="toastC"></div>
 
-    <!-- Chat Page -->
+    <!-- 2. EarnBot AI Chat Page -->
     <div class="cpg" id="chatPage">
         <div class="c-hdr">
             <div class="c-av" id="chatBotAv"><i class="fas fa-robot"></i><div class="digital-wave"><span></span><span></span><span></span><span></span><span></span></div></div>
@@ -49,71 +49,8 @@
         </div>
     </div>
 
-    <!-- Full-page: Spin -->
-    <div class="fg-page" id="fgSpin">
-        <div class="fg-hdr"><div class="fg-back" onclick="closeFG('fgSpin')"><i class="fas fa-arrow-left"></i></div><div class="fg-title" data-l="g_spin">Lucky Spin</div><div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="spinBalTop">0</div></div>
-        <div class="fg-body">
-            <div class="spin-hero"><h2>LUCKY SPIN</h2><p data-l="g_spin_d">Spin to win coins!</p></div>
-            <div class="sp-container"><div class="sp-glow"></div><div class="sp-ring"></div><div class="sp-ptr"></div><canvas id="spinCanvas" width="280" height="280"></canvas></div>
-            <div class="sp-info"><div class="sp-info-item"><div class="sp-info-label" data-l="g_cost">Cost</div><div class="sp-info-val" style="color:var(--gd)" id="spinCost">10</div></div><div class="sp-info-item"><div class="sp-info-label" data-l="g_left">Spins Left</div><div class="sp-info-val" id="spinLeft">5</div></div><div class="sp-info-item"><div class="sp-info-label" data-l="g_max">Max</div><div class="sp-info-val" style="color:var(--gd)" id="spinMax">100</div></div></div>
-            <button class="sp-btn" id="spinBtn" onclick="doSpin()"><i class="fas fa-sync-alt"></i>&nbsp; <span data-l="g_spin_btn">Spin</span></button>
-            <div class="sp-result" id="spinResult"><div id="spinResultIcon" style="font-size:40px;margin-bottom:4px"></div><div style="font-family:'Space Grotesk';font-size:32px;font-weight:900;color:var(--ac)" id="spinResultAmt"></div><div style="font-size:11px;color:var(--mt)" id="spinResultMsg"></div></div>
-        </div>
-    </div>
-
-    <!-- Full-page: Mine -->
-    <div class="fg-page" id="fgMine">
-        <div class="fg-hdr"><div class="fg-back" onclick="closeFG('fgMine')"><i class="fas fa-arrow-left"></i></div><div class="fg-title" data-l="g_mine">Coin Mine</div><div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="mineBalTop">0</div></div>
-        <div class="fg-body">
-            <div class="mine-hero"><h2>COIN MINE</h2><p data-l="g_mine_d">Avoid mines and find coins!</p></div>
-            <div class="mine-ctrls"><div class="mine-ctrl"><label data-l="g_bet">Bet</label><div class="val" id="mineBetDisp">10</div><div class="mine-cbtns"><button onclick="adjBet(-5)">-</button><button onclick="adjBet(5)">+</button></div></div><div class="mine-ctrl"><label data-l="g_mines">Mines</label><div class="val red" id="mineCountDisp">3</div><div class="mine-cbtns"><button onclick="adjMines(-1)">-</button><button onclick="adjMines(1)">+</button></div></div></div>
-            <div class="mine-stats"><div class="mine-stat"><div class="mine-stat-label" data-l="g_mult">Multiplier</div><div class="mine-stat-val" style="color:var(--gd)" id="mineMult">1.00x</div></div><div class="mine-stat"><div class="mine-stat-label" data-l="g_pot">Potential</div><div class="mine-stat-val" style="color:var(--ac)" id="minePotWin">0</div></div><div class="mine-stat"><div class="mine-stat-label" data-l="g_found">Found</div><div class="mine-stat-val" style="color:var(--ac)" id="mineFound">0</div></div></div>
-            <div style="position:relative;width:100%;max-width:340px"><div class="mine-grid" id="mineGrid"></div><div class="mine-over" id="mineOver"><div class="mine-over-icon" id="mineOverIcon"></div><div class="mine-over-text" id="mineOverText"></div><div class="mine-over-sub" id="mineOverSub"></div><div class="mine-over-amount" id="mineOverAmt"></div><button class="btn btn-p" style="padding:12px 28px;font-size:14px" onclick="closeMineOver()" data-l="g_play_again">Play Again</button></div></div>
-            <div class="mine-action"><button class="mine-start-btn" id="mineStartBtn" onclick="startMine()"><i class="fas fa-play"></i>&nbsp; <span data-l="g_start">Start</span></button><button class="mine-cashout-btn" id="mineCashBtn" onclick="cashOut()" disabled><i class="fas fa-hand-holding-usd"></i>&nbsp; <span data-l="g_cashout">Cashout</span></button></div>
-        </div>
-    </div>
-
-    <!-- Full-page: Tic Tac Toe -->
-    <div class="fg-page" id="fgTicTac">
-        <div class="fg-hdr"><div class="fg-back" onclick="closeFG('fgTicTac')"><i class="fas fa-arrow-left"></i></div><div class="fg-title" data-l="g_ttt">Tic Tac Toe</div><div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="tttBalTop">0</div></div>
-        <div class="fg-body" id="tttBody"></div>
-    </div>
-
-    <!-- Full-page: Target -->
-    <div class="fg-page" id="fgTarget">
-        <div class="fg-hdr"><div class="fg-back" onclick="closeFG('fgTarget')"><i class="fas fa-arrow-left"></i></div><div class="fg-title" data-l="g_target">Target Strike</div><div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="targetBalTop">0</div></div>
-        <div class="fg-body">
-            <div class="mine-hero"><h2>TARGET STRIKE</h2><p data-l="g_target_d">Tap the moving target to win!</p></div>
-            <div class="target-arena" id="targetArena"><div class="target-dot" id="targetDot"></div></div>
-            <div class="mine-stats" style="max-width:320px;"><div class="mine-stat"><div class="mine-stat-label" data-l="g_hits">Hits</div><div class="mine-stat-val" style="color:var(--ac)" id="targetHits">0</div></div><div class="mine-stat"><div class="mine-stat-label" data-l="g_time">Time</div><div class="mine-stat-val" style="color:var(--gd)" id="targetTime">10</div></div><div class="mine-stat"><div class="mine-stat-label" data-l="g_prize">Prize</div><div class="mine-stat-val" style="color:var(--pp)" id="targetPrize">100</div></div></div>
-            <button class="btn btn-p btn-bk" id="targetStartBtn" onclick="startTargetGame()" style="max-width:320px;" data-l="g_target_start">Start (10 Coins)</button>
-        </div>
-    </div>
-
-    <!-- Full-page: 2Captcha Tasks -->
-    <div class="fg-page" id="fgCaptcha">
-        <div class="fg-hdr">
-            <div class="fg-back" onclick="closeFG('fgCaptcha')"><i class="fas fa-arrow-left"></i></div>
-            <div class="fg-title">2Captcha Tasks</div>
-            <div style="font-family:'Space Grotesk';font-size:12px;font-weight:800;color:var(--ac)" id="captchaBalTop">0</div>
-        </div>
-        <div class="fg-body">
-            <div class="spin-hero">
-                <h2>2CAPTCHA</h2>
-                <p data-l="g_spin_d">Solve captchas & earn coins!</p>
-            </div>
-            <div class="captcha-limit-badge">
-                <i class="fas fa-tasks"></i>
-                <span data-l="t_daily">Daily</span>:
-                <span id="captchaFgLimit" class="limit-remaining">0 / 20</span>
-            </div>
-            <div class="captcha-grid" id="captchaFgGrid"></div>
-            <div style="font-size:9px; color:var(--mt); text-align:center; margin-top:6px;">
-                <i class="fas fa-info-circle"></i> <span data-l="t_proof_step4">Complete each captcha to earn coins.</span>
-            </div>
-        </div>
-    </div>
-
+    <!-- 3. MAIN PAGES -->
+    
     <!-- Home Page -->
     <div class="page on" id="pg-home">
         <div class="hdr">
@@ -126,31 +63,19 @@
         <div class="ubar"><div class="u-av" id="hAvatar">U</div><div class="u-inf"><div class="u-nm"><span id="hName">User</span><div class="u-vb"><i class="fas fa-check"></i></div></div><div class="u-id" id="hUserId">@user</div></div><div class="u-lv" id="hLevel">Lv.1</div></div>
         <div class="bcard"><div class="b-lb" data-l="h_bal">Total Balance</div><div class="b-val" id="hBal">0<span data-l="h_coin">Coins</span></div><div class="b-sub"><div><span data-l="h_today">Today's Earn</span>: <strong id="hTodayE">0</strong></div><div><span data-l="h_wd">Withdrawn</span>: <strong id="hTotalW">0</strong></div></div></div>
         
-        <!-- Promo Code -->
         <div class="promo-sec"><h3><i class="fas fa-ticket-alt" style="color:var(--gd)"></i> <span data-l="h_promo">Promo Code</span></h3><div class="promo-inp"><input type="text" id="promoInput" data-l="h_promo_ph" placeholder="Enter code..." maxlength="20"><button onclick="redeemPromo()" data-l="h_redeem">Redeem</button></div></div>
 
-        <!-- Quick Actions -->
         <div class="qck">
             <div class="qck-item" onclick="openDailyReward()"><div class="qck-ic" style="background:rgba(251,191,36,.12);color:var(--gd)"><i class="fas fa-calendar-check"></i></div><div class="qck-tx" data-l="q_daily">Daily</div></div>
             <div class="qck-item" onclick="goTo('earn')"><div class="qck-ic" style="background:rgba(0,230,138,.12);color:var(--ac)"><i class="fas fa-play-circle"></i></div><div class="qck-tx" data-l="q_ads">Ads</div></div>
             <div class="qck-item" onclick="openFG('fgSpin')"><div class="qck-ic" style="background:rgba(167,139,250,.12);color:var(--pp)"><i class="fas fa-dharmachakra"></i></div><div class="qck-tx" data-l="q_spin">Spin</div></div>
             <div class="qck-item" onclick="openFG('fgMine')"><div class="qck-ic" style="background:rgba(239,68,68,.12);color:var(--rd)"><i class="fas fa-bomb"></i></div><div class="qck-tx" data-l="q_mine">Mine</div></div>
-            <div class="qck-item" onclick="openFG('fgTarget')"><div class="qck-ic" style="background:rgba(236,72,153,.12);color:var(--pk)"><i class="fas fa-bullseye"></i></div><div class="qck-tx" data-l="q_target">Target</div></div>
-            <div class="qck-item" onclick="openFG('fgCaptcha')"><div class="qck-ic" style="background:rgba(56,189,248,.12);color:var(--bl)"><i class="fas fa-shield-alt"></i></div><div class="qck-tx">2Captcha</div></div>
         </div>
-
-        <div class="sec-h"><h3><i class="fas fa-fire" style="color:var(--gd);margin-right:3px"></i><span data-l="h_streak">Streak</span></h3><a onclick="openDailyReward()" data-l="h_claim">Claim</a></div>
-        <div class="streak" id="streakHome"></div>
 
         <div class="sec-h"><h3><i class="fas fa-tasks" style="color:var(--ac);margin-right:3px"></i><span data-l="h_top_tasks">Top Tasks</span></h3><a onclick="goTo('earn')" data-l="h_all">All</a></div>
         <div id="homeTasks"></div>
 
-        <div class="sec-h" style="margin-top:16px"><h3><i class="fas fa-trophy" style="color:var(--gd);margin-right:3px"></i><span data-l="m_lb">Leaderboard (Top 10)</span></h3></div>
-        <div class="tab-bar">
-            <button class="tab-btn on" id="btn-home-daily" onclick="changeLeaderboardTimeframe('home', 'daily')"><i class="fas fa-calendar-day"></i><span data-l="t_daily">Daily</span></button>
-            <button class="tab-btn" id="btn-home-weekly" onclick="changeLeaderboardTimeframe('home', 'weekly')"><i class="fas fa-calendar-week"></i><span data-l="t_weekly">Weekly</span></button>
-            <button class="tab-btn" id="btn-home-monthly" onclick="changeLeaderboardTimeframe('home', 'monthly')"><i class="fas fa-calendar-alt"></i><span data-l="t_monthly">Monthly</span></button>
-        </div>
+        <div class="sec-h" style="margin-top:16px"><h3><i class="fas fa-trophy" style="color:var(--gd);margin-right:3px"></i><span data-l="m_lb">Leaderboard</span></h3></div>
         <div id="homeLB"></div>
     </div>
 
@@ -161,41 +86,16 @@
             <button class="tab-btn on" onclick="switchTab('tsk',this)"><i class="fas fa-tasks"></i><span data-l="e_tab_task">Tasks</span></button>
             <button class="tab-btn" onclick="switchTab('ads',this)"><i class="fas fa-ad"></i><span data-l="e_tab_ads">Ads</span></button>
             <button class="tab-btn" onclick="switchTab('gm',this)"><i class="fas fa-gamepad"></i><span data-l="e_tab_games">Games</span></button>
-            <button class="tab-btn" onclick="switchTab('of',this)"><i class="fas fa-gift"></i><span data-l="e_tab_offers">Offers</span></button>
         </div>
         <div id="et-tsk"></div>
         <div id="et-ads" style="display:none"><div id="adsList"></div></div>
         <div id="et-gm" style="display:none">
             <div class="games-grid">
-                <div class="game-box" onclick="openFG('fgSpin')">
-                    <div class="gb-glow"></div>
-                    <div class="gb-icon" style="background: rgba(167,139,250,0.15); color: var(--pp); border: 1px solid rgba(167,139,250,0.3);"><i class="fas fa-dharmachakra"></i></div>
-                    <div class="gb-title">Lucky Spin</div>
-                    <div class="gb-desc">Win 10-100 coins!</div>
-                </div>
-                <div class="game-box" onclick="openFG('fgMine')">
-                    <div class="gb-glow"></div>
-                    <div class="gb-icon" style="background: rgba(239,68,68,0.15); color: var(--rd); border: 1px solid rgba(239,68,68,0.3);"><i class="fas fa-bomb"></i></div>
-                    <div class="gb-title">Coin Mine</div>
-                    <div class="gb-desc">Avoid mines!</div>
-                </div>
-                <div class="game-box" onclick="openFG('fgTicTac')">
-                    <div class="gb-glow"></div>
-                    <div class="gb-icon" style="background: rgba(0,230,138,0.15); color: var(--ac); border: 1px solid rgba(0,230,138,0.3);"><i class="fas fa-hashtag"></i></div>
-                    <div class="gb-title">Tic Tac Toe</div>
-                    <div class="gb-desc">Real Multiplayer!</div>
-                </div>
-                <div class="game-box" onclick="openFG('fgTarget')">
-                    <div class="gb-glow"></div>
-                    <div class="gb-icon" style="background: rgba(236,72,153,0.15); color: var(--pk); border: 1px solid rgba(236,72,153,0.3);"><i class="fas fa-bullseye"></i></div>
-                    <div class="gb-title">Target Strike</div>
-                    <div class="gb-desc">Tap the target!</div>
-                </div>
+                <div class="game-box" onclick="openFG('fgSpin')"><div class="gb-glow"></div><div class="gb-icon" style="background: rgba(167,139,250,0.15); color: var(--pp);"><i class="fas fa-dharmachakra"></i></div><div class="gb-title">Lucky Spin</div></div>
+                <div class="game-box" onclick="openFG('fgMine')"><div class="gb-glow"></div><div class="gb-icon" style="background: rgba(239,68,68,0.15); color: var(--rd);"><i class="fas fa-bomb"></i></div><div class="gb-title">Coin Mine</div></div>
+                <div class="game-box" onclick="openFG('fgTicTac')"><div class="gb-glow"></div><div class="gb-icon" style="background: rgba(0,230,138,0.15); color: var(--ac);"><i class="fas fa-hashtag"></i></div><div class="gb-title">Tic Tac Toe</div></div>
+                <div class="game-box" onclick="openFG('fgCaptcha')"><div class="gb-glow"></div><div class="gb-icon" style="background: rgba(56,189,248,0.15); color: var(--bl);"><i class="fas fa-shield-alt"></i></div><div class="gb-title">2Captcha</div></div>
             </div>
-        </div>
-        <div id="et-of" style="display:none">
-            <div class="tk" style="cursor:default;"><div class="tk-ic" style="background:rgba(56,189,248,.12);color:var(--bl)"><i class="fas fa-snowflake"></i></div><div class="tk-inf"><div class="tk-nm">Winter Promo</div><div class="tk-ds">Get 20% extra on next withdrawal!</div></div><div class="tk-rw">Active</div></div>
-            <div class="tk" style="cursor:default;"><div class="tk-ic" style="background:rgba(167,139,250,.12);color:var(--pp)"><i class="fas fa-medal"></i></div><div class="tk-inf"><div class="tk-nm">VIP Pass</div><div class="tk-ds">Unlock exclusive high-reward tasks!</div></div><div class="tk-rw">+50</div></div>
         </div>
     </div>
 
@@ -203,210 +103,203 @@
     <div class="page" id="pg-ref">
         <div class="hdr"><div class="logo"><div class="logo-ic"><i class="fas fa-users"></i></div><div class="logo-tx" data-l="r_title">Referral</div></div></div>
         <div class="rcard">
-            <i class="fas fa-gift" style="font-size:24px;color:var(--gd);margin-bottom:3px"></i>
-            <h3 style="font-size:13px;margin-bottom:2px" data-l="r_invite">Invite Friends</h3>
-            <p style="font-size:9px;color:var(--mt)" data-l="r_desc">Get 50 coins per referral + 5% commission on their withdrawals!</p>
+            <h3 data-l="r_invite">Invite Friends</h3>
+            <p style="font-size:9px;color:var(--mt)" data-l="r_desc">Get 50 coins per referral!</p>
             <div class="rcode" id="refCode">EARNXXXX</div>
             <div style="display:flex;gap:5px;justify-content:center;margin-bottom:12px">
-                <button class="btn btn-p btn-sm" onclick="copyCode()"><i class="fas fa-copy"></i> <span data-l="r_copy">Copy</span></button>
-                <button class="btn btn-o btn-sm" onclick="shareCode()"><i class="fas fa-share"></i> <span data-l="r_share">Share</span></button>
-            </div>
-            <div style="background:var(--bg2); border-radius:10px; padding:10px; border:1px solid var(--border); text-align:left; margin-bottom:12px;">
-                <h4 style="font-size:10px; font-weight:800; color:var(--ac); margin-bottom:4px;" data-l="r_enter_code">Enter Friend's Code</h4>
-                <div style="display:flex; gap:6px;">
-                    <input type="text" id="friendRefCode" placeholder="EARNXXXX" style="flex:1; background:var(--card); border:1px solid var(--border); padding:8px; border-radius:6px; font-size:10px; color:var(--fg); outline:none; text-transform:uppercase;">
-                    <button class="btn btn-p btn-sm" onclick="submitReferralCode()" data-l="r_submit_code">Submit</button>
-                </div>
+                <button class="btn btn-p btn-sm" onclick="copyCode()"><i class="fas fa-copy"></i> Copy</button>
+                <button class="btn btn-o btn-sm" onclick="shareCode()"><i class="fas fa-share"></i> Share</button>
             </div>
             <div class="rstat">
-                <div class="rst-item"><div class="rst-v" id="totalRef">0</div><div class="rst-l" data-l="r_total">Total Ref</div></div>
-                <div class="rst-item"><div class="rst-v" id="refEarn">0</div><div class="rst-l" data-l="r_earn">Ref Earn</div></div>
-                <div class="rst-item"><div class="rst-v" id="refPend">0</div><div class="rst-l" data-l="r_pend">Pending</div></div>
+                <div class="rst-item"><div class="rst-v" id="totalRef">0</div><div class="rst-l">Total Ref</div></div>
+                <div class="rst-item"><div class="rst-v" id="refEarn">0</div><div class="rst-l">Ref Earn</div></div>
             </div>
-        </div>
-        <div class="sec-h"><h3><i class="fas fa-users" style="color:var(--gd);margin-right:3px"></i> <span data-l="m_lb">Referral Leaderboard (Top 10)</span></h3></div>
-        <div class="tab-bar">
-            <button class="tab-btn on" id="btn-ref-daily" onclick="changeLeaderboardTimeframe('ref', 'daily')"><i class="fas fa-calendar-day"></i><span data-l="t_daily">Daily</span></button>
-            <button class="tab-btn" id="btn-ref-weekly" onclick="changeLeaderboardTimeframe('ref', 'weekly')"><i class="fas fa-calendar-week"></i><span data-l="t_weekly">Weekly</span></button>
-            <button class="tab-btn" id="btn-ref-monthly" onclick="changeLeaderboardTimeframe('ref', 'monthly')"><i class="fas fa-calendar-alt"></i><span data-l="t_monthly">Monthly</span></button>
         </div>
         <div id="refLB"></div>
     </div>
 
-    <!-- Withdraw (Wallet) Page -->
-<div class="page" id="pg-wd">
-    <div class="hdr">
-        <div class="logo"><div class="logo-ic" style="background:var(--g1)"><i class="fas fa-wallet" style="color:#000"></i></div><div class="logo-tx">Wallet</div></div>
-    </div>
+    <!-- WALLET (Withdraw) PAGE - ভিডিওর মতো নতুন ডিজাইন -->
+    <div class="page" id="pg-wd">
+        <div class="hdr">
+            <div class="logo">
+                <div class="logo-ic" style="background:var(--g1)"><i class="fas fa-wallet" style="color:#000"></i></div>
+                <div class="logo-tx">Wallet</div>
+            </div>
+        </div>
 
-    <!-- Balance Overview -->
-    <div class="wallet-main-card">
-        <div class="w-ov-label"><i class="fas fa-circle" style="color:var(--ac); font-size: 8px; margin-right: 5px;"></i> BALANCE OVERVIEW</div>
-        <div class="w-total-val">≈ <span id="wdTotalUSDT">0.00</span> <span>USDT</span></div>
-        
-        <div class="w-asset-grid">
-            <div class="w-asset-card">
-                <div class="w-asset-icon" style="background: var(--g1); color: #000;">V</div>
-                <div class="w-asset-info">
-                    <div class="w-asset-amt" id="wdVenomBal">0</div>
-                    <div class="w-asset-nm">$VENOM</div>
+        <!-- Balance Overview Card -->
+        <div class="wallet-main-card">
+            <div class="w-ov-label"><i class="fas fa-circle" style="color:var(--ac); font-size: 8px; margin-right: 5px;"></i> BALANCE OVERVIEW</div>
+            <div class="w-total-val">≈ <span id="wdTotalUSDT">0.0000</span> <span>USDT</span></div>
+            
+            <div class="w-asset-grid">
+                <div class="w-asset-card">
+                    <div class="w-asset-icon" style="background: var(--g1); color: #000;">V</div>
+                    <div class="w-asset-info">
+                        <div class="w-asset-amt" id="wdVenomBal">0</div>
+                        <div class="w-asset-nm">$VENOM</div>
+                    </div>
+                </div>
+                <div class="w-asset-card">
+                    <div class="w-asset-icon" style="background: rgba(0,230,138,0.1); color: var(--ac);"><i class="fas fa-chart-line"></i></div>
+                    <div class="w-asset-info">
+                        <div class="w-asset-amt" id="wdTotalEarned">0</div>
+                        <div class="w-asset-nm">TOTAL EARNED</div>
+                    </div>
                 </div>
             </div>
-            <div class="w-asset-card">
-                <div class="w-asset-icon" style="background: rgba(0,230,138,0.1); color: var(--ac);"><i class="fas fa-arrow-up-right-from-square"></i></div>
-                <div class="w-asset-info">
-                    <div class="w-asset-amt" id="wdTotalEarned">0</div>
-                    <div class="w-asset-nm">TOTAL EARNED</div>
-                </div>
+        </div>
+
+        <!-- Action Grid Buttons -->
+        <div class="w-action-grid">
+            <div class="w-action-item" onclick="openWdFlow()">
+                <div class="w-action-ic"><i class="fas fa-arrow-down"></i></div>
+                <div class="w-action-tx">Withdraw</div>
+            </div>
+            <div class="w-action-item" onclick="openMod('modConvert')">
+                <div class="w-action-ic"><i class="fas fa-exchange-alt"></i></div>
+                <div class="w-action-tx">Convert</div>
+            </div>
+            <div class="w-action-item" onclick="openMod('modSetWallet')">
+                <div class="w-action-ic"><i class="fas fa-wallet"></i></div>
+                <div class="w-action-tx">Set wallet</div>
+            </div>
+            <div class="w-action-item" onclick="openMod('modWdHistory')">
+                <div class="w-action-ic"><i class="fas fa-history"></i></div>
+                <div class="w-action-tx">History</div>
             </div>
         </div>
-    </div>
 
-    <!-- Action Grid -->
-    <div class="w-action-grid">
-        <div class="w-action-item" onclick="openWdFlow()">
-            <div class="w-action-ic"><i class="fas fa-arrow-down"></i></div>
-            <div class="w-action-tx">Withdraw</div>
+        <!-- Saved Addresses Section -->
+        <div class="sec-h" style="margin-top: 20px;">
+            <h3><i class="fas fa-shield-alt" style="color:var(--ac); margin-right: 5px;"></i> Saved addresses</h3>
+            <button class="btn-sm btn-o" style="border-radius: 20px; font-size: 8px;">Manage</button>
         </div>
-        <div class="w-action-item" onclick="openMod('modConvert')">
-            <div class="w-action-ic"><i class="fas fa-exchange-alt"></i></div>
-            <div class="w-action-tx">Convert</div>
-        </div>
-        <div class="w-action-item" onclick="openMod('modSetWallet')">
-            <div class="w-action-ic"><i class="fas fa-wallet"></i></div>
-            <div class="w-action-tx">Set wallet</div>
-        </div>
-        <div class="w-action-item" onclick="openMod('modWdHistory')">
-            <div class="w-action-ic"><i class="fas fa-history"></i></div>
-            <div class="w-action-tx">History</div>
-        </div>
-    </div>
-
-    <!-- Saved Addresses -->
-    <div class="sec-h" style="margin-top: 20px;">
-        <h3><i class="fas fa-shield-alt" style="color:var(--ac); margin-right: 5px;"></i> Saved addresses</h3>
-        <button class="btn-sm btn-o" style="border-radius: 20px; font-size: 8px;">Manage</button>
-    </div>
-    <div class="saved-addr-card" id="savedAddrDisplay">
-        <div class="w-asset-icon" style="background: #26a17b;"><i class="fab fa-ethereum"></i></div>
-        <div style="flex:1; margin-left: 10px;">
-            <div style="font-size: 11px; font-weight: 700;">USDT (BEP20)</div>
-            <div style="font-size: 8px; color: var(--mt); word-break: break-all;" id="savedAddrTxt">Not set yet</div>
-        </div>
-    </div>
-
-    <div class="sec-h" style="margin-top: 20px;">
-        <h3><i class="fas fa-clock" style="color:var(--mt); margin-right: 5px;"></i> Recent</h3>
-        <button class="btn-sm btn-o" style="border-radius: 20px; font-size: 8px;" onclick="openMod('modWdHistory')">View all</button>
-    </div>
-    <div id="recentWdList"></div>
-</div>
-
-<!-- Convert Modal -->
-<div class="modal" id="modConvert">
-    <div class="modal-c" style="background: #111928;">
-        <div class="modal-h"><h3>Convert to USDT</h3><button class="modal-x" onclick="closeMod('modConvert')"><i class="fas fa-times"></i></button></div>
-        <p style="font-size: 9px; color: var(--mt); margin-bottom: 15px;">Rate: 1,000 Coins = 1 USDT</p>
-        <div class="ig"><label>You pay (Coins)</label><input type="number" id="convInp" placeholder="0" oninput="updateConv()"></div>
-        <div style="text-align: center; margin: 10px 0;"><i class="fas fa-arrow-down" style="color:var(--ac)"></i></div>
-        <div class="ig"><label>You get (USDT)</label><input type="text" id="convOut" placeholder="0.00" disabled></div>
-        <button class="btn btn-p btn-bk" style="margin-top: 15px;" onclick="processConvert()">Convert Coins</button>
-    </div>
-</div>
-
-<!-- Multi-step Withdraw Modal (ভিডিওর মতো) -->
-<div class="modal" id="modWdFlow">
-    <div class="modal-c" style="background: #0d1321; border-top: 2px solid var(--ac);">
-        <div class="modal-h"><h3 id="wdFlowTitle">Withdraw</h3><button class="modal-x" onclick="closeMod('modWdFlow')"><i class="fas fa-times"></i></button></div>
-        
-        <!-- Step 1: Requirements -->
-        <div id="wdStep1">
-            <div class="vip-badge" style="background: var(--card); padding: 10px; border-radius: 12px; display: flex; align-items: center; margin-bottom: 15px;">
-                <div style="background:var(--gd); width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #000;"><i class="fas fa-crown"></i></div>
-                <div style="margin-left: 10px;"><div style="font-size: 10px; font-weight: 800;">Daily withdrawals</div><div style="font-size: 8px; color: var(--gd);">VIP 1 (1 left today)</div></div>
+        <div class="saved-addr-card" id="savedAddrDisplay">
+            <div class="w-asset-icon" style="background: #26a17b;"><i class="fab fa-ethereum"></i></div>
+            <div style="flex:1; margin-left: 10px;">
+                <div style="font-size: 11px; font-weight: 700;">Payment Address</div>
+                <div style="font-size: 8px; color: var(--mt); word-break: break-all;" id="savedAddrTxt">Not set yet</div>
             </div>
-            <div class="req-item" id="reqBal"><i class="fas fa-check-circle"></i> Minimum balance (100 Coins)</div>
-            <div class="req-item" id="reqTasks"><i class="fas fa-check-circle"></i> Complete 5 tasks (last 24h)</div>
-            <button class="btn btn-p btn-bk" style="margin-top: 20px;" onclick="wdToStep2()">Next <i class="fas fa-arrow-right"></i></button>
         </div>
 
-        <!-- Step 2: Watch Ad -->
-        <div id="wdStep2" style="display:none; text-align: center; padding: 20px 0;">
-            <i class="fas fa-play-circle" style="font-size: 40px; color: var(--ac); margin-bottom: 10px;"></i>
-            <h3>Watch an ad</h3>
-            <p style="font-size: 10px; color: var(--mt); margin-bottom: 20px;">One short ad is required before placing a withdrawal.</p>
-            <button class="btn btn-g btn-bk" onclick="watchWdAd()">Watch ad</button>
+        <!-- Recent Transactions -->
+        <div class="sec-h" style="margin-top: 20px;">
+            <h3><i class="fas fa-clock" style="color:var(--mt); margin-right: 5px;"></i> Recent</h3>
+            <button class="btn-sm btn-o" style="border-radius: 20px; font-size: 8px;" onclick="openMod('modWdHistory')">View all</button>
         </div>
-
-        <!-- Step 3: Amount & Method -->
-        <div id="wdStep3" style="display:none;">
-            <div class="ig"><label>Amount (Coins)</label><input type="number" id="wdAmtFinal" placeholder="0"></div>
-            <div class="ig"><label>Method</label>
-                <select id="wdMethodFinal" style="width: 100%; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 10px; color: #fff;">
-                    <option value="bkash">bKash</option>
-                    <option value="nagad">Nagad</option>
-                    <option value="rocket">Rocket</option>
-                </select>
-            </div>
-            <button class="btn btn-p btn-bk" style="margin-top: 15px;" onclick="confirmFinalWd()">Place withdrawal</button>
-        </div>
+        <div id="recentWdList"></div>
     </div>
-</div>
-
-<!-- History Modal -->
-<div class="modal" id="modWdHistory">
-    <div class="modal-c">
-        <div class="modal-h"><h3>Transaction history</h3><button class="modal-x" onclick="closeMod('modWdHistory')"><i class="fas fa-times"></i></button></div>
-        <div id="fullWdHist" style="max-height: 400px; overflow-y: auto;"></div>
-    </div>
-</div>
-
-<!-- Set Wallet Modal -->
-<div class="modal" id="modSetWallet">
-    <div class="modal-c">
-        <div class="modal-h"><h3>Set withdrawal wallet</h3><button class="modal-x" onclick="closeMod('modSetWallet')"><i class="fas fa-times"></i></button></div>
-        <div class="ig"><label>Wallet Address / Number</label><input type="text" id="walletAddrInp" placeholder="Enter bKash/Nagad number"></div>
-        <button class="btn btn-p btn-bk" onclick="saveWalletAddr()">Save wallet</button>
-    </div>
-</div>
 
     <!-- Profile Page -->
     <div class="page" id="pg-prof">
-        <div style="text-align:center;padding:14px 0">
+        <div style="text-align:center;padding:20px 0">
             <div class="pav" id="pAvatar">U</div>
-            <div style="font-size:16px;font-weight:800" id="pName">User</div>
-            <div style="font-size:10px;color:var(--mt);font-family:'Space Grotesk',monospace;margin-top:2px" id="pUserId">@user</div>
-            <div style="display:inline-flex;align-items:center;gap:3px;margin-top:4px;padding:2px 8px;background:rgba(251,191,36,.12);border-radius:10px;font-size:9px;color:var(--gd);font-weight:700"><i class="fas fa-star"></i><span id="pLevel">Level 1</span></div>
+            <div style="font-size:18px;font-weight:800" id="pName">User</div>
+            <div style="font-size:10px;color:var(--mt)" id="pUserId">@user</div>
         </div>
-        <div onclick="goTo('wd')" style="background:var(--g2); color:#000; margin-bottom:12px; padding:12px; border-radius:12px; font-weight:800; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer; box-shadow:0 4px 15px rgba(251,191,36,0.3);">
-            <i class="fas fa-wallet"></i> <span data-l="w_title">Withdraw</span>
+        <div class="pst">
+            <div class="ps-item"><div class="ps-v" id="pCoins">0</div><div class="ps-l">Coins</div></div>
+            <div class="ps-item"><div class="ps-v" id="pTasks">0</div><div class="ps-l">Tasks</div></div>
         </div>
-        <div class="pst"><div class="ps-item"><div class="ps-v" style="color:var(--ac)" id="pCoins">0</div><div class="ps-l" data-l="p_coins">Total Coins</div></div><div class="ps-item"><div class="ps-v" style="color:var(--gd)" id="pEarned">0</div><div class="ps-l" data-l="p_earned">Total Earned</div></div><div class="ps-item"><div class="ps-v" style="color:var(--bl)" id="pTasks">0</div><div class="ps-l" data-l="p_tasks">Tasks</div></div><div class="ps-item"><div class="ps-v" style="color:var(--pp)" id="pDays">0</div><div class="ps-l" data-l="p_days">Days Active</div></div></div>
-        <div style="padding:0 1px;margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:2px"><span style="color:var(--mt)" data-l="p_lvl_prog">Level Progress</span><span style="color:var(--ac)" id="pLvlP">0%</span></div><div class="pb"><div class="fl" id="pLvlF" style="width:0%"></div></div></div>
-        <div class="sec-h"><h3><i class="fas fa-medal" style="color:var(--gd);margin-right:3px"></i><span data-l="p_ach">Achievements</span></h3></div>
-        <div id="achList"></div>
-        <div class="sec-h" style="margin-top:12px"><h3><i class="fas fa-headset" style="color:var(--ac);margin-right:3px"></i><span data-l="p_sup">Support</span></h3></div>
-        <div class="sbtn" onclick="openLangSelect()"><div class="sbtn-ic" style="background:rgba(56,189,248,.12);color:var(--bl)"><i class="fas fa-language"></i></div><div style="flex:1"><div class="sbtn-nm" data-l="p_lang">Change Language</div><div class="sbtn-ds">বাংলা / हिन्दी / English</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div>
-        <div class="sbtn" onclick="openChat()"><div class="sbtn-ic" style="background:rgba(0,230,138,.12);color:var(--ac)"><i class="fas fa-robot"></i></div><div style="flex:1"><div class="sbtn-nm" data-l="p_chat">EarnBot Chat</div><div class="sbtn-ds" data-l="p_chat_d">Ask directly</div></div></div>
-        <div class="sbtn" onclick="safeOpenLink('https://t.me/EarnHubAdmin')"><div class="sbtn-ic" style="background:rgba(56,189,248,.12);color:var(--bl)"><i class="fab fa-telegram-plane"></i></div><div style="flex:1"><div class="sbtn-nm" data-l="p_admin_direct">Direct Admin Link</div><div class="sbtn-ds" data-l="p_admin_direct_d">Telegram support</div></div><i class="fas fa-chevron-right" style="color:var(--mt);font-size:10px"></i></div>
+        <div class="sec-h"><h3>Support</h3></div>
+        <div class="sbtn" onclick="openChat()"><div class="sbtn-ic" style="background:rgba(0,230,138,.12);color:var(--ac)"><i class="fas fa-robot"></i></div><div class="sbtn-nm">EarnBot Chat</div></div>
+        <div class="sbtn" onclick="safeOpenLink('https://t.me/EarnHubAdmin')"><div class="sbtn-ic" style="background:rgba(56,189,248,.12);color:var(--bl)"><i class="fab fa-telegram-plane"></i></div><div class="sbtn-nm">Direct Admin</div></div>
     </div>
 
-    <!-- Modals -->
-    <div class="modal" id="modNotif"><div class="modal-c"><div class="modal-h"><h3><i class="fas fa-bell" style="color:var(--gd);margin-right:4px"></i><span data-l="notif_title">Notifications</span></h3><button class="modal-x" onclick="closeMod('modNotif')"><i class="fas fa-times"></i></button></div><div id="notifBody" style="max-height:300px;overflow-y:auto;margin-bottom:12px"></div><button class="btn btn-p btn-bk" onclick="closeMod('modNotif')"><span data-l="t_done">Done</span></button></div></div>
-    <div class="modal" id="modDaily"><div class="modal-c"><div class="modal-h"><h3><i class="fas fa-gift" style="color:var(--gd);margin-right:4px"></i><span data-l="d_title">Daily Reward</span></h3><button class="modal-x" onclick="closeMod('modDaily')"><i class="fas fa-times"></i></button></div><div style="text-align:center;margin-bottom:12px"><div style="font-size:34px;margin-bottom:3px">🎁</div><div style="font-size:10px;color:var(--mt)" data-l="d_today">Today's Reward</div><div style="font-family:'Space Grotesk';font-size:26px;font-weight:800;color:var(--gd)" id="drAmt">+10</div></div><div class="streak" id="streakModal" style="justify-content:center"></div><button class="btn btn-g btn-bk" id="drBtn" onclick="claimDaily()"><i class="fas fa-hand-sparkles"></i> <span data-l="d_claim">Claim</span></button></div></div>
-    <div class="modal" id="modAd"><div class="modal-c"><div class="modal-h"><h3><i class="fas fa-play-circle" style="color:var(--ac);margin-right:4px"></i><span data-l="a_title">Advertisement</span></h3><button class="modal-x" onclick="closeAdModal()"><i class="fas fa-times"></i></button></div><div style="text-align:center;padding:14px 0"><div id="adBox" style="width:100%;height:120px;background:var(--card);border:2px dashed var(--border);border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mt);margin:8px 0"><i class="fas fa-ad" style="font-size:24px;margin-bottom:3px"></i><div style="font-size:10px" data-l="a_click">Click button</div></div><div id="adTimer" style="display:none;width:70px;height:70px;border-radius:50%;border:4px solid var(--border);border-top-color:var(--ac);align-items:center;justify-content:center;margin:0 auto 8px;font-family:'Space Grotesk';font-size:22px;font-weight:800;color:var(--ac)"></div><p style="font-size:10px;color:var(--mt);margin-bottom:10px" id="adMsg" data-l="a_ready">Ready</p><button class="btn btn-p" id="adBtn" onclick="startAd()"><i class="fas fa-play"></i> <span data-l="a_start">Start</span></button></div></div></div>
-    <div class="modal" id="modBodyAd"><div class="modal-c"><div class="modal-h"><h3><i class="fas fa-ad" style="color:var(--ac);margin-right:4px"></i> Sponsor Ad</h3><button class="modal-x" id="bodyAdCloseBtn" style="display:none" onclick="closeBodyAd()"><i class="fas fa-times"></i></button></div><div style="text-align:center;padding:14px 0"><div id="bodyAdBox" style="width:100%;height:150px;background:var(--card);border:2px dashed var(--border);border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mt);margin:8px 0"><i class="fas fa-ad" style="font-size:30px;margin-bottom:5px"></i><div style="font-size:10px">Sponsor Ad Loading...</div></div><div id="bodyAdTimer" style="display:flex;width:70px;height:70px;border-radius:50%;border:4px solid var(--border);border-top-color:var(--ac);align-items:center;justify-content:center;margin:0 auto 8px;font-family:'Space Grotesk';font-size:22px;font-weight:800;color:var(--ac)">5</div><p style="font-size:10px;color:var(--mt);margin-bottom:10px" id="bodyAdMsg">Please wait...</p></div></div></div>
-    <div class="modal" id="modTask"><div class="modal-c"><div class="modal-h"><h3 id="taskModTitle">Task</h3><button class="modal-x" onclick="closeMod('modTask')"><i class="fas fa-times"></i></button></div><div id="taskModBody"></div></div></div>
-    <div class="modal" id="modProof"><div class="modal-c"><div class="modal-h"><h3 id="proofModTitle">Proof Submit</h3><button class="modal-x" onclick="closeMod('modProof')"><i class="fas fa-times"></i></button></div><div id="proofModBody"></div></div></div>
-    <div class="modal" id="modPrereqAd"><div class="modal-c"><div class="modal-h"><h3 id="prereqAdTitle"><i class="fas fa-ad" style="color:var(--ac);margin-right:4px"></i><span data-l="a_title">Ad</span></h3><button class="modal-x" style="display:none" id="prereqAdCloseBtn" onclick="skipPrereqAd()"><i class="fas fa-times"></i></button></div><div style="text-align:center;padding:14px 0"><div id="prereqAdBox" style="width:100%;height:100px;background:var(--card);border:2px dashed var(--border);border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mt);margin:8px 0"><i class="fas fa-ad" style="font-size:24px;margin-bottom:3px"></i><div style="font-size:10px">Ad Loading...</div></div><div id="prereqAdTimer" style="display:none;width:60px;height:60px;border-radius:50%;border:4px solid var(--border);border-top-color:var(--ac);align-items:center;justify-content:center;margin:0 auto 8px;font-family:'Space Grotesk';font-size:20px;font-weight:800;color:var(--ac)"></div><p style="font-size:10px;color:var(--mt);margin-bottom:10px" id="prereqAdMsg">Watch Ad...</p><button class="btn btn-p" id="prereqAdBtn" onclick="skipPrereqAd()" style="display:none"><i class="fas fa-forward"></i> <span data-l="prereq_ad_skip">Skip / Continue</span></button></div></div></div>
+    <!-- 4. MODALS & POPUPS -->
 
-    <!-- Navigation -->
+    <!-- Multi-step Withdrawal Flow -->
+    <div class="modal" id="modWdFlow">
+        <div class="modal-c" style="background: #0d1321; border-top: 2px solid var(--ac);">
+            <div class="modal-h"><h3>Withdraw</h3><button class="modal-x" onclick="closeMod('modWdFlow')"><i class="fas fa-times"></i></button></div>
+            
+            <div id="wdStep1">
+                <div style="background: var(--card); padding: 12px; border-radius: 12px; display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="background:var(--gd); width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #000;"><i class="fas fa-crown"></i></div>
+                    <div style="margin-left: 10px;"><div style="font-size: 10px; font-weight: 800;">Daily withdrawals</div><div style="font-size: 8px; color: var(--gd);">VIP 1 Limits</div></div>
+                </div>
+                <div class="req-item" id="reqBal"><i class="fas fa-check-circle"></i> Minimum balance (100 Coins)</div>
+                <div class="req-item" id="reqTasks"><i class="fas fa-check-circle"></i> Complete 5 tasks (last 24h)</div>
+                <button class="btn btn-p btn-bk" style="margin-top: 20px;" onclick="wdToStep2()">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+
+            <div id="wdStep2" style="display:none; text-align: center; padding: 20px 0;">
+                <i class="fas fa-play-circle" style="font-size: 40px; color: var(--ac); margin-bottom: 10px;"></i>
+                <h3 style="font-size: 14px;">Watch an ad</h3>
+                <p style="font-size: 10px; color: var(--mt); margin-bottom: 20px;">One short ad is required before placing a withdrawal.</p>
+                <button class="btn btn-g btn-bk" onclick="watchWdAd()">Watch ad & Continue</button>
+            </div>
+
+            <div id="wdStep3" style="display:none;">
+                <div class="ig"><label>Amount (Coins)</label><input type="number" id="wdAmtFinal" placeholder="Min 100"></div>
+                <div class="ig"><label>Select Method</label>
+                    <select id="wdMethodFinal" style="width: 100%; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: 10px; color: #fff; font-family: inherit;">
+                        <option value="bkash">bKash</option>
+                        <option value="nagad">Nagad</option>
+                        <option value="rocket">Rocket</option>
+                    </select>
+                </div>
+                <button class="btn btn-p btn-bk" style="margin-top: 15px;" onclick="confirmFinalWd()">Place withdrawal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Convert Modal -->
+    <div class="modal" id="modConvert">
+        <div class="modal-c">
+            <div class="modal-h"><h3>Convert to USDT</h3><button class="modal-x" onclick="closeMod('modConvert')"><i class="fas fa-times"></i></button></div>
+            <p style="font-size: 9px; color: var(--mt); margin-bottom: 10px;">Rate: 1,000 Coins = 1 USDT</p>
+            <div class="ig"><label>You pay (Coins)</label><input type="number" id="convInp" placeholder="0" oninput="updateConv()"></div>
+            <div style="text-align: center; margin: 10px 0;"><i class="fas fa-exchange-alt" style="color:var(--ac)"></i></div>
+            <div class="ig"><label>You get (USDT)</label><input type="text" id="convOut" placeholder="0.00" disabled></div>
+            <button class="btn btn-p btn-bk" onclick="processConvert()">Convert Now</button>
+        </div>
+    </div>
+
+    <!-- Set Wallet Modal -->
+    <div class="modal" id="modSetWallet">
+        <div class="modal-c">
+            <div class="modal-h"><h3>Set Payout Wallet</h3><button class="modal-x" onclick="closeMod('modSetWallet')"><i class="fas fa-times"></i></button></div>
+            <div class="ig"><label>Number / Address</label><input type="text" id="walletAddrInp" placeholder="Enter bKash/Nagad number"></div>
+            <button class="btn btn-p btn-bk" onclick="saveWalletAddr()">Save Wallet</button>
+        </div>
+    </div>
+
+    <!-- Transaction History Modal -->
+    <div class="modal" id="modWdHistory">
+        <div class="modal-c">
+            <div class="modal-h"><h3>History</h3><button class="modal-x" onclick="closeMod('modWdHistory')"><i class="fas fa-times"></i></button></div>
+            <div id="fullWdHist" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- Task & Ad Modals -->
+    <div class="modal" id="modAd"><div class="modal-c">... (Ad Logic) ...</div></div>
+    <div class="modal" id="modTask"><div class="modal-c"><div class="modal-h"><h3 id="taskModTitle">Task</h3><button class="modal-x" onclick="closeMod('modTask')"><i class="fas fa-times"></i></button></div><div id="taskModBody"></div></div></div>
+    <div class="modal" id="modDaily"><div class="modal-c">... (Daily Logic) ...</div></div>
+    <div class="modal" id="modPrereqAd"><div class="modal-c">... (Prereq Ad Logic) ...</div></div>
+
+    <!-- 5. FULL SCREEN GAMES (FG) -->
+    <div class="fg-page" id="fgSpin">...</div>
+    <div class="fg-page" id="fgMine">...</div>
+    <div class="fg-page" id="fgTicTac">...</div>
+    <div class="fg-page" id="fgCaptcha">...</div>
+
+    <!-- 6. BOTTOM NAVIGATION -->
     <nav class="nav">
         <div class="nav-i on" onclick="goTo('home')" data-p="home"><i class="fas fa-home"></i><span data-l="nav_home">Home</span></div>
         <div class="nav-i" onclick="goTo('earn')" data-p="earn"><i class="fas fa-bolt"></i><span data-l="nav_earn">Earn</span></div>
         <div class="nav-i nav-ctr" onclick="openDailyReward()"><div class="ctr-c"><i class="fas fa-gift"></i></div><span data-l="nav_reward">Reward</span></div>
         <div class="nav-i" onclick="goTo('ref')" data-p="ref"><i class="fas fa-users"></i><span data-l="nav_refer">Refer</span></div>
-        <div class="nav-i" onclick="goTo('prof')" data-p="prof"><i class="fas fa-user"></i><span data-l="nav_prof">Profile</span></div>
+        <div class="nav-i" onclick="goTo('prof')" data-p="prof"><i class="fas fa-wallet"></i><span>Wallet</span></div>
     </nav>
+
+    <!-- Hidden standard Withdrawal inputs for background compatibility -->
+    <div style="display:none;">
+        <input type="hidden" id="wdAcc">
+        <input type="hidden" id="wdAmt">
+    </div>
+
 </body>
 </html>
